@@ -783,9 +783,9 @@
     
       <category term="iOS" scheme="http://tcblog/github.io/tags/iOS/"/>
     
-      <category term="性能" scheme="http://tcblog/github.io/tags/%E6%80%A7%E8%83%BD/"/>
-    
       <category term="缓存" scheme="http://tcblog/github.io/tags/%E7%BC%93%E5%AD%98/"/>
+    
+      <category term="性能" scheme="http://tcblog/github.io/tags/%E6%80%A7%E8%83%BD/"/>
     
   </entry>
   
