@@ -278,6 +278,129 @@
             
               
                 
+                <a class="post-title-link" href="/2017/01/01/instruments实践/" itemprop="url">
+                  instruments实践
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-01T17:24:39+08:00" content="2017-01-01">
+              2017-01-01
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS技术/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS技术</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/01/01/instruments实践/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/01/instruments实践/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>前段时间写项目，突然跳到某一个页面crash了，然后我重新又进来几次，然后又没问题了，以为这是个”意外”，也没在意，一段时间后，又发生了一次crash，还是同一个页面，我意识到这不是偶然了，然后开始找原因。关于instruments的使用也看过很多次了，但是一直没怎么用，正好这次用它解决了一个问题，顺便记录一下。在猜测某个页面有问题的情况下，我一般的思路是这样的：</p>
+<h3 id="第一步：查看dealloc"><a href="#第一步：查看dealloc" class="headerlink" title="第一步：查看dealloc"></a>第一步：查看dealloc</h3><p>看这个页面有没有被释放，在dealloc打上断点，发现页面确实已经释放了，排除这个可能，进行下一步。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2017/01/01/instruments实践/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/12/24/iOS数组防止越界crash/" itemprop="url">
                   iOS数组防止越界crash
                 </a>
@@ -653,133 +776,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/11/21/iOS构建自动化打包脚本/" itemprop="url">
-                  iOS构建自动化打包脚本
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-11-21T00:00:59+08:00" content="2016-11-21">
-              2016-11-21
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/iOS配置/" itemprop="url" rel="index">
-                    <span itemprop="name">iOS配置</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/11/21/iOS构建自动化打包脚本/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/21/iOS构建自动化打包脚本/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>虽然Xcode打包很方便，但是每次也得花费好几分钟，一次次重复相同的事情，日积月累也会浪费不少的时间。而且大多数情况下，一个app会有多个target,这样的话打包花费的时间更加是成倍的增加。在生成自动化构建脚本之前得先了解几个概念。</p>
-<h3 id="1-xcodebuild"><a href="#1-xcodebuild" class="headerlink" title="1.xcodebuild"></a>1.xcodebuild</h3><p>使用 xcodebuild -h 来看看 xcodebuild 到底是干啥的</p>
-<blockquote>
-<p>Usage: xcodebuild [-project ] [[-target ]…|-alltargets] [-configuration ] [-arch ]… [-sdk [|]] [-showBuildSettings] [=]… []…<br>       xcodebuild [-project ] -scheme  [-destination ]… [-configuration ] [-arch ]… [-sdk [|]] [-showBuildSettings] [=]… []…<br>       xcodebuild -workspace  -scheme  [-destination ]… [-configuration ] [-arch ]… [-sdk [|]] [-showBuildSettings] [=]… []…<br>       xcodebuild -version [-sdk [|] [] ]<br>       xcodebuild -list [[-project ]|[-workspace ]] [-json]<br>       xcodebuild -showsdks<br>       xcodebuild -exportArchive -archivePath  -exportPath  -exportOptionsPlist<br>       xcodebuild -exportLocalizations -localizationPath  -project  [-exportLanguage …]<br>       xcodebuild -importLocalizations -localizationPath  -project</p>
-</blockquote>
-<p>这里我只截取了 usage 部分，option 部分太多没有截取。<br>这里介绍几条毕竟常用的命令：<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/11/21/iOS构建自动化打包脚本/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -825,7 +821,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-count">19</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -842,7 +838,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-count">29</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

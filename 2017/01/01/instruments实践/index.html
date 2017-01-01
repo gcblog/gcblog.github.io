@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="iOS, 钱佳能, 夜千寻墨, 风逝, swift" />
+  <meta name="keywords" content="iOS,性能,crash,instruments," />
 
 
 
@@ -86,15 +86,24 @@
 
 
 
-<meta name="description" content="一介刁民的修行路">
-<meta property="og:type" content="website">
-<meta property="og:title" content="iOS随手记">
-<meta property="og:url" content="http://gcblog/github.io/tags/Method-Swizzling/index.html">
+<meta name="description" content="前段时间写项目，突然跳到某一个页面crash了，然后我重新又进来几次，然后又没问题了，以为这是个”意外”，也没在意，一段时间后，又发生了一次crash，还是同一个页面，我意识到这不是偶然了，然后开始找原因。关于instruments的使用也看过很多次了，但是一直没怎么用，正好这次用它解决了一个问题，顺便记录一下。在猜测某个页面有问题的情况下，我一般的思路是这样的：
+第一步：查看dealloc看这个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="instruments实践">
+<meta property="og:url" content="http://gcblog/github.io/2017/01/01/instruments实践/index.html">
 <meta property="og:site_name" content="iOS随手记">
-<meta property="og:description" content="一介刁民的修行路">
+<meta property="og:description" content="前段时间写项目，突然跳到某一个页面crash了，然后我重新又进来几次，然后又没问题了，以为这是个”意外”，也没在意，一段时间后，又发生了一次crash，还是同一个页面，我意识到这不是偶然了，然后开始找原因。关于instruments的使用也看过很多次了，但是一直没怎么用，正好这次用它解决了一个问题，顺便记录一下。在猜测某个页面有问题的情况下，我一般的思路是这样的：
+第一步：查看dealloc看这个">
+<meta property="og:image" content="https://raw.githubusercontent.com/suifengqjn/demoimages/master/instruments/1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/suifengqjn/demoimages/master/instruments/2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/suifengqjn/demoimages/master/instruments/3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/suifengqjn/demoimages/master/instruments/4.png">
+<meta property="og:updated_time" content="2017-01-01T09:27:35.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="iOS随手记">
-<meta name="twitter:description" content="一介刁民的修行路">
+<meta name="twitter:title" content="instruments实践">
+<meta name="twitter:description" content="前段时间写项目，突然跳到某一个页面crash了，然后我重新又进来几次，然后又没问题了，以为这是个”意外”，也没在意，一段时间后，又发生了一次crash，还是同一个页面，我意识到这不是偶然了，然后开始找原因。关于instruments的使用也看过很多次了，但是一直没怎么用，正好这次用它解决了一个问题，顺便记录一下。在猜测某个页面有问题的情况下，我一般的思路是这样的：
+第一步：查看dealloc看这个">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/suifengqjn/demoimages/master/instruments/1.png">
 
 
 
@@ -112,7 +121,7 @@
   };
 </script>
 
-  <title> 标签: Method Swizzling | iOS随手记 </title>
+  <title> instruments实践 | iOS随手记 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -133,7 +142,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left  ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -254,46 +263,183 @@
           <div id="content" class="content">
             
 
-  <div id="posts" class="posts-collapse">
-    <div class="collection-title">
-      <h2 >
-        Method Swizzling
-        <small>标签</small>
-      </h2>
-    </div>
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
 
     
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                instruments实践
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-01T17:24:39+08:00" content="2017-01-01">
+              2017-01-01
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS技术/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS技术</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/01/01/instruments实践/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/01/instruments实践/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i></i> 浏览
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
       
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+      
+        <p>前段时间写项目，突然跳到某一个页面crash了，然后我重新又进来几次，然后又没问题了，以为这是个”意外”，也没在意，一段时间后，又发生了一次crash，还是同一个页面，我意识到这不是偶然了，然后开始找原因。关于instruments的使用也看过很多次了，但是一直没怎么用，正好这次用它解决了一个问题，顺便记录一下。在猜测某个页面有问题的情况下，我一般的思路是这样的：</p>
+<h3 id="第一步：查看dealloc"><a href="#第一步：查看dealloc" class="headerlink" title="第一步：查看dealloc"></a>第一步：查看dealloc</h3><p>看这个页面有没有被释放，在dealloc打上断点，发现页面确实已经释放了，排除这个可能，进行下一步。<br><a id="more"></a></p>
+<h3 id="第二步：查看内存-cpu"><a href="#第二步：查看内存-cpu" class="headerlink" title="第二步：查看内存,cpu"></a>第二步：查看内存,cpu</h3><p><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/instruments/1.png" alt="查看运行状态的内存cpu"></p>
+<p>我先后两次进入到这个页面，发现刚进入这个页面的瞬间内存飚的很高，然后瞬间又降下来，到这里问题已经变得明显了，这个页面确实存在问题，下面就需要深入的寻找问题所在。</p>
+<h3 id="第三步：Profile"><a href="#第三步：Profile" class="headerlink" title="第三步：Profile"></a>第三步：Profile</h3><p>直接在上图的右上角点击 Profile in instruments,<br><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/instruments/2.png" alt="查看运行状态的内存cpu"><br>进入instruments后，我还是重复之前的操作，进入这个问题页面，还是发现了内存飙高的情况，然后我在下面的堆栈里找，发现怎么也找不到到底是哪个方法引起的。<br><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/instruments/3.png" alt="查看运行状态的内存cpu"><br>然后我发现上面的内存图上有条线可以拖动，然后我就把它拖到内存最高的地方，然后再去下面找，发现还是找不到。<br><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/instruments/4.png" alt="查看运行状态的内存cpu"><br>最后，我尝试在内存飙高的同时，点击左上角暂停运行，然后再下面的堆栈中继续找，这回终于找到了，是我自己的一个类渲染UI的时候导致的内存问题，找到具体的原因，解决起来也就轻松了。光看果然是没有用的，重要的还是要实践。</p>
 
-      <h1 class="post-title">
+      
+    </div>
+
+    <div>
+      
         
-            <a class="post-title-link" href="/2016/04/16/runtime详解/" itemprop="url">
-              
-                <span itemprop="name">runtime详解</span>
-              
-            </a>
+      
+    </div>
+
+    <div>
+      
         
-      </h1>
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/weixin.jpg" alt="夜千寻墨 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/zhifubao.jpg" alt="夜千寻墨 Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2016-04-16T16:59:52+08:00"
-              content="2016-04-16" >
-          04-16
-        </time>
-      </div>
 
-    </header>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag">#iOS</a>
+          
+            <a href="/tags/性能/" rel="tag">#性能</a>
+          
+            <a href="/tags/crash/" rel="tag">#crash</a>
+          
+            <a href="/tags/instruments/" rel="tag">#instruments</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/24/iOS数组防止越界crash/" rel="next" title="iOS数组防止越界crash">
+                <i class="fa fa-chevron-left"></i> iOS数组防止越界crash
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </article>
 
 
-    
-  </div>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -301,6 +447,14 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/01/01/instruments实践/"
+           data-title="instruments实践" data-url="http://gcblog/github.io/2017/01/01/instruments实践/">
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -320,8 +474,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -416,6 +579,17 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一步：查看dealloc"><span class="nav-number">1.</span> <span class="nav-text">第一步：查看dealloc</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二步：查看内存-cpu"><span class="nav-number">2.</span> <span class="nav-text">第二步：查看内存,cpu</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三步：Profile"><span class="nav-number">3.</span> <span class="nav-text">第三步：Profile</span></a></li></ol></div>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -535,6 +709,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
 
   
 
