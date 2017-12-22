@@ -278,6 +278,133 @@
             
               
                 
+                <a class="post-title-link" href="/2016/03/12/iOS缓存机制-非结构化存储/" itemprop="url">
+                  iOS缓存机制-非结构化存储
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-03-12T19:43:33+08:00" content="2016-03-12">
+              2016-03-12
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS技术/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS技术</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/03/12/iOS缓存机制-非结构化存储/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/12/iOS缓存机制-非结构化存储/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>对于一个优秀的app来说，缓存机制必不可少。图片，视频，音频等等各种类型的文件，怎么样去更好的管理这些数据，这对于我们开发者以及用户都是息息相关的。闲话不多说，先来看看几个github开源中牛逼的几个缓存框架。</p>
+<p>它们的使用方式都很类似，都是通过键值对(key-value)的形式进行存取，跟<code>NSUserDefaults</code>用法类似。</p>
+<p>以下排名按照性能由低到高：</p>
+<h3 id="1-EGOCache"><a href="#1-EGOCache" class="headerlink" title="1.EGOCache"></a>1.EGOCache</h3><p> 只提供磁盘缓存，没有内存缓存，一个比较简易的缓存框架。</p>
+<h3 id="2-TMCache"><a href="#2-TMCache" class="headerlink" title="2.TMCache"></a>2.TMCache</h3><p> 最初由 Tumblr 开发，但现在已经不再维护了。TMMemoryCache 实现有很多 NSCache 并没有提供的功能，比如数量限制、总容量限制、存活时间限制、内存警告或应用退到后台时清空缓存等。TMMemoryCache 在设计时，主要目标是线程安全，它把所有读写操作都放到了同一个 concurrent queue 中，然后用 dispatch_barrier_async 来保证任务能顺序执行。它错误的用了大量异步 block 回调来实现存取功能，以至于产生了很大的性能和死锁问题。它有磁盘缓存和内存缓存两部分组成，个人感觉一般好点的缓存库都会由磁盘缓存和内存缓存两部分组成，在我们第一次存储一个文件到磁盘的时候，缓存库会帮我们复制一份到内存缓存中，可以让我们在下次使用该文件的时候可以更快的找到。我上家公司就是用的这个缓存框架，挺好用的，也没出什么问题。</p>
+<h3 id="3-PINCache"><a href="#3-PINCache" class="headerlink" title="3.PINCache"></a>3.PINCache</h3><p> 是 Tumblr 宣布不在维护 TMCache 后，由 Pinterest 维护和改进的一个内存缓存。它的功能和接口基本和 TMCache 一样，但修复了性能和死锁的问题。它同样也用 dispatch_semaphore 来保证线程安全，但去掉了dispatch_barrier_async，避免了线程切换带来的巨大开销，也避免了可能的死锁。相当于是TMCache的优化版，而且一直有更新。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/03/12/iOS缓存机制-非结构化存储/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/02/27/一分钟学会环形进度条/" itemprop="url">
                   一分钟学会环形进度条
                 </a>
@@ -636,130 +763,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/02/25/iOS性能监测/" itemprop="url">
-                  iOS性能监测
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-02-25T15:46:16+08:00" content="2016-02-25">
-              2016-02-25
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/iOS技术/" itemprop="url" rel="index">
-                    <span itemprop="name">iOS技术</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/02/25/iOS性能监测/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/25/iOS性能监测/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>iOS开发中，如果是由于占用内存或者cpu过高导致性能下降，使用Instruments比较容易那些造成性能低下的”罪魁祸首”，在开发测试阶段它可以帮助我们分析软件运行的性能消耗，但是这可定是远远不够的，我们需要一个工具，可以在正式环境中由大量用户在使用过程中监控、分析到的数据更能解决一些隐藏的问题.</p>
-<h3 id="Time-Profiler"><a href="#Time-Profiler" class="headerlink" title="Time Profiler"></a>Time Profiler</h3><p>可以查看多个线程中每个方法的耗时。</p>
-<h4 id="对Xcode进行设置"><a href="#对Xcode进行设置" class="headerlink" title="对Xcode进行设置"></a>对Xcode进行设置</h4><h5 id="1-不设置该选项，只能看到一堆栈"><a href="#1-不设置该选项，只能看到一堆栈" class="headerlink" title="1. 不设置该选项，只能看到一堆栈"></a>1. 不设置该选项，只能看到一堆栈</h5><p>如果想要在TimeProfile中直观的查看方法耗时，需要对Xcode进行设置<br>在Xcode-&gt;Build Setting-&gt;Debug Information Format中设置选项为：DWARF with DSYM File<br><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/PerformanceMonitor/1.png" alt="image"><br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/25/iOS性能监测/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -805,7 +808,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">21</span>
+              <span class="site-state-item-count">22</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -822,7 +825,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">36</span>
+                <span class="site-state-item-count">38</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

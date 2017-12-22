@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="iOS,越界,NSArray,NSMutableArray,crash," />
+  <meta name="keywords" content="macOS,macOSApp,图片去重,图片相似查询," />
 
 
 
@@ -86,28 +86,24 @@
 
 
 
-<meta name="description" content="有时候项目中总是出现一些无法预知的情况，导致数组越界是程序crash，如果这种意外情况无法避免，那么只能从侧面采取保护措施。我先从网上找答案，我想其他人也肯定遇到过相同的情况，如果有好的解决方案，直接采用就可以了。但是实际上，网上搜索的结果令人有些失望。下面还是记录一下我自己的解决方案，以及和网上解决方案的差异。
-crash的具体几种情况
-取值：index超出array的索引范围
-添加：插入的ob">
+<meta name="description" content="参考资料：http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
+很多时候，我们的文件夹里会有重复或者相似的图片，这类图片自然没有必要存在多份，我们要做的就是遍历所有图片，然后找出相似的，只保留其中一张即可。
+这里的关键技术叫做”感知哈希算法”（Perceptual hash algorithm），它的">
 <meta property="og:type" content="article">
-<meta property="og:title" content="iOS数组防止越界crash">
-<meta property="og:url" content="http://gcblog/github.io/2016/12/24/iOS数组防止越界crash/index.html">
+<meta property="og:title" content="PhotoBatch-图片去重(3)">
+<meta property="og:url" content="http://gcblog/github.io/2017/12/22/PhotoBatch-图片去重-3/index.html">
 <meta property="og:site_name" content="iOS随手记">
-<meta property="og:description" content="有时候项目中总是出现一些无法预知的情况，导致数组越界是程序crash，如果这种意外情况无法避免，那么只能从侧面采取保护措施。我先从网上找答案，我想其他人也肯定遇到过相同的情况，如果有好的解决方案，直接采用就可以了。但是实际上，网上搜索的结果令人有些失望。下面还是记录一下我自己的解决方案，以及和网上解决方案的差异。
-crash的具体几种情况
-取值：index超出array的索引范围
-添加：插入的ob">
-<meta property="og:image" content="https://raw.githubusercontent.com/suifengqjn/demoimages/master/iOS%E9%98%B2%E6%AD%A2%E6%95%B0%E6%8D%AE%E8%B6%8A%E7%95%8Ccrash/12.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/suifengqjn/demoimages/master/iOS%E9%98%B2%E6%AD%A2%E6%95%B0%E6%8D%AE%E8%B6%8A%E7%95%8Ccrash/13.png">
-<meta property="og:updated_time" content="2016-12-24T07:52:07.000Z">
+<meta property="og:description" content="参考资料：http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
+很多时候，我们的文件夹里会有重复或者相似的图片，这类图片自然没有必要存在多份，我们要做的就是遍历所有图片，然后找出相似的，只保留其中一张即可。
+这里的关键技术叫做”感知哈希算法”（Perceptual hash algorithm），它的">
+<meta property="og:image" content="https://raw.githubusercontent.com/suifengqjn/demoimages/master/PhotoBatch/3_1.png">
+<meta property="og:updated_time" content="2017-12-22T04:38:21.983Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="iOS数组防止越界crash">
-<meta name="twitter:description" content="有时候项目中总是出现一些无法预知的情况，导致数组越界是程序crash，如果这种意外情况无法避免，那么只能从侧面采取保护措施。我先从网上找答案，我想其他人也肯定遇到过相同的情况，如果有好的解决方案，直接采用就可以了。但是实际上，网上搜索的结果令人有些失望。下面还是记录一下我自己的解决方案，以及和网上解决方案的差异。
-crash的具体几种情况
-取值：index超出array的索引范围
-添加：插入的ob">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/suifengqjn/demoimages/master/iOS%E9%98%B2%E6%AD%A2%E6%95%B0%E6%8D%AE%E8%B6%8A%E7%95%8Ccrash/12.png">
+<meta name="twitter:title" content="PhotoBatch-图片去重(3)">
+<meta name="twitter:description" content="参考资料：http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
+很多时候，我们的文件夹里会有重复或者相似的图片，这类图片自然没有必要存在多份，我们要做的就是遍历所有图片，然后找出相似的，只保留其中一张即可。
+这里的关键技术叫做”感知哈希算法”（Perceptual hash algorithm），它的">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/suifengqjn/demoimages/master/PhotoBatch/3_1.png">
 
 
 
@@ -125,7 +121,7 @@ crash的具体几种情况
   };
 </script>
 
-  <title> iOS数组防止越界crash | iOS随手记 </title>
+  <title> PhotoBatch-图片去重(3) | iOS随手记 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -288,7 +284,7 @@ crash的具体几种情况
             
             
               
-                iOS数组防止越界crash
+                PhotoBatch-图片去重(3)
               
             
           </h1>
@@ -300,8 +296,8 @@ crash的具体几种情况
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-12-24T15:45:55+08:00" content="2016-12-24">
-              2016-12-24
+            <time itemprop="dateCreated" datetime="2017-12-22T12:36:51+08:00" content="2017-12-22">
+              2017-12-22
             </time>
           </span>
 
@@ -314,8 +310,8 @@ crash的具体几种情况
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/iOS技术/" itemprop="url" rel="index">
-                    <span itemprop="name">iOS技术</span>
+                  <a href="/categories/macOS/" itemprop="url" rel="index">
+                    <span itemprop="name">macOS</span>
                   </a>
                 </span>
 
@@ -330,8 +326,8 @@ crash的具体几种情况
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/12/24/iOS数组防止越界crash/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/24/iOS数组防止越界crash/" itemprop="commentsCount"></span>
+                <a href="/2017/12/22/PhotoBatch-图片去重-3/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/12/22/PhotoBatch-图片去重-3/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -359,32 +355,20 @@ crash的具体几种情况
       
 
       
-        <p>有时候项目中总是出现一些无法预知的情况，导致数组越界是程序crash，如果这种意外情况无法避免，那么只能从侧面采取保护措施。我先从网上找答案，我想其他人也肯定遇到过相同的情况，如果有好的解决方案，直接采用就可以了。但是实际上，网上搜索的结果令人有些失望。下面还是记录一下我自己的解决方案，以及和网上解决方案的差异。</p>
-<h3 id="crash的具体几种情况"><a href="#crash的具体几种情况" class="headerlink" title="crash的具体几种情况"></a>crash的具体几种情况</h3><ul>
-<li>取值：index超出array的索引范围</li>
-<li>添加：插入的object为nil或者Null</li>
-<li>插入：index大于count、插入的object为nil或者Null</li>
-<li>删除：index超出array的索引范围</li>
-<li>替换：index超出array的索引范围、替换的object为nil或者Null</li>
-</ul>
-<h3 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h3><p>任何代码都需要围绕”高内聚，低耦合”的思想来实现，尤其是这种工具类的代码，更是应该对原代码入侵越少越好。一个很容易想到的方法，就是采用runtime, 把array中的以上几种情况的方法替换成自己的方法，然后再执行方法的时候加以判断。而我在网上搜到的结果全是以这种方案解决的，不排除有更好的方法我没找到。附上一个我找到的代码比较详细的<a href="https://github.com/wanyakun/YKIntercepter" target="_blank" rel="external">demo</a>。我试了一下，效果是可以达到，不过我还是毫不犹豫的拒绝这种方式。直接替换了系统的方法必然会导致更多无法预知的问题。这些问题，我在后面会讲几个我遇到的。而我准备这样解决：<br><a id="more"></a></p>
-<ul>
-<li><p>这是系统原本的调用方式<br><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/iOS%E9%98%B2%E6%AD%A2%E6%95%B0%E6%8D%AE%E8%B6%8A%E7%95%8Ccrash/12.png" alt="这是系统原本的调用方式"></p>
-</li>
-<li><p>这是改变之后的调用方式<br><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/iOS%E9%98%B2%E6%AD%A2%E6%95%B0%E6%8D%AE%E8%B6%8A%E7%95%8Ccrash/13.png" alt="这是改变之后的调用方式"></p>
-</li>
-</ul>
-<p>我是先勾住array自带的方法，进行判断，如果没有越界等几种情况，再继续执行它自身的方法，相当于在执行方法前多了一步判断，而网上是直接把方法替换成自己的方法了，这里还是有本质的区别。</p>
-<h3 id="具体实现原理"><a href="#具体实现原理" class="headerlink" title="具体实现原理"></a>具体实现原理</h3><p>这里举例说明 <code>NSArray</code> 的 <code>addObject:</code> 方法，其他也类似。</p>
-<h4 id="先定义一个静态变量"><a href="#先定义一个静态变量" class="headerlink" title="先定义一个静态变量"></a>先定义一个静态变量</h4><p><code>static IMP array_old_func_imap_object = NULL;</code><br>这个变量用来记录array自带方法的指针地址</p>
-<h4 id="获取方法，然后记录方法的指针地址"><a href="#获取方法，然后记录方法的指针地址" class="headerlink" title="获取方法，然后记录方法的指针地址"></a>获取方法，然后记录方法的指针地址</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Method old_func_imap_object = class_getInstanceMethod(NSClassFromString(@&quot;__NSArrayI&quot;), @selector(objectAtIndex:));</div><div class="line">            array_old_func_imap_object = method_getImplementation(old_func_imap_object);</div></pre></td></tr></table></figure>
-<h4 id="改变原方法的指针地址，并指向自定义方法"><a href="#改变原方法的指针地址，并指向自定义方法" class="headerlink" title="改变原方法的指针地址，并指向自定义方法"></a>改变原方法的指针地址，并指向自定义方法</h4><p><code>method_setImplementation(old_func_imap_object, [self methodForSelector:@selector(fm_objectAtIndex:)]);</code></p>
-<h4 id="自定义方法的实现"><a href="#自定义方法的实现" class="headerlink" title="自定义方法的实现"></a>自定义方法的实现</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">- (id)fm_objectAtIndex:(NSUInteger)index &#123;</div><div class="line">    if (index &lt; [(NSArray*)self count]) &#123;</div><div class="line">        return ((id(*)(id, SEL, NSUInteger))array_old_func_imap_object)(self, @selector(objectAtIndex:), index);</div><div class="line">    &#125;</div><div class="line">    NSLog(@&quot;NArray objectAtIndex 失败--%@&quot;, [NSThread callStackSymbols]);</div><div class="line">    return nil;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="最后一步"><a href="#最后一步" class="headerlink" title="最后一步"></a>最后一步</h4><p>到这里已经差不多完成了，就剩最后一个问题了，就是怎么运用到项目中，让这个工具类继承自NSObject，把这个工具类写成一个单例，然后在load方法中调用单例。load 方法会在本类第一次使用的时候调用一次，所以，把这个工具类拖到项目中，不用写其他代码，就实现了以上的功能。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">+ (void)load &#123;</div><div class="line">    [FMDetecter sharedInstance];</div><div class="line">&#125;</div><div class="line"></div><div class="line">static dispatch_once_t onceToken;</div><div class="line">static FMDetecter *sharedInstance;</div><div class="line"></div><div class="line">+ (instancetype)sharedInstance &#123;</div><div class="line">    dispatch_once(&amp;onceToken, ^&#123;</div><div class="line">        sharedInstance = [[FMDetecter alloc] init];</div><div class="line">    &#125;);</div><div class="line">    return sharedInstance;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>这里有完整的代码，有兴趣可查看<a href="https://github.com/suifengqjn/FMArrarMonitor" target="_blank" rel="external">demo</a></p>
-<h3 id="实际出现的问题"><a href="#实际出现的问题" class="headerlink" title="实际出现的问题"></a>实际出现的问题</h3><p>我用这两种方式都试了试，新建一个空项目，然后把上面几个方法都试一遍，似乎都没问题，然后我把他们公司的项目中，程序有时候卡死，还会crash，还是没法用，两种方式都有问题，找了找原因，发现NSArray和NSMutableArray的那几个方法，系统自己会调用很多很多次，极大的影响了性能，还有网友遇到了其他的问题：替换了objectAtIndex方法有输入的地方出来了软键盘按手机Home键就Crash了。简直无解，最后，还是决定写个分类，虽然low一点，毕竟还是能解决我的问题，并且不会带来新的问题。</p>
-<h4 id="这是给NSArray添加的方法"><a href="#这是给NSArray添加的方法" class="headerlink" title="这是给NSArray添加的方法"></a>这是给NSArray添加的方法</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">#import &quot;NSArray+beyond.h&quot;</div><div class="line"></div><div class="line">@implementation NSArray (beyond)</div><div class="line">-(id)objectAtIndexCheck:(NSUInteger)index</div><div class="line">&#123;</div><div class="line">    if (index &lt; self.count) &#123;</div><div class="line">        return [self objectAtIndex:index];</div><div class="line">    &#125;</div><div class="line">    return nil;</div><div class="line">&#125;</div><div class="line">@end</div></pre></td></tr></table></figure>
-<h4 id="这是给NSMutableArray添加的方法"><a href="#这是给NSMutableArray添加的方法" class="headerlink" title="这是给NSMutableArray添加的方法"></a>这是给NSMutableArray添加的方法</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line">#import &quot;NSMutableArray+beyond.h&quot;</div><div class="line"></div><div class="line">@implementation NSMutableArray (beyond)</div><div class="line">-(id)objectAtIndexCheck:(NSUInteger)index</div><div class="line">&#123;</div><div class="line">    if (index &lt; self.count) &#123;</div><div class="line">        return [self objectAtIndex:index];</div><div class="line">    &#125;</div><div class="line">    NSLog(@&quot;%@&quot;, [NSThread callStackSymbols]);</div><div class="line">    return nil;</div><div class="line">&#125;</div><div class="line">- (void)addObjectCheck:(id)anObject</div><div class="line">&#123;</div><div class="line">    if (anObject != nil &amp;&amp; [anObject isKindOfClass:[NSNull class]] == NO) &#123;</div><div class="line">        [self addObject:anObject];</div><div class="line">    &#125; else &#123;</div><div class="line">        NSLog(@&quot;%@&quot;, [NSThread callStackSymbols]);</div><div class="line">        </div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">- (void)insertObjectCheck:(id)anObject atIndex:(NSUInteger)index</div><div class="line">&#123;</div><div class="line">    if (index &lt;= self.count &amp;&amp; anObject != nil &amp;&amp; [anObject isKindOfClass:[NSNull class]] == NO) &#123;</div><div class="line">        [self insertObject:anObject atIndex:index];</div><div class="line">    &#125; else &#123;</div><div class="line">        NSLog(@&quot;%@&quot;, [NSThread callStackSymbols]);</div><div class="line">        </div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)removeObjectAtIndexCheck:(NSUInteger)index</div><div class="line">&#123;</div><div class="line">    if (index &lt; self.count) &#123;</div><div class="line">        [self removeObjectAtIndex:index];</div><div class="line">    &#125; else &#123;</div><div class="line">        NSLog(@&quot;%@&quot;, [NSThread callStackSymbols]);</div><div class="line">        </div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">- (void)replaceObjectAtIndexCheck:(NSUInteger)index withObject:(id)anObject</div><div class="line">&#123;</div><div class="line">    if (index &lt; self.count &amp;&amp; anObject != nil &amp;&amp; [anObject isKindOfClass:[NSNull class]] == NO) &#123;</div><div class="line">        [self replaceObjectAtIndex:index withObject:anObject];</div><div class="line">    &#125; else &#123;</div><div class="line">        NSLog(@&quot;%@&quot;, [NSThread callStackSymbols]);</div><div class="line">        </div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">@end</div></pre></td></tr></table></figure>
+        <p>参考资料：<a href="http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html" target="_blank" rel="external">http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html</a></p>
+<p>很多时候，我们的文件夹里会有重复或者相似的图片，这类图片自然没有必要存在多份，我们要做的就是遍历所有图片，然后找出相似的，只保留其中一张即可。</p>
+<p>这里的关键技术叫做”感知哈希算法”（Perceptual hash algorithm），它的作用是对每张图片生成一个”指纹”（fingerprint）字符串，然后比较不同图片的指纹。结果越接近，就说明图片越相似。</p>
+<p>另外还找到了其他几种方法，这里是地址<br><a href="http://www.ruanyifeng.com/blog/2013/03/similar_image_search_part_ii.html" target="_blank" rel="external">http://www.ruanyifeng.com/blog/2013/03/similar_image_search_part_ii.html</a></p>
+<h2 id="第一步，缩小尺寸。"><a href="#第一步，缩小尺寸。" class="headerlink" title="第一步，缩小尺寸。"></a>第一步，缩小尺寸。</h2><p>将图片缩小到8x8的尺寸，总共64个像素。这一步的作用是去除图片的细节，只保留结构、明暗等基本信息，摒弃不同尺寸、比例带来的图片差异。<br>在macOS，使用的是<code>NSImage</code>, 两者的一些操作很类似。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">- (NSImage *)reSizeImage:(NSImage *)image toSize:(CGSize)reSize</div><div class="line">&#123;</div><div class="line">    NSImage *sourceImage = image;</div><div class="line">    if (![sourceImage isValid])&#123;</div><div class="line">        NSLog(@&quot;Invalid Image&quot;);</div><div class="line">    &#125; else &#123;</div><div class="line">        NSImage *smallImage = [[NSImage alloc] initWithSize: reSize];</div><div class="line">        [smallImage lockFocus];</div><div class="line">        [sourceImage setSize: reSize];</div><div class="line">        [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationHigh];</div><div class="line">        [sourceImage drawAtPoint:NSZeroPoint fromRect:CGRectMake(0, 0, reSize.width, reSize.height) operation:NSCompositeCopy fraction:1.0];</div><div class="line">        [smallImage unlockFocus];</div><div class="line">        return smallImage;</div><div class="line">    &#125;</div><div class="line">    return nil;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+ <a id="more"></a>
+<h2 id="第二步，简化色彩。"><a href="#第二步，简化色彩。" class="headerlink" title="第二步，简化色彩。"></a>第二步，简化色彩。</h2><p>将缩小后的图片，转为64级灰度。也就是说，所有像素点总共只有64种颜色。</p>
+<h2 id="第三步，计算平均值。"><a href="#第三步，计算平均值。" class="headerlink" title="第三步，计算平均值。"></a>第三步，计算平均值。</h2><p>计算所有64个像素的灰度平均值。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">a[ArrSize] = 0;</div><div class="line">b[ArrSize] = 0;</div><div class="line">CGPoint point;</div><div class="line">for (i = 0 ; i &lt; cursize; i++) &#123;//计算a的灰度</div><div class="line">    for (j = 0; j &lt; cursize; j++) &#123;</div><div class="line">        point.x = i;</div><div class="line">        point.y = j;</div><div class="line">        grey = ToGrey([self NSColorToRGB:[self colorAtPixel:point img:imga]]);</div><div class="line">        a[cursize * i + j] = grey;</div><div class="line">        a[ArrSize] += grey;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">a[ArrSize] /= (ArrSize - 1);//灰度平均值</div><div class="line">for (i = 0 ; i &lt; cursize; i++) &#123;//计算b的灰度</div><div class="line">    for (j = 0; j &lt; cursize; j++) &#123;</div><div class="line">        point.x = i;</div><div class="line">        point.y = j;</div><div class="line">        grey = ToGrey([self NSColorToRGB:[self colorAtPixel:point img:imgb]]);</div><div class="line">        b[cursize * i + j] = grey;</div><div class="line">        b[ArrSize] += grey;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">b[ArrSize] /= (ArrSize - 1);//灰度平均值</div></pre></td></tr></table></figure></p>
+<h2 id="第四步，比较像素的灰度。"><a href="#第四步，比较像素的灰度。" class="headerlink" title="第四步，比较像素的灰度。"></a>第四步，比较像素的灰度。</h2><p>将每个像素的灰度，与平均值进行比较。大于或等于平均值，记为1；小于平均值，记为0。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">a[ArrSize] = 0;</div><div class="line">   b[ArrSize] = 0;</div><div class="line">   CGPoint point;</div><div class="line">   for (i = 0 ; i &lt; cursize; i++) &#123;//计算a的灰度</div><div class="line">       for (j = 0; j &lt; cursize; j++) &#123;</div><div class="line">           point.x = i;</div><div class="line">           point.y = j;</div><div class="line">           grey = ToGrey([self NSColorToRGB:[self colorAtPixel:point img:imga]]);</div><div class="line">           a[cursize * i + j] = grey;</div><div class="line">           a[ArrSize] += grey;</div><div class="line">       &#125;</div><div class="line">   &#125;</div></pre></td></tr></table></figure></p>
+<h2 id="第五步，计算哈希值。"><a href="#第五步，计算哈希值。" class="headerlink" title="第五步，计算哈希值。"></a>第五步，计算哈希值。</h2><p>将上一步的比较结果，组合在一起，就构成了一个64位的整数，这就是这张图片的指纹。组合的次序并不重要，只要保证所有图片都采用同样次序就行了。<br>得到指纹以后，就可以对比不同的图片，看看64位中有多少位是不一样的。在理论上，这等同于计算”汉明距离”（Hamming distance）。如果不相同的数据位不超过5，就说明两张图片很相似；如果大于10，就说明这是两张不同的图片。</p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>上面已经得到了判断两张图片是否相似的方法，而我们要实现的功能是：从一堆图片中找出哪些图片是相似的，并把相似图片放到一起。<br>实现逻辑：遍历所有图片，第一张图片先放到第一组中，第二张图片先与第一组中的第一张图片做比较，如果相似，就放到第一组中，否则放到第二组中，以此类推，直到遍历完左右图片，这时候，相似的图片都已经分到各个组中，有一些组中可能只有一张图片，表示没有与之相似大的图片，取出图片个数大于1的组，然后挨个显示这个组中的图片，让用户选择哪些图片该保留。</p>
+<p>这是一个比较耗时的操作，所以放在子线程中操作。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line">NSMutableArray *totalArr = [NSMutableArray array];</div><div class="line">   </div><div class="line">   __weak __typeof(self)weakSelf = self;</div><div class="line">   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^&#123;</div><div class="line">       </div><div class="line">       for (NSString *filePath in allFiles) &#123;</div><div class="line">           dispatch_async(dispatch_get_main_queue(), ^&#123;</div><div class="line">               weakSelf.dealingLabel.stringValue = [NSString stringWithFormat:@&quot;处理文件：%@&quot;, filePath];</div><div class="line">           &#125;);</div><div class="line">           if (totalArr.count == 0) &#123;</div><div class="line">               NSMutableArray *arr = [NSMutableArray array];</div><div class="line">               [arr addObject:filePath];</div><div class="line">               [totalArr addObject:arr];</div><div class="line">           &#125; else &#123;</div><div class="line">               </div><div class="line">               NSInteger groupCount = [[totalArr mutableCopy] count];</div><div class="line">               for (int i = 0; i &lt; groupCount; i++) &#123;</div><div class="line">                   NSMutableArray *arr = totalArr[i];</div><div class="line">                   NSImage *imagea = [[NSImage alloc] initWithContentsOfFile:arr.firstObject];</div><div class="line">                   NSImage *imageb = [[NSImage alloc] initWithContentsOfFile:filePath];</div><div class="line">                   Similarity simi = [PHCompare getSimilarityValueWithImgA:imagea ImgB:imageb];</div><div class="line">                   if (simi &gt;= 0.9) &#123; //相似度比较接近</div><div class="line">                       [arr addObject:filePath];</div><div class="line">                       break;</div><div class="line">                   &#125; else &#123;</div><div class="line">                       if (i == [[totalArr mutableCopy] count] - 1) &#123;  //已经遍历到最后一组，还没有找到相似图片，新建一组</div><div class="line">                           NSMutableArray *arr = [NSMutableArray array];</div><div class="line">                           [arr addObject:filePath];</div><div class="line">                           @synchronized(totalArr) &#123;</div><div class="line">                               [totalArr addObject:arr];</div><div class="line">                           &#125;</div><div class="line">                           break;</div><div class="line">                       &#125;</div><div class="line">                   &#125;</div><div class="line">               &#125;</div><div class="line">               </div><div class="line">               </div><div class="line">           &#125;</div><div class="line">       &#125;</div><div class="line">       </div><div class="line">       NSMutableArray *repeatArr = [NSMutableArray new];</div><div class="line">       for (NSArray *arr in totalArr) &#123;</div><div class="line">           if (arr.count &gt; 1) &#123;</div><div class="line">               [repeatArr addObject:arr];</div><div class="line">           &#125;</div><div class="line">       &#125;</div><div class="line">       dispatch_async(dispatch_get_main_queue(), ^&#123;</div><div class="line">           weakSelf.dealingLabel.stringValue = [NSString stringWithFormat:@&quot;处理完成&quot;];</div><div class="line">           [self.checkRepeatView buildUIWithImageArr:repeatArr];</div><div class="line">       &#125;);</div><div class="line">       </div><div class="line">   &#125;);</div></pre></td></tr></table></figure></p>
+<p>效果图：</p>
+<p><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/PhotoBatch/3_1.png" alt=""></p>
 
       
     </div>
@@ -427,15 +411,13 @@ crash的具体几种情况
       
         <div class="post-tags">
           
-            <a href="/tags/iOS/" rel="tag">#iOS</a>
+            <a href="/tags/macOS/" rel="tag">#macOS</a>
           
-            <a href="/tags/越界/" rel="tag">#越界</a>
+            <a href="/tags/macOSApp/" rel="tag">#macOSApp</a>
           
-            <a href="/tags/NSArray/" rel="tag">#NSArray</a>
+            <a href="/tags/图片去重/" rel="tag">#图片去重</a>
           
-            <a href="/tags/NSMutableArray/" rel="tag">#NSMutableArray</a>
-          
-            <a href="/tags/crash/" rel="tag">#crash</a>
+            <a href="/tags/图片相似查询/" rel="tag">#图片相似查询</a>
           
         </div>
       
@@ -444,17 +426,13 @@ crash的具体几种情况
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/11/29/Swift小结/" rel="next" title="Swift小结">
-                <i class="fa fa-chevron-left"></i> Swift小结
+              <a href="/2017/12/04/PhotoBatch-文件重命名-2/" rel="next" title="PhotoBatch-文件重命名(2)">
+                <i class="fa fa-chevron-left"></i> PhotoBatch-文件重命名(2)
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/01/01/instruments实践/" rel="prev" title="instruments实践">
-                instruments实践 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -480,8 +458,8 @@ crash的具体几种情况
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/12/24/iOS数组防止越界crash/"
-           data-title="iOS数组防止越界crash" data-url="http://gcblog/github.io/2016/12/24/iOS数组防止越界crash/">
+      <div class="ds-thread" data-thread-key="2017/12/22/PhotoBatch-图片去重-3/"
+           data-title="PhotoBatch-图片去重(3)" data-url="http://gcblog/github.io/2017/12/22/PhotoBatch-图片去重-3/">
       </div>
     
   </div>
@@ -617,7 +595,7 @@ crash的具体几种情况
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#crash的具体几种情况"><span class="nav-number">1.</span> <span class="nav-text">crash的具体几种情况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决思路"><span class="nav-number">2.</span> <span class="nav-text">解决思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#具体实现原理"><span class="nav-number">3.</span> <span class="nav-text">具体实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#先定义一个静态变量"><span class="nav-number">3.1.</span> <span class="nav-text">先定义一个静态变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#获取方法，然后记录方法的指针地址"><span class="nav-number">3.2.</span> <span class="nav-text">获取方法，然后记录方法的指针地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#改变原方法的指针地址，并指向自定义方法"><span class="nav-number">3.3.</span> <span class="nav-text">改变原方法的指针地址，并指向自定义方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自定义方法的实现"><span class="nav-number">3.4.</span> <span class="nav-text">自定义方法的实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#最后一步"><span class="nav-number">3.5.</span> <span class="nav-text">最后一步</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实际出现的问题"><span class="nav-number">4.</span> <span class="nav-text">实际出现的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#这是给NSArray添加的方法"><span class="nav-number">4.1.</span> <span class="nav-text">这是给NSArray添加的方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#这是给NSMutableArray添加的方法"><span class="nav-number">4.2.</span> <span class="nav-text">这是给NSMutableArray添加的方法</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一步，缩小尺寸。"><span class="nav-number">1.</span> <span class="nav-text">第一步，缩小尺寸。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二步，简化色彩。"><span class="nav-number">2.</span> <span class="nav-text">第二步，简化色彩。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三步，计算平均值。"><span class="nav-number">3.</span> <span class="nav-text">第三步，计算平均值。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四步，比较像素的灰度。"><span class="nav-number">4.</span> <span class="nav-text">第四步，比较像素的灰度。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第五步，计算哈希值。"><span class="nav-number">5.</span> <span class="nav-text">第五步，计算哈希值。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码实现"><span class="nav-number">6.</span> <span class="nav-text">代码实现</span></a></li></ol></div>
             
           </div>
         </section>
