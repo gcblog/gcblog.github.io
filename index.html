@@ -278,8 +278,8 @@
             
               
                 
-                <a class="post-title-link" href="/2018/03/23/数组和切片/" itemprop="url">
-                  数组和切片
+                <a class="post-title-link" href="/2018/04/18/go数组/" itemprop="url">
+                  go数组
                 </a>
               
             
@@ -292,8 +292,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-03-23T18:21:32+08:00" content="2018-03-23">
-              2018-03-23
+            <time itemprop="dateCreated" datetime="2018-04-18T14:59:13+08:00" content="2018-04-18">
+              2018-04-18
             </time>
           </span>
 
@@ -322,8 +322,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2018/03/23/数组和切片/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/03/23/数组和切片/" itemprop="commentsCount"></span>
+                <a href="/2018/04/18/go数组/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/04/18/go数组/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -347,9 +347,18 @@
 
       
         
-          数组 和 切片 详细 使用
+          <h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><ul>
+<li>在Go语言中数组是一个值类型（value type）。是真真实实的数组，而不是一个指向数组内存起始位置的指针，也不能和同类型的指针进行转化，这一点严重不同于C语言。所有的值类型变量在赋值和作为参数传递时都将产生一次复制动作。如果将数组作为函数的参数类型，则在函数调用时该参数将发生数据复制。因此，在函数体中无法修改传入的数组的内容，因为函数内操作的只是所传入数组的一个副本。</li>
+<li>定义数组的格式：var <varName> [n]<type>，n&gt;=0</li>
+<li>数组长度也是类型的一部分，因此具有不同长度的数组为不同类型</li>
+<li>注意区分指向数组的指针和指针数组</li>
+<li>数组在Go中为值类型</li>
+<li>数组之间可以使用==或!=进行比较，但不可以使用&lt;或&gt;(比较的前提是数组个数相同，并且元素类型相同)</li>
+<li>可以使用new来创建数组，此方法返回一个指向数组的指针</li>
+<li>Go支持多维数组</li>
+</ul>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2018/03/23/数组和切片/">
+            <a class="btn" href="/2018/04/18/go数组/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -818,7 +827,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">41</span>
+                <span class="site-state-item-count">40</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
