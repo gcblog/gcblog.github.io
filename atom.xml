@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>iOS随手记</title>
+  <title>code随手记</title>
   <subtitle>Practice from here</subtitle>
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://gcblog/github.io/"/>
-  <updated>2018-04-18T07:01:46.365Z</updated>
+  <updated>2018-04-27T08:06:16.170Z</updated>
   <id>http://gcblog/github.io/</id>
   
   <author>
@@ -14,6 +14,197 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>字符串操作</title>
+    <link href="http://gcblog/github.io/2018/04/26/%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%93%8D%E4%BD%9C/"/>
+    <id>http://gcblog/github.io/2018/04/26/字符串操作/</id>
+    <published>2018-04-26T03:30:20.000Z</published>
+    <updated>2018-04-27T08:06:16.170Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p>本文列举关于字符串最常用的几个操作，都会举例说明</p>
+<ul>
+<li><a href="#0">字符串长度</a></li>
+<li><a href="#1">查找</a></li>
+<li><a href="#2">替换</a></li>
+<li><a href="#3">分割</a></li>
+<li><a href="#4">合并</a></li>
+<li><a href="#5">前缀或后缀</a></li>
+<li><a href="#6">截取</a></li>
+<li><a href="#7">删除</a></li>
+<li><a href="#8">插入</a></li>
+<li><a href="#9">编码转换</a></li>
+<li><a href="#10">转换数值类型</a></li>
+<li><a href="#11">大小写转换</a></li>
+<li><a href="#12">Trim操作</a></li>
+<li><a href="#13">ASCII 转换</a></li>
+<li><a href="#14">字符串重复几次</a></li>
+<li><a href="#15">字符或子串在字符串中首次出现的位置或最后一次出现的位置</a></li>
+</ul>
+<p>字符串相关操作需要导入包<code>strings</code></p>
+<a id="more"></a>
+<h3 id="0">字符串长度</h3>    
+
+<ul>
+<li><code>len()</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">func strLength() &#123;</div><div class="line">	var str = &quot;abc&quot;</div><div class="line">	var length = len(str)</div><div class="line">	fmt.Println(length)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="1">查找</h3>    
+
+<ul>
+<li><code>func Contains(s, substr string) bool</code> 子串substr在s中，返回true</li>
+<li><code>func ContainsAny(s, chars string) bool</code>  chars中任何一个字符在s中，返回true</li>
+<li><code>func ContainsRune(s string, r rune) bool</code>  Unicode代码点r在s中，返回true</li>
+<li><code>func Count(s, sep string) int</code> sep 在s中重复出现的次数(不计算重叠)</li>
+<li><code>func Index(s, sep string)</code> int 在字符串s中查找sep所在的位置, 找不到返回-1</li>
+</ul>
+<blockquote>
+<p>在Go中，查找子串出现次数即字符串模式匹配，实现的是Rabin-Karp算法。<br>另外，Count 是计算子串在字符串中出现的无重叠的次数</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">func existSubStringOrChar() &#123;</div><div class="line"></div><div class="line">	var super = &quot;abcdef!&quot;</div><div class="line">	var suba = &quot;abc&quot;</div><div class="line">	var subb = &quot;ef!&quot;</div><div class="line"></div><div class="line">	var hasa = existSubString(super, suba)</div><div class="line">	var hasb = existSubChar(super, subb)</div><div class="line"></div><div class="line">	fmt.Println(hasa, hasb)</div><div class="line"></div><div class="line">	var s = &quot;fivevev&quot;</div><div class="line">	var sep1 = &quot;vev&quot;</div><div class="line">	var sep2 = &quot;adfd&quot;</div><div class="line"></div><div class="line">	var c1 = repeatCount(s, sep1)</div><div class="line">	var c2 = repeatCount(s, sep2)</div><div class="line">	fmt.Println(c1, c2)</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">// 是否存在某个字符或子串</div><div class="line">func existSubString(superString string, substring string) bool &#123;</div><div class="line">	return strings.Contains(superString, substring)</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">//substring 是否含有superString 的任意一个字符</div><div class="line">func existSubChar(superString string, substring string) bool &#123;</div><div class="line">	return strings.ContainsAny(superString, substring)</div><div class="line">&#125;</div><div class="line"></div><div class="line">//substring 的重复出现次数</div><div class="line">func repeatCount(superString string, substring string) int &#123;</div><div class="line">	return strings.Count(superString, substring)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">true true</div><div class="line">1 0</div></pre></td></tr></table></figure>
+<h3 id="2">替换</h3>    
+
+<ul>
+<li><code>strings.Replace(s, old, new, n)</code></li>
+</ul>
+<p><code>s</code>需要替换的字符串   <code>old</code>需要被替换掉的某个子串    <code>new</code>替换的值<br><code>n</code>  <code>n&lt;0</code>全部替换  <code>n==0</code>不替换 <code>n&gt;0</code>全部替换 如果<code>n</code>的下标匹配上old值，则只替换当前下标的字符，如果不是，则全部替换</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">func strReplace() &#123;</div><div class="line"></div><div class="line">	var str = &quot;cabcdefgabc&quot;</div><div class="line">	var value = strings.Replace(str, &quot;a&quot;, &quot;v&quot;, -1)</div><div class="line">	var value1 = strings.Replace(str, &quot;a&quot;, &quot;v&quot;, 0)</div><div class="line">	var value2 = strings.Replace(str, &quot;a&quot;, &quot;v&quot;, 1)</div><div class="line">	var value3 = strings.Replace(str, &quot;a&quot;, &quot;v&quot;, 3)</div><div class="line"></div><div class="line">	fmt.Println(value, value1, value2, value3)</div><div class="line">	strings.Replace(s, old, new, n)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cvbcdefgvbc cabcdefgabc cvbcdefgabc cvbcdefgvbc</div></pre></td></tr></table></figure></p>
+<h3 id="3">分割</h3>
+
+<h4 id="Fields-和-FieldsFunc"><a href="#Fields-和-FieldsFunc" class="headerlink" title="Fields 和 FieldsFunc"></a>Fields 和 FieldsFunc</h4><ul>
+<li>Fields 按空格切割</li>
+<li>FieldsFunc 按照自己指定的方式切割</li>
+</ul>
+<p>实际上，Fields 函数就是调用 FieldsFunc 实现的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">func Fields(s string) []string &#123;</div><div class="line">    return FieldsFunc(s, unicode.IsSpace)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">func strCut() &#123;</div><div class="line"></div><div class="line">	var str = &quot;abc bde efg&quot;</div><div class="line"></div><div class="line">	var cut1 = strings.Fields(str)</div><div class="line"></div><div class="line">	var cut2 = strings.FieldsFunc(str, unicode.IsSpace)</div><div class="line"></div><div class="line">	fmt.Println(cut1, cut2)</div><div class="line"></div><div class="line">	s := &quot;ab*cd*ef&quot;</div><div class="line">	result := strings.FieldsFunc(s, func(c rune) bool &#123;</div><div class="line">		if c == &apos;h&apos; &#123;</div><div class="line">			return true</div><div class="line">		&#125;</div><div class="line">		return false</div><div class="line">	&#125;)</div><div class="line">	fmt.Println(result)</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[abc bde efg] [abc bde efg]</div><div class="line">[ab*cd*ef]</div></pre></td></tr></table></figure></p>
+<h4 id="Split-和-SplitAfter、-SplitN-和-SplitAfterN"><a href="#Split-和-SplitAfter、-SplitN-和-SplitAfterN" class="headerlink" title="Split 和 SplitAfter、 SplitN 和 SplitAfterN"></a>Split 和 SplitAfter、 SplitN 和 SplitAfterN</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">func Split(s, sep string) []string &#123; return genSplit(s, sep, 0, -1) &#125;</div><div class="line">func SplitAfter(s, sep string) []string &#123; return genSplit(s, sep, len(sep), -1) &#125;</div><div class="line">func SplitN(s, sep string, n int) []string &#123; return genSplit(s, sep, 0, n) &#125;</div><div class="line">func SplitAfterN(s, sep string, n int) []string &#123; return genSplit(s, sep,len(sep), n)&#125;</div></pre></td></tr></table></figure>
+<p>它们都调用了 genSplit 函数。<br>这四个函数都是通过 sep 进行分割，返回[]string。如果 sep 为空，相当于分成一个个的 UTF-8 字符，如 Split(“abc”,””)，得到的是[a b c]。</p>
+<h5 id="功能区分：after-会保留分隔符"><a href="#功能区分：after-会保留分隔符" class="headerlink" title="功能区分：after 会保留分隔符"></a>功能区分：after 会保留分隔符</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">fmt.Printf(&quot;%q\n&quot;, strings.Split(&quot;foo,bar,baz&quot;, &quot;,&quot;))</div><div class="line">fmt.Printf(&quot;%q\n&quot;, strings.SplitAfter(&quot;foo,bar,baz&quot;, &quot;,&quot;))</div></pre></td></tr></table></figure>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[&quot;foo&quot; &quot;bar&quot; &quot;baz&quot;]</div><div class="line">[&quot;foo,&quot; &quot;bar,&quot; &quot;baz&quot;]</div></pre></td></tr></table></figure></p>
+<h5 id="N的区别"><a href="#N的区别" class="headerlink" title="N的区别"></a>N的区别</h5><p><code>N</code> 用来控制分割的个数<br>当 n &lt; 0 时，返回所有的子字符串；当 n == 0 时，返回的结果是 nil；当 n &gt; 0 时，表示返回的 slice 中最多只有 n 个元素，其中，最后一个元素不会分割</p>
+<p><code>fmt.Printf(&quot;%q\n&quot;, strings.SplitN(&quot;foo,bar,baz&quot;, &quot;,&quot;, 2))</code><br>输出：<br><code>[&quot;foo&quot; &quot;bar,baz&quot;]</code></p>
+<p>另外看一下官方文档提供的例子，注意一下输出结果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">fmt.Printf(&quot;%q\n&quot;, strings.Split(&quot;a,b,c&quot;, &quot;,&quot;))</div><div class="line">fmt.Printf(&quot;%q\n&quot;, strings.Split(&quot;a man a plan a canal panama&quot;, &quot;a &quot;))</div><div class="line">fmt.Printf(&quot;%q\n&quot;, strings.Split(&quot; xyz &quot;, &quot;&quot;))</div><div class="line">fmt.Printf(&quot;%q\n&quot;, strings.Split(&quot;&quot;, &quot;Bernardo O&apos;Higgins&quot;))</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[&quot;a&quot; &quot;b&quot; &quot;c&quot;]</div><div class="line">[&quot;&quot; &quot;man &quot; &quot;plan &quot; &quot;canal panama&quot;]</div><div class="line">[&quot; &quot; &quot;x&quot; &quot;y&quot; &quot;z&quot; &quot; &quot;]</div><div class="line">[&quot;&quot;]</div></pre></td></tr></table></figure></p>
+<h5 id="split总结"><a href="#split总结" class="headerlink" title="split总结"></a>split总结</h5><p>关于字符串的分割，最常用的就是<code>Split</code>，其他几乎用不到</p>
+<h3 id="4">合并</h3>
+
+<p>将字符串数组（或slice）连接起来可以通过 Join 实现</p>
+<ul>
+<li><code>func Join(a []string, sep string) string</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">func strJoin() &#123;</div><div class="line">	var arr = []string&#123;&quot;a&quot;, &quot;b&quot;, &quot;c&quot;&#125;</div><div class="line">	fmt.Println(arr)</div><div class="line">	// 用 ‘-’ 拼接</div><div class="line">	fmt.Println(strings.Join(arr, &quot;-&quot;))</div><div class="line">	// 直接拼接</div><div class="line">	fmt.Println(strings.Join(arr, &quot;&quot;))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[a b c]</div><div class="line">a-b-c</div><div class="line">abc</div></pre></td></tr></table></figure></p>
+<h3 id="5">前缀或后缀</h3>    
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">func presuf() &#123;</div><div class="line"></div><div class="line">	var str = &quot;abcdefg&quot;</div><div class="line">	//判断开始</div><div class="line">	var preA = strings.HasPrefix(str, &quot;a&quot;)</div><div class="line"></div><div class="line">	//判断结尾</div><div class="line">	var preG = strings.HasSuffix(str, &quot;g&quot;)</div><div class="line"></div><div class="line">	fmt.Println(preA, preG)</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出：<br><code>true true</code></p>
+<h3 id="6">截取</h3>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">func subString() &#123;</div><div class="line">	//strings 没有 截取字符串的方法</div><div class="line">	var str = &quot;abc中国defgh&quot;</div><div class="line">	// 将str转为切片处理 这里最好不用byte，byte不支持中文，unicode等</div><div class="line">	var strArr = string([]rune(str)[:4])</div><div class="line"></div><div class="line">	fmt.Println(strArr)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">abc中</div></pre></td></tr></table></figure></p>
+<h3 id="7">删除</h3>
+
+<p>strings 包中没有提供删除的方法，只能自己实现</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">func deleteStrWithRange(s string, start int, end int) string &#123;</div><div class="line">if len(s) == 0 || end &gt; len(s) &#123;</div><div class="line">	return &quot;&quot;</div><div class="line">&#125;</div><div class="line">var str1 = string([]rune(s)[:start])</div><div class="line">var str2 = string([]rune(s)[end:])</div><div class="line">return str1 + str2</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var sss = deleteStrWithRange(&quot;012345678&quot;, 1, 3)</div><div class="line">fmt.Println(sss)</div></pre></td></tr></table></figure>
+<p>输出：<br><code>0345678</code></p>
+<h3 id="8">插入</h3>
+
+<p>go strings 包没有插入方法，只能将字符串转化为切片，然后插入元素，再转为string</p>
+<h3 id="9">编码转换</h3>
+
+<p>字符串转换需要用到 <code>strconv</code></p>
+<ul>
+<li>Append 函数表示将给定的类型(如bool, int等)转换为字符串后, 添加在现有的字节数组中[]byte</li>
+<li>Format 函数将给定的类型变量转换为string返回</li>
+<li>Parse 函数将字符串转换为其他类型</li>
+</ul>
+<h4 id="unicode-与-中文-互转"><a href="#unicode-与-中文-互转" class="headerlink" title="unicode  与 中文 互转"></a>unicode  与 中文 互转</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">func chinaeseToUnicode() &#123;</div><div class="line">	sText := &quot;中文&quot;</div><div class="line">	textQuoted := strconv.QuoteToASCII(sText)</div><div class="line">	fmt.Println(textQuoted)</div><div class="line"></div><div class="line">	textUnquoted := textQuoted[1 : len(textQuoted)-1]</div><div class="line">	fmt.Println(textUnquoted)</div><div class="line"></div><div class="line">	sUnicodev := strings.Split(textUnquoted, &quot;\\u&quot;)</div><div class="line">	var context string</div><div class="line">	for _, v := range sUnicodev &#123;</div><div class="line">		if len(v) &lt; 1 &#123;</div><div class="line">			continue</div><div class="line">		&#125;</div><div class="line">		temp, err := strconv.ParseInt(v, 16, 32)</div><div class="line">		if err != nil &#123;</div><div class="line">			panic(err)</div><div class="line">		&#125;</div><div class="line">		context += fmt.Sprintf(&quot;%c&quot;, temp)</div><div class="line">	&#125;</div><div class="line">	fmt.Println(context)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&quot;\u4e2d\u6587&quot;</div><div class="line">\u4e2d\u6587</div><div class="line">中文</div></pre></td></tr></table></figure></p>
+<h4 id="转码与解码"><a href="#转码与解码" class="headerlink" title="转码与解码"></a>转码与解码</h4><p>需要导入包 <code>net/url</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">func encodeAndDecode() &#123;</div><div class="line">	var str = &quot;https://www.baidu.com/生活&quot;</div><div class="line"></div><div class="line">	//转码</div><div class="line">	var encode = url.QueryEscape(str)</div><div class="line"></div><div class="line">	fmt.Println(encode)</div><div class="line"></div><div class="line">	//解码</div><div class="line">	decodeurl, err := url.QueryUnescape(encode)</div><div class="line">	if err != nil &#123;</div><div class="line">		panic(err)</div><div class="line">	&#125;</div><div class="line">	fmt.Println(decodeurl)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">https%3A%2F%2Fwww.baidu.com%2F%E7%94%9F%E6%B4%BB</div><div class="line">https://www.baidu.com/生活</div></pre></td></tr></table></figure></p>
+<h3 id="10">转换数值类型</h3>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">func strToValue() &#123;</div><div class="line"></div><div class="line">	// int 转 string</div><div class="line">	var intA int = 123</div><div class="line">	var stringA string = strconv.Itoa(intA)</div><div class="line">	fmt.Println(stringA, reflect.TypeOf(stringA))</div><div class="line"></div><div class="line">	// string 转 int</div><div class="line"></div><div class="line">	var stringB = &quot;45678&quot;</div><div class="line">	intB, err := strconv.Atoi(stringB)</div><div class="line">	if err != nil &#123;</div><div class="line">		panic(err)</div><div class="line">	&#125;</div><div class="line">	fmt.Println(intB, reflect.TypeOf(intB))</div><div class="line"></div><div class="line">	// string to float</div><div class="line">	var stringc = &quot;123.45678&quot;</div><div class="line">	floatC, err := strconv.ParseFloat(stringc, 32) //bitSize：指定浮点类型（32:float32、64:float64,</div><div class="line">	if err != nil &#123;</div><div class="line">		panic(err)</div><div class="line">	&#125;</div><div class="line">	fmt.Println(floatC, reflect.TypeOf(floatC))</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">123 string</div><div class="line">45678 int</div><div class="line">123.45678 float64</div></pre></td></tr></table></figure></p>
+<h3 id="11">大小写转换</h3>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">// 给定字符串转换为英文标题的首字母大写的格式(不能正确处理unicode标点)</div><div class="line">func Title(s string) string</div><div class="line"></div><div class="line">// 所有字母转换为小写</div><div class="line">func ToLower(s string) string</div><div class="line"></div><div class="line">// 所有字母转换为大写</div><div class="line">func ToUpper(s string) string</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">fmt.Println(strings.Title(&quot;her royal highness&quot;))  // Her Royal Highness</div><div class="line"></div><div class="line">fmt.Println(strings.ToLower(&quot;Gopher123&quot;))  // gopher123</div><div class="line"></div><div class="line">fmt.Println(strings.ToUpper(&quot;Gopher&quot;))  // GOPHER</div></pre></td></tr></table></figure>
+<h3 id="12">Trim操作</h3>
+
+<p>bytes提供了有Compare、Count、Equal、Index、Join、Split、Replace等直接针对[]byte类型的函数。还有一个重要的Buffer类，将[]byte类型当作一个缓冲区，提供了对这个缓冲区便捷的操作：读、写、和string/rune之间的转换、迭代等函数。</p>
+<p>在bytes库中，有Trim系列的函数，它的功能是对[]byte类型做裁剪，去除不需要的部分。</p>
+<ul>
+<li><code>func Trim(s string, cutset string) string</code> 去除两边自定义字符</li>
+<li><code>func TrimFunc(s string, f func(rune) bool) string</code> 自定义清除</li>
+<li><code>func TrimLeft(s string, cutset string) string</code> 清除左边</li>
+<li><code>func TrimPrefix(s, prefix string) string</code> 删除前缀</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">func strtrim() &#123;</div><div class="line">	var str = &quot;  ads!/  ;&apos;  jha   asdfhj   &quot;</div><div class="line"></div><div class="line">	// 去除首尾空格，一般这个最常用</div><div class="line">	var value1 = strings.Trim(str, &quot; &quot;)</div><div class="line">	fmt.Println(value1)</div><div class="line"></div><div class="line">	//自定义trim</div><div class="line">	fmt.Println(strings.TrimFunc(&quot;&amp;&amp;&amp;&amp;nihao&amp;&amp;&amp;&amp;&quot;, func(r rune) bool &#123;</div><div class="line">		if r == &apos;&amp;&apos; &#123;</div><div class="line">			return true</div><div class="line">		&#125;</div><div class="line">		return false</div><div class="line">	&#125;))</div><div class="line"></div><div class="line">	//trim 左侧 &amp; 右侧</div><div class="line">	fmt.Println(strings.TrimLeft(&quot;&amp;&amp;&amp;&amp;nihao&amp;&amp;&amp;&amp;&quot;, &quot;&amp;&quot;))</div><div class="line">	fmt.Println(strings.TrimRight(&quot;&amp;&amp;&amp;&amp;nihao&amp;&amp;&amp;&amp;&quot;, &quot;&amp;&quot;))</div><div class="line"></div><div class="line">	//去除前缀，后缀也一样</div><div class="line">	var str2 = &quot;xxx_abcd&quot;</div><div class="line">	if strings.HasPrefix(str2, &quot;xxx_&quot;) &#123;</div><div class="line">		fmt.Println(strings.TrimPrefix(str2, &quot;xxx_&quot;))</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">ads!/  ;&apos;  jha   asdfhj</div><div class="line">nihao</div><div class="line">nihao&amp;&amp;&amp;&amp;</div><div class="line">&amp;&amp;&amp;&amp;nihao</div><div class="line">abcd</div></pre></td></tr></table></figure>
+<h3 id="13">ASCII 转换</h3>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">func strASCII() &#123;</div><div class="line"></div><div class="line">	//字符转ASCII</div><div class="line">	var c rune = &apos;a&apos;</div><div class="line">	var i1 = int(c)</div><div class="line">	fmt.Println(&quot;&apos;a&apos; convert to ASCII&quot;, i1)</div><div class="line"></div><div class="line">	//ASCII 转字符</div><div class="line">	var i int = 98</div><div class="line">	var c1 = rune(i)</div><div class="line">	fmt.Println(&quot;98 convert to string&quot;, string(c1))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&apos;a&apos; convert to ASCII 97</div><div class="line">98 convert to string b</div></pre></td></tr></table></figure>
+<h3 id="14">字符串重复几次</h3>
+
+<ul>
+<li><code>func Repeat(s string, count int) string</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">func strRepeatCount() &#123;</div><div class="line">	fmt.Println(strings.Repeat(&quot;a&quot;, 2))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出</p>
+<p><code>aa</code></p>
+<h3 id="15">字符或子串在字符串中首次出现的位置或最后一次出现的位置</h3>
+
+<h4 id="4个查找第一次出现的位置"><a href="#4个查找第一次出现的位置" class="headerlink" title="4个查找第一次出现的位置"></a>4个查找第一次出现的位置</h4><p>// 在 s 中查找 sep 的第一次出现，返回第一次出现的索引<br><code>func Index(s, sep string) int</code><br>// chars中任何一个Unicode代码点在s中首次出现的位置<br><code>func IndexAny(s, chars string) int</code><br>// 查找字符 c 在 s 中第一次出现的位置，其中 c 满足 f(c) 返回 true<br><code>func IndexFunc(s string, f func(rune) bool) int</code><br>// Unicode 代码点 r 在 s 中第一次出现的位置<br><code>func IndexRune(s string, r rune) int</code></p>
+<p>一般用<code>indexAny</code></p>
+<h4 id="3个查找最后一次出现的位置"><a href="#3个查找最后一次出现的位置" class="headerlink" title="3个查找最后一次出现的位置"></a>3个查找最后一次出现的位置</h4><p><code>func LastIndex(s, sep string) int</code><br><code>func LastIndexAny(s, chars string) int</code><br><code>func LastIndexFunc(s string, f func(rune) bool) int</code></p>
+<p>一般用<code>LastIndexAny</code>就行</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;目录&quot;&gt;&lt;a href=&quot;#目录&quot; class=&quot;headerlink&quot; title=&quot;目录&quot;&gt;&lt;/a&gt;目录&lt;/h3&gt;&lt;p&gt;本文列举关于字符串最常用的几个操作，都会举例说明&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#0&quot;&gt;字符串长度&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#1&quot;&gt;查找&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#2&quot;&gt;替换&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#3&quot;&gt;分割&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#4&quot;&gt;合并&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#5&quot;&gt;前缀或后缀&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#6&quot;&gt;截取&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#7&quot;&gt;删除&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#8&quot;&gt;插入&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#9&quot;&gt;编码转换&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#10&quot;&gt;转换数值类型&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#11&quot;&gt;大小写转换&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#12&quot;&gt;Trim操作&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#13&quot;&gt;ASCII 转换&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#14&quot;&gt;字符串重复几次&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#15&quot;&gt;字符或子串在字符串中首次出现的位置或最后一次出现的位置&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;字符串相关操作需要导入包&lt;code&gt;strings&lt;/code&gt;&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="go" scheme="http://gcblog/github.io/categories/go/"/>
+    
+    
+      <category term="go" scheme="http://gcblog/github.io/tags/go/"/>
+    
+      <category term="strings" scheme="http://gcblog/github.io/tags/strings/"/>
+    
+      <category term="字符串操作" scheme="http://gcblog/github.io/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%93%8D%E4%BD%9C/"/>
+    
+  </entry>
   
   <entry>
     <title>go数组</title>
@@ -347,9 +538,9 @@ NSLog(@&quot;-----%@&quot;, filePaths);
     
       <category term="iOS" scheme="http://gcblog/github.io/tags/iOS/"/>
     
-      <category term="crash" scheme="http://gcblog/github.io/tags/crash/"/>
-    
       <category term="性能" scheme="http://gcblog/github.io/tags/%E6%80%A7%E8%83%BD/"/>
+    
+      <category term="crash" scheme="http://gcblog/github.io/tags/crash/"/>
     
       <category term="instruments" scheme="http://gcblog/github.io/tags/instruments/"/>
     
@@ -1177,31 +1368,6 @@ NSLog(@&quot;-----%@&quot;, filePaths);
       <category term="iOS" scheme="http://gcblog/github.io/tags/iOS/"/>
     
       <category term="UI" scheme="http://gcblog/github.io/tags/UI/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>github ssh key 问题</title>
-    <link href="http://gcblog/github.io/2016/02/27/github%20ssh%20key%E9%97%AE%E9%A2%98/"/>
-    <id>http://gcblog/github.io/2016/02/27/github ssh key问题/</id>
-    <published>2016-02-27T09:02:21.000Z</published>
-    <updated>2016-11-16T15:05:20.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>   当我部署hexo在github上的时候去看了一下ssh key，发现github上早就有ssh key了，但是我从来没有手动去生成过，并且这个key的名字与手动生成的不一样，文件名是这样github_rsa，当然还有另外一个pub格式的，而如果我们手动生成的话，必然是id_rsa,除非我们自己改名。这个key应该是我安装github客户端的时候生成的，不过我可以在github提交代码，hexo也部署成功了，这些东西也从来没去了解过，然后这次出问题了，折腾了很久。<br>   <a id="more"></a><br>   我打算把博客迁移到gitcafe上，然后我申请了一个gitcafe账号，然后也是配置相关ssh key，当我生成了gitcafe 的ssh key 后，我的github 就不能提交代码了。可恶的是我在gitcafe上添加ssh key后，也是提交不了代码，现在我两个地方都不能用了。现在我的ssh是这样的，github是github_rsa，gitcafe是id_rsa，然后我又在网上搜索管理多个ssh key方法，通过config配置，但是还是没有用。最后搞了很久，实在没有办法，我就先把gitcafe 的 key 给删了，看看github能不能用了，结果发现github还是不能用，这回蛋疼了。最后终于决定，我把ssh目录给清空了，然后重新手动生成github ssh key，这回github能用了，有点劫后余生的感觉，毕竟公司的代码就托管在github上，要是不能用了，工作都做不了。然后我又有些不甘心，再次尝试 gitcafe的 ssh key，然后在通过config管理，这回能用了。<br>   原因就在于第一个github的key不是我自己生成的，如果你也遇到此类问题，可以试试清空哪些不是自己生成的key。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;   当我部署hexo在github上的时候去看了一下ssh key，发现github上早就有ssh key了，但是我从来没有手动去生成过，并且这个key的名字与手动生成的不一样，文件名是这样github_rsa，当然还有另外一个pub格式的，而如果我们手动生成的话，必然是id_rsa,除非我们自己改名。这个key应该是我安装github客户端的时候生成的，不过我可以在github提交代码，hexo也部署成功了，这些东西也从来没去了解过，然后这次出问题了，折腾了很久。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="随笔" scheme="http://gcblog/github.io/categories/%E9%9A%8F%E7%AC%94/"/>
-    
-    
-      <category term="github" scheme="http://gcblog/github.io/tags/github/"/>
-    
-      <category term="ssh key" scheme="http://gcblog/github.io/tags/ssh-key/"/>
     
   </entry>
   
