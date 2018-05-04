@@ -328,6 +328,49 @@
   </entry>
   
   <entry>
+    <title>mac下安装go及环境变量配置</title>
+    <link href="http://gcblog/github.io/2018/04/04/mac%E4%B8%8B%E5%AE%89%E8%A3%85go%E5%8F%8A%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E9%85%8D%E7%BD%AE/"/>
+    <id>http://gcblog/github.io/2018/04/04/mac下安装go及环境变量配置/</id>
+    <published>2018-04-04T09:10:56.000Z</published>
+    <updated>2018-05-04T09:13:19.221Z</updated>
+    
+    <content type="html"><![CDATA[<p>以下命令都是直接在根目录下执行即可</p>
+<h3 id="方法一：homebrew"><a href="#方法一：homebrew" class="headerlink" title="方法一：homebrew"></a>方法一：homebrew</h3><p><code>homebrew</code>是Mac系统下面目前使用最多的管理软件的工具，目前已支持Go，可以通过命令直接安装Go,不过在这之前需要先安装<code>homebrew</code></p>
+<p>安装命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ brew update &amp;&amp; brew upgrade</div><div class="line">$ brew install go</div></pre></td></tr></table></figure></p>
+<p>安装完输入 <code>go env</code> 查看环境信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">GOARCH=&quot;amd64&quot;</div><div class="line">GOBIN=&quot;&quot;</div><div class="line">GOCACHE=&quot;/Users/qianjianeng/Library/Caches/go-build&quot;</div><div class="line">GOEXE=&quot;&quot;</div><div class="line">GOHOSTARCH=&quot;amd64&quot;</div><div class="line">GOHOSTOS=&quot;darwin&quot;</div><div class="line">GOOS=&quot;darwin&quot;</div><div class="line">GOPATH=&quot;/Users/qianjianeng/go&quot;</div><div class="line">GORACE=&quot;&quot;</div><div class="line">GOROOT=&quot;/usr/local/Cellar/go/1.10/libexec&quot;</div><div class="line">GOTMPDIR=&quot;&quot;</div><div class="line">GOTOOLDIR=&quot;/usr/local/Cellar/go/1.10/libexec/pkg/tool/darwin_amd64&quot;</div><div class="line">GCCGO=&quot;gccgo&quot;</div><div class="line">CC=&quot;clang&quot;</div><div class="line">CXX=&quot;clang++&quot;</div><div class="line">CGO_ENABLED=&quot;1&quot;</div><div class="line">CGO_CFLAGS=&quot;-g -O2&quot;</div><div class="line">CGO_CPPFLAGS=&quot;&quot;</div><div class="line">CGO_CXXFLAGS=&quot;-g -O2&quot;</div><div class="line">CGO_FFLAGS=&quot;-g -O2&quot;</div><div class="line">CGO_LDFLAGS=&quot;-g -O2&quot;</div><div class="line">PKG_CONFIG=&quot;pkg-config&quot;</div><div class="line">GOGCCFLAGS=&quot;-fPIC -m64 -pthread -fno-caret-diagnostics -Qunused-arguments -fmessage-length=0 -fdebug-prefix-map=/var/folders/vj/0nsxxzqd3cgdqnwkzqxqg6zr0000gn/T/go-build786549549=/tmp/go-build -gno-record-gcc-switches -fno-common&quot;</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<h3 id="方法二：pkg包安装"><a href="#方法二：pkg包安装" class="headerlink" title="方法二：pkg包安装"></a>方法二：pkg包安装</h3><p>直接去官方下载安装包，然后双击安装,之后同样地输入<code>go env</code>、<code>go version</code>等查看是否安装。</p>
+<h3 id="环境变量配置"><a href="#环境变量配置" class="headerlink" title="环境变量配置"></a>环境变量配置</h3><h4 id="打开bash-profile"><a href="#打开bash-profile" class="headerlink" title="打开bash_profile"></a>打开<code>bash_profile</code></h4><p><code>$ open .bash_profile</code></p>
+<h4 id="如果不存在创建bash-profile"><a href="#如果不存在创建bash-profile" class="headerlink" title="如果不存在创建bash_profile"></a>如果不存在创建bash_profile</h4><p><code>$ vim ~/.bash_profile</code></p>
+<h4 id="添加go环境变量"><a href="#添加go环境变量" class="headerlink" title="添加go环境变量"></a>添加go环境变量</h4><p>如果是第一种安装方法，只需要指定一下GOPATH即可。为了让自己的程序编译之后在命令行任何地方能直接执行，再加入GOPATH下的bin即可：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">#This is my personal bash_profile,when loaded at login.</div><div class="line">#===2015-08-15===</div><div class="line"></div><div class="line">#GOPATH</div><div class="line">export GOPATH=$HOME/Documents/go_workspace</div><div class="line"></div><div class="line">#GOPATH bin</div><div class="line">export PATH=$PATH:$GOPATH/bin</div></pre></td></tr></table></figure></p>
+<p>但是第二种方法安装之后输入go可能会显示ommand not found: go，所以需要在.bash_profile中指定GOROOT下的bin：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">#This is my personal bash_profile,when loaded at login.</div><div class="line">#===2015-08-15===</div><div class="line">#GOROOT</div><div class="line">export GOROOT=/usr/local/go</div><div class="line"></div><div class="line">#GOPATH</div><div class="line">export GOPATH=$HOME/Documents/go_workspace</div><div class="line"></div><div class="line">#GOROOT bin</div><div class="line">export PATH=$PATH:$GOROOT/bin</div><div class="line"></div><div class="line">#GOPATH bin</div><div class="line">export PATH=$PATH:$GOPATH/bin</div></pre></td></tr></table></figure></p>
+<p>一般环境变量更改后，重启后生效。在重启终端的时候就会自动执行.bash_profile文件。<br>如果想立刻生效，则可执行下面的语句：</p>
+<p><code>$ source .bash_profile</code></p>
+<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><p>如果打开终端没有生效，就把上面添加go环境变量的语句追加到~/.zshrc中：</p>
+<p><code>$ open .zshrc</code></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;以下命令都是直接在根目录下执行即可&lt;/p&gt;
+&lt;h3 id=&quot;方法一：homebrew&quot;&gt;&lt;a href=&quot;#方法一：homebrew&quot; class=&quot;headerlink&quot; title=&quot;方法一：homebrew&quot;&gt;&lt;/a&gt;方法一：homebrew&lt;/h3&gt;&lt;p&gt;&lt;code&gt;homebrew&lt;/code&gt;是Mac系统下面目前使用最多的管理软件的工具，目前已支持Go，可以通过命令直接安装Go,不过在这之前需要先安装&lt;code&gt;homebrew&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;安装命令&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;$ brew update &amp;amp;&amp;amp; brew upgrade&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;$ brew install go&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;安装完输入 &lt;code&gt;go env&lt;/code&gt; 查看环境信息&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;8&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;9&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;10&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;11&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;12&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;13&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;14&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;15&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;16&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;17&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;18&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;19&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;20&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;21&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;22&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;23&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;GOARCH=&amp;quot;amd64&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;GOBIN=&amp;quot;&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;GOCACHE=&amp;quot;/Users/qianjianeng/Library/Caches/go-build&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;GOEXE=&amp;quot;&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;GOHOSTARCH=&amp;quot;amd64&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;GOHOSTOS=&amp;quot;darwin&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;GOOS=&amp;quot;darwin&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;GOPATH=&amp;quot;/Users/qianjianeng/go&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;GORACE=&amp;quot;&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;GOROOT=&amp;quot;/usr/local/Cellar/go/1.10/libexec&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;GOTMPDIR=&amp;quot;&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;GOTOOLDIR=&amp;quot;/usr/local/Cellar/go/1.10/libexec/pkg/tool/darwin_amd64&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;GCCGO=&amp;quot;gccgo&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;CC=&amp;quot;clang&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;CXX=&amp;quot;clang++&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;CGO_ENABLED=&amp;quot;1&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;CGO_CFLAGS=&amp;quot;-g -O2&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;CGO_CPPFLAGS=&amp;quot;&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;CGO_CXXFLAGS=&amp;quot;-g -O2&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;CGO_FFLAGS=&amp;quot;-g -O2&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;CGO_LDFLAGS=&amp;quot;-g -O2&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;PKG_CONFIG=&amp;quot;pkg-config&amp;quot;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;GOGCCFLAGS=&amp;quot;-fPIC -m64 -pthread -fno-caret-diagnostics -Qunused-arguments -fmessage-length=0 -fdebug-prefix-map=/var/folders/vj/0nsxxzqd3cgdqnwkzqxqg6zr0000gn/T/go-build786549549=/tmp/go-build -gno-record-gcc-switches -fno-common&amp;quot;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+    
+    </summary>
+    
+      <category term="go" scheme="http://gcblog/github.io/categories/go/"/>
+    
+    
+      <category term="go" scheme="http://gcblog/github.io/tags/go/"/>
+    
+      <category term="环境变量" scheme="http://gcblog/github.io/tags/%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/"/>
+    
+  </entry>
+  
+  <entry>
     <title>PhotoBatch-图片去重(3)</title>
     <link href="http://gcblog/github.io/2017/12/22/PhotoBatch-%E5%9B%BE%E7%89%87%E5%8E%BB%E9%87%8D-3/"/>
     <id>http://gcblog/github.io/2017/12/22/PhotoBatch-图片去重-3/</id>
@@ -850,6 +893,71 @@ NSLog(@&quot;-----%@&quot;, filePaths);
   </entry>
   
   <entry>
+    <title>iOS语音识别</title>
+    <link href="http://gcblog/github.io/2016/11/16/IOS10%E8%AF%AD%E9%9F%B3%E8%AF%86%E5%88%AB%E8%AF%A6%E8%A7%A3/"/>
+    <id>http://gcblog/github.io/2016/11/16/IOS10语音识别详解/</id>
+    <published>2016-11-16T15:05:20.000Z</published>
+    <updated>2016-11-17T14:57:21.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>公司项目需要实现语音搜索，正好记录一下这个iOS10新出的API。</p>
+<pre><code>iOS10是一个变化比价大的版本，开放了很多接口，这样也更方便开发者自定义各种功能。本文主要讲解一下新增的Speech框架，有了这个框架，我们想要为自己的app增加语音识别功能，不要依赖第三方的服务，几十行代码就可以轻松搞定。demo地址在文章末尾。
+</code></pre><h3 id="一：基本配置"><a href="#一：基本配置" class="headerlink" title="一：基本配置"></a>一：基本配置</h3><ul>
+<li>Xcode8，iOS10系统真机</li>
+<li>导入头文件：OC <code>#import&lt;Speech/Speech.h&gt;</code>   swift <code>import Speech</code></li>
+<li>配置info.plist文件:配置两个权限，语音识别和麦克风</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;key&gt;NSMicrophoneUsageDescription&lt;/key&gt;</div><div class="line">    &lt;string&gt;Your microphone will be used to record your speech when you press the &quot;Start Recording&quot; button.&lt;/string&gt;</div><div class="line">    </div><div class="line">    &lt;key&gt;NSSpeechRecognitionUsageDescription&lt;/key&gt;</div><div class="line">    &lt;string&gt;Speech recognition will be used to determine which words you speak into this device&apos;s microphone.&lt;/string&gt;</div></pre></td></tr></table></figure>
+<h3 id="二：用到的几个类"><a href="#二：用到的几个类" class="headerlink" title="二：用到的几个类"></a>二：用到的几个类</h3><p><code>AVAudioEngine</code>                           语音引擎，负责提供语音输入<br><code>SFSpeechAudioBufferRecognitionRequest</code>   处理语音识别请求<br><code>SFSpeechRecognizer</code>                       语音识别器<br><code>SFSpeechRecognitionTask</code>                 输出语音识别对象的结果<br><code>NSLocale</code>                                语言类型<br>语音识别一共就用到了这几个类，整体的流程也容易理解，语音识别器通过语音引擎，处理语音识别请求，把结果交给<code>SFSpeechRecognitionTask</code>处理，最后输出文字。<br><code>SFSpeechRecognizer</code> 自身有几个代理方法，实际上，如果只是将语音转化成文字，是不需要这几个代理方法的。<br><a id="more"></a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">//当开始检测音频源中的语音时首先调用此方法</div><div class="line">-(void)speechRecognitionDidDetectSpeech:(SFSpeechRecognitionTask *)task</div><div class="line">&#123;</div><div class="line">  </div><div class="line">&#125;</div><div class="line">//当识别出一条可用的信息后 会调用</div><div class="line">/*需要注意，apple的语音识别服务会根据提供的音频源识别出多个可能的结果 每有一条结果可用 都会调用此方法 */</div><div class="line">-(void)speechRecognitionTask:(SFSpeechRecognitionTask *)task didHypothesizeTranscription:(SFTranscription *)transcription</div><div class="line">&#123;</div><div class="line">   </div><div class="line">&#125;</div><div class="line">//当识别完成所有可用的结果后调用</div><div class="line">- (void)speechRecognitionTask:(SFSpeechRecognitionTask *)task didFinishRecognition:(SFSpeechRecognitionResult *)recognitionResult</div><div class="line">&#123;</div><div class="line">    </div><div class="line">&#125;</div><div class="line">//当不再接受音频输入时调用 即开始处理语音识别任务时调用</div><div class="line">- (void)speechRecognitionTaskFinishedReadingAudio:(SFSpeechRecognitionTask *)task</div><div class="line">&#123;</div><div class="line">    </div><div class="line">&#125;</div><div class="line">//当语音识别任务被取消时调用</div><div class="line">- (void)speechRecognitionTaskWasCancelled:(SFSpeechRecognitionTask *)task</div><div class="line">&#123;</div><div class="line">    </div><div class="line">&#125;</div><div class="line">//语音识别任务完成时被调用</div><div class="line">- (void)speechRecognitionTask:(SFSpeechRecognitionTask *)task didFinishSuccessfully:(BOOL)successfully</div><div class="line">&#123;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="三：重点代码"><a href="#三：重点代码" class="headerlink" title="三：重点代码"></a>三：重点代码</h3><p>有两点需要注意：</p>
+<ul>
+<li>语音识别会很耗电以及会使用很多数据</li>
+<li>语音识别一次只持续大概一分钟的时间</li>
+</ul>
+<p>我先定义了这几个属性</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">@property (nonatomic, strong) AVAudioEngine         *audioEngine;</div><div class="line">@property (nonatomic, strong) SFSpeechRecognizer    *speechRecognizer;</div><div class="line">@property (nonatomic, strong) SFSpeechAudioBufferRecognitionRequest     *recognitionRequest;</div><div class="line">@property (nonatomic, strong) SFSpeechRecognitionTask   *recognitionTask;</div><div class="line">@property (nonatomic, strong) NSLocale                  *locale;</div></pre></td></tr></table></figure>
+<ol>
+<li><p>语音权限的判断</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">[SFSpeechRecognizer requestAuthorization:^(SFSpeechRecognizerAuthorizationStatus status) &#123;</div><div class="line">        BOOL isAuthorized = NO;</div><div class="line">       switch (status) &#123;</div><div class="line">                //结果未知 用户尚未进行选择</div><div class="line">            case SFSpeechRecognizerAuthorizationStatusNotDetermined:</div><div class="line">                isAuthorized = NO;</div><div class="line">                break;</div><div class="line">                //用户拒绝授权语音识别</div><div class="line">            case SFSpeechRecognizerAuthorizationStatusDenied:</div><div class="line">                isAuthorized = NO;</div><div class="line">                break;</div><div class="line">                //设备不支持语音识别功能</div><div class="line">            case SFSpeechRecognizerAuthorizationStatusRestricted:</div><div class="line">                isAuthorized = NO;</div><div class="line">                break;</div><div class="line">                //用户授权语音识别</div><div class="line">            case SFSpeechRecognizerAuthorizationStatusAuthorized:</div><div class="line">                isAuthorized = YES;</div><div class="line">                </div><div class="line">                break;</div><div class="line">                </div><div class="line">            default:</div><div class="line">                break;</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        if (callback) &#123;</div><div class="line">            callback(isAuthorized, status);</div><div class="line">        &#125;</div><div class="line">    &#125;];</div></pre></td></tr></table></figure>
+</li>
+<li><p>将语音引擎得到的语音数据添加到语音识别的请求中，这个过程也就是开始录音后的流程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">AVAudioFormat *recordingFormat = [[self.audioEngine inputNode] outputFormatForBus:0];</div><div class="line">    [[self.audioEngine inputNode] installTapOnBus:0 bufferSize:1024 format:recordingFormat block:^(AVAudioPCMBuffer * _Nonnull buffer, AVAudioTime * _Nonnull when) &#123;</div><div class="line">        [self.recognitionRequest appendAudioPCMBuffer:buffer];</div><div class="line">    &#125;];</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>SFSpeechRecognitionTask</code> 把上一过程中得到的语音请求转化成文字，这个过程是试试进行的。</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">self.recognitionTask = [self.speechRecognizer recognitionTaskWithRequest:self.recognitionRequest resultHandler:^(SFSpeechRecognitionResult * _Nullable result, NSError * _Nullable error) &#123;</div><div class="line">        BOOL isFinal = NO;</div><div class="line">        NSString *bestResult = [[result bestTranscription] formattedString];</div><div class="line">        isFinal = result.isFinal;</div><div class="line">        if (error || isFinal) &#123;</div><div class="line">            [self endTask];</div><div class="line">            if (self.delegate &amp;&amp; [self.delegate respondsToSelector:@selector(recognizeFail:)]) &#123;</div><div class="line">                [self.delegate recognizeFail:error];</div><div class="line">            &#125;</div><div class="line">        &#125; else &#123;</div><div class="line">            if (self.delegate &amp;&amp; [self.delegate respondsToSelector:@selector(recognizeSuccess:)]) &#123;</div><div class="line">                [self.delegate recognizeSuccess:bestResult];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;];</div></pre></td></tr></table></figure>
+<h3 id="四：提取录音文件中的文字"><a href="#四：提取录音文件中的文字" class="headerlink" title="四：提取录音文件中的文字"></a>四：提取录音文件中的文字</h3><ol>
+<li>也需要先获取用户的授权，授权代码与上面一致。</li>
+<li>对文件的处理相对较为简单<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">//初始化一个识别器</div><div class="line">SFSpeechRecognizer *recognizer = [[SFSpeechRecognizer alloc] initWithLocale:[NSLocale localeWithLocaleIdentifier:@&quot;zh_CN&quot;]];</div><div class="line">//初始化mp3的url</div><div class="line">NSURL *url = [[NSBundle mainBundle] URLForResource:@&quot;test.mp3&quot; withExtension:nil];</div><div class="line">//初始化一个识别的请求</div><div class="line">SFSpeechURLRecognitionRequest *request = [[SFSpeechURLRecognitionRequest alloc] initWithURL:url];</div><div class="line">//发起请求</div><div class="line">[recognizer recognitionTaskWithRequest:request resultHandler:^(SFSpeechRecognitionResult * _Nullable result, NSError * _Nullable error) &#123;</div><div class="line">    if(error != nil)</div><div class="line">    &#123;</div><div class="line">        NSLog(@&quot;识别错误:%@&quot;,error);</div><div class="line">    &#125;</div><div class="line">    NSString *resultString = result.bestTranscription.formattedString;</div><div class="line">    NSLog(@&quot;%@&quot;,resultString);</div><div class="line">    </div><div class="line">&#125;];</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><a href="https://github.com/suifengqjn/IOS10Speech" target="_blank" rel="external">github地址：https://github.com/suifengqjn/IOS10Speech</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;公司项目需要实现语音搜索，正好记录一下这个iOS10新出的API。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;iOS10是一个变化比价大的版本，开放了很多接口，这样也更方便开发者自定义各种功能。本文主要讲解一下新增的Speech框架，有了这个框架，我们想要为自己的app增加语音识别功能，不要依赖第三方的服务，几十行代码就可以轻松搞定。demo地址在文章末尾。
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;一：基本配置&quot;&gt;&lt;a href=&quot;#一：基本配置&quot; class=&quot;headerlink&quot; title=&quot;一：基本配置&quot;&gt;&lt;/a&gt;一：基本配置&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;Xcode8，iOS10系统真机&lt;/li&gt;
+&lt;li&gt;导入头文件：OC &lt;code&gt;#import&amp;lt;Speech/Speech.h&amp;gt;&lt;/code&gt;   swift &lt;code&gt;import Speech&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;配置info.plist文件:配置两个权限，语音识别和麦克风&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;&amp;lt;key&amp;gt;NSMicrophoneUsageDescription&amp;lt;/key&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;lt;string&amp;gt;Your microphone will be used to record your speech when you press the &amp;quot;Start Recording&amp;quot; button.&amp;lt;/string&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;lt;key&amp;gt;NSSpeechRecognitionUsageDescription&amp;lt;/key&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;lt;string&amp;gt;Speech recognition will be used to determine which words you speak into this device&amp;apos;s microphone.&amp;lt;/string&amp;gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h3 id=&quot;二：用到的几个类&quot;&gt;&lt;a href=&quot;#二：用到的几个类&quot; class=&quot;headerlink&quot; title=&quot;二：用到的几个类&quot;&gt;&lt;/a&gt;二：用到的几个类&lt;/h3&gt;&lt;p&gt;&lt;code&gt;AVAudioEngine&lt;/code&gt;                           语音引擎，负责提供语音输入&lt;br&gt;&lt;code&gt;SFSpeechAudioBufferRecognitionRequest&lt;/code&gt;   处理语音识别请求&lt;br&gt;&lt;code&gt;SFSpeechRecognizer&lt;/code&gt;                       语音识别器&lt;br&gt;&lt;code&gt;SFSpeechRecognitionTask&lt;/code&gt;                 输出语音识别对象的结果&lt;br&gt;&lt;code&gt;NSLocale&lt;/code&gt;                                语言类型&lt;br&gt;语音识别一共就用到了这几个类，整体的流程也容易理解，语音识别器通过语音引擎，处理语音识别请求，把结果交给&lt;code&gt;SFSpeechRecognitionTask&lt;/code&gt;处理，最后输出文字。&lt;br&gt;&lt;code&gt;SFSpeechRecognizer&lt;/code&gt; 自身有几个代理方法，实际上，如果只是将语音转化成文字，是不需要这几个代理方法的。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="iOS技术" scheme="http://gcblog/github.io/categories/iOS%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="iOS" scheme="http://gcblog/github.io/tags/iOS/"/>
+    
+      <category term="语音识别" scheme="http://gcblog/github.io/tags/%E8%AF%AD%E9%9F%B3%E8%AF%86%E5%88%AB/"/>
+    
+  </entry>
+  
+  <entry>
     <title>自定义刷新控件</title>
     <link href="http://gcblog/github.io/2016/11/16/%E8%87%AA%E5%AE%9A%E4%B9%89%E5%88%B7%E6%96%B0%E6%8E%A7%E4%BB%B6/"/>
     <id>http://gcblog/github.io/2016/11/16/自定义刷新控件/</id>
@@ -957,71 +1065,6 @@ NSLog(@&quot;-----%@&quot;, filePaths);
       <category term="iOS" scheme="http://gcblog/github.io/tags/iOS/"/>
     
       <category term="UIRefreshControl" scheme="http://gcblog/github.io/tags/UIRefreshControl/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>iOS语音识别</title>
-    <link href="http://gcblog/github.io/2016/11/16/IOS10%E8%AF%AD%E9%9F%B3%E8%AF%86%E5%88%AB%E8%AF%A6%E8%A7%A3/"/>
-    <id>http://gcblog/github.io/2016/11/16/IOS10语音识别详解/</id>
-    <published>2016-11-16T15:05:20.000Z</published>
-    <updated>2016-11-17T14:57:21.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>公司项目需要实现语音搜索，正好记录一下这个iOS10新出的API。</p>
-<pre><code>iOS10是一个变化比价大的版本，开放了很多接口，这样也更方便开发者自定义各种功能。本文主要讲解一下新增的Speech框架，有了这个框架，我们想要为自己的app增加语音识别功能，不要依赖第三方的服务，几十行代码就可以轻松搞定。demo地址在文章末尾。
-</code></pre><h3 id="一：基本配置"><a href="#一：基本配置" class="headerlink" title="一：基本配置"></a>一：基本配置</h3><ul>
-<li>Xcode8，iOS10系统真机</li>
-<li>导入头文件：OC <code>#import&lt;Speech/Speech.h&gt;</code>   swift <code>import Speech</code></li>
-<li>配置info.plist文件:配置两个权限，语音识别和麦克风</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;key&gt;NSMicrophoneUsageDescription&lt;/key&gt;</div><div class="line">    &lt;string&gt;Your microphone will be used to record your speech when you press the &quot;Start Recording&quot; button.&lt;/string&gt;</div><div class="line">    </div><div class="line">    &lt;key&gt;NSSpeechRecognitionUsageDescription&lt;/key&gt;</div><div class="line">    &lt;string&gt;Speech recognition will be used to determine which words you speak into this device&apos;s microphone.&lt;/string&gt;</div></pre></td></tr></table></figure>
-<h3 id="二：用到的几个类"><a href="#二：用到的几个类" class="headerlink" title="二：用到的几个类"></a>二：用到的几个类</h3><p><code>AVAudioEngine</code>                           语音引擎，负责提供语音输入<br><code>SFSpeechAudioBufferRecognitionRequest</code>   处理语音识别请求<br><code>SFSpeechRecognizer</code>                       语音识别器<br><code>SFSpeechRecognitionTask</code>                 输出语音识别对象的结果<br><code>NSLocale</code>                                语言类型<br>语音识别一共就用到了这几个类，整体的流程也容易理解，语音识别器通过语音引擎，处理语音识别请求，把结果交给<code>SFSpeechRecognitionTask</code>处理，最后输出文字。<br><code>SFSpeechRecognizer</code> 自身有几个代理方法，实际上，如果只是将语音转化成文字，是不需要这几个代理方法的。<br><a id="more"></a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">//当开始检测音频源中的语音时首先调用此方法</div><div class="line">-(void)speechRecognitionDidDetectSpeech:(SFSpeechRecognitionTask *)task</div><div class="line">&#123;</div><div class="line">  </div><div class="line">&#125;</div><div class="line">//当识别出一条可用的信息后 会调用</div><div class="line">/*需要注意，apple的语音识别服务会根据提供的音频源识别出多个可能的结果 每有一条结果可用 都会调用此方法 */</div><div class="line">-(void)speechRecognitionTask:(SFSpeechRecognitionTask *)task didHypothesizeTranscription:(SFTranscription *)transcription</div><div class="line">&#123;</div><div class="line">   </div><div class="line">&#125;</div><div class="line">//当识别完成所有可用的结果后调用</div><div class="line">- (void)speechRecognitionTask:(SFSpeechRecognitionTask *)task didFinishRecognition:(SFSpeechRecognitionResult *)recognitionResult</div><div class="line">&#123;</div><div class="line">    </div><div class="line">&#125;</div><div class="line">//当不再接受音频输入时调用 即开始处理语音识别任务时调用</div><div class="line">- (void)speechRecognitionTaskFinishedReadingAudio:(SFSpeechRecognitionTask *)task</div><div class="line">&#123;</div><div class="line">    </div><div class="line">&#125;</div><div class="line">//当语音识别任务被取消时调用</div><div class="line">- (void)speechRecognitionTaskWasCancelled:(SFSpeechRecognitionTask *)task</div><div class="line">&#123;</div><div class="line">    </div><div class="line">&#125;</div><div class="line">//语音识别任务完成时被调用</div><div class="line">- (void)speechRecognitionTask:(SFSpeechRecognitionTask *)task didFinishSuccessfully:(BOOL)successfully</div><div class="line">&#123;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h3 id="三：重点代码"><a href="#三：重点代码" class="headerlink" title="三：重点代码"></a>三：重点代码</h3><p>有两点需要注意：</p>
-<ul>
-<li>语音识别会很耗电以及会使用很多数据</li>
-<li>语音识别一次只持续大概一分钟的时间</li>
-</ul>
-<p>我先定义了这几个属性</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">@property (nonatomic, strong) AVAudioEngine         *audioEngine;</div><div class="line">@property (nonatomic, strong) SFSpeechRecognizer    *speechRecognizer;</div><div class="line">@property (nonatomic, strong) SFSpeechAudioBufferRecognitionRequest     *recognitionRequest;</div><div class="line">@property (nonatomic, strong) SFSpeechRecognitionTask   *recognitionTask;</div><div class="line">@property (nonatomic, strong) NSLocale                  *locale;</div></pre></td></tr></table></figure>
-<ol>
-<li><p>语音权限的判断</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">[SFSpeechRecognizer requestAuthorization:^(SFSpeechRecognizerAuthorizationStatus status) &#123;</div><div class="line">        BOOL isAuthorized = NO;</div><div class="line">       switch (status) &#123;</div><div class="line">                //结果未知 用户尚未进行选择</div><div class="line">            case SFSpeechRecognizerAuthorizationStatusNotDetermined:</div><div class="line">                isAuthorized = NO;</div><div class="line">                break;</div><div class="line">                //用户拒绝授权语音识别</div><div class="line">            case SFSpeechRecognizerAuthorizationStatusDenied:</div><div class="line">                isAuthorized = NO;</div><div class="line">                break;</div><div class="line">                //设备不支持语音识别功能</div><div class="line">            case SFSpeechRecognizerAuthorizationStatusRestricted:</div><div class="line">                isAuthorized = NO;</div><div class="line">                break;</div><div class="line">                //用户授权语音识别</div><div class="line">            case SFSpeechRecognizerAuthorizationStatusAuthorized:</div><div class="line">                isAuthorized = YES;</div><div class="line">                </div><div class="line">                break;</div><div class="line">                </div><div class="line">            default:</div><div class="line">                break;</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        if (callback) &#123;</div><div class="line">            callback(isAuthorized, status);</div><div class="line">        &#125;</div><div class="line">    &#125;];</div></pre></td></tr></table></figure>
-</li>
-<li><p>将语音引擎得到的语音数据添加到语音识别的请求中，这个过程也就是开始录音后的流程</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">AVAudioFormat *recordingFormat = [[self.audioEngine inputNode] outputFormatForBus:0];</div><div class="line">    [[self.audioEngine inputNode] installTapOnBus:0 bufferSize:1024 format:recordingFormat block:^(AVAudioPCMBuffer * _Nonnull buffer, AVAudioTime * _Nonnull when) &#123;</div><div class="line">        [self.recognitionRequest appendAudioPCMBuffer:buffer];</div><div class="line">    &#125;];</div></pre></td></tr></table></figure>
-</li>
-<li><p><code>SFSpeechRecognitionTask</code> 把上一过程中得到的语音请求转化成文字，这个过程是试试进行的。</p>
-</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">self.recognitionTask = [self.speechRecognizer recognitionTaskWithRequest:self.recognitionRequest resultHandler:^(SFSpeechRecognitionResult * _Nullable result, NSError * _Nullable error) &#123;</div><div class="line">        BOOL isFinal = NO;</div><div class="line">        NSString *bestResult = [[result bestTranscription] formattedString];</div><div class="line">        isFinal = result.isFinal;</div><div class="line">        if (error || isFinal) &#123;</div><div class="line">            [self endTask];</div><div class="line">            if (self.delegate &amp;&amp; [self.delegate respondsToSelector:@selector(recognizeFail:)]) &#123;</div><div class="line">                [self.delegate recognizeFail:error];</div><div class="line">            &#125;</div><div class="line">        &#125; else &#123;</div><div class="line">            if (self.delegate &amp;&amp; [self.delegate respondsToSelector:@selector(recognizeSuccess:)]) &#123;</div><div class="line">                [self.delegate recognizeSuccess:bestResult];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;];</div></pre></td></tr></table></figure>
-<h3 id="四：提取录音文件中的文字"><a href="#四：提取录音文件中的文字" class="headerlink" title="四：提取录音文件中的文字"></a>四：提取录音文件中的文字</h3><ol>
-<li>也需要先获取用户的授权，授权代码与上面一致。</li>
-<li>对文件的处理相对较为简单<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">//初始化一个识别器</div><div class="line">SFSpeechRecognizer *recognizer = [[SFSpeechRecognizer alloc] initWithLocale:[NSLocale localeWithLocaleIdentifier:@&quot;zh_CN&quot;]];</div><div class="line">//初始化mp3的url</div><div class="line">NSURL *url = [[NSBundle mainBundle] URLForResource:@&quot;test.mp3&quot; withExtension:nil];</div><div class="line">//初始化一个识别的请求</div><div class="line">SFSpeechURLRecognitionRequest *request = [[SFSpeechURLRecognitionRequest alloc] initWithURL:url];</div><div class="line">//发起请求</div><div class="line">[recognizer recognitionTaskWithRequest:request resultHandler:^(SFSpeechRecognitionResult * _Nullable result, NSError * _Nullable error) &#123;</div><div class="line">    if(error != nil)</div><div class="line">    &#123;</div><div class="line">        NSLog(@&quot;识别错误:%@&quot;,error);</div><div class="line">    &#125;</div><div class="line">    NSString *resultString = result.bestTranscription.formattedString;</div><div class="line">    NSLog(@&quot;%@&quot;,resultString);</div><div class="line">    </div><div class="line">&#125;];</div></pre></td></tr></table></figure>
-</li>
-</ol>
-<p><a href="https://github.com/suifengqjn/IOS10Speech" target="_blank" rel="external">github地址：https://github.com/suifengqjn/IOS10Speech</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;公司项目需要实现语音搜索，正好记录一下这个iOS10新出的API。&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;iOS10是一个变化比价大的版本，开放了很多接口，这样也更方便开发者自定义各种功能。本文主要讲解一下新增的Speech框架，有了这个框架，我们想要为自己的app增加语音识别功能，不要依赖第三方的服务，几十行代码就可以轻松搞定。demo地址在文章末尾。
-&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;一：基本配置&quot;&gt;&lt;a href=&quot;#一：基本配置&quot; class=&quot;headerlink&quot; title=&quot;一：基本配置&quot;&gt;&lt;/a&gt;一：基本配置&lt;/h3&gt;&lt;ul&gt;
-&lt;li&gt;Xcode8，iOS10系统真机&lt;/li&gt;
-&lt;li&gt;导入头文件：OC &lt;code&gt;#import&amp;lt;Speech/Speech.h&amp;gt;&lt;/code&gt;   swift &lt;code&gt;import Speech&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;配置info.plist文件:配置两个权限，语音识别和麦克风&lt;/li&gt;
-&lt;/ul&gt;
-&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;&amp;lt;key&amp;gt;NSMicrophoneUsageDescription&amp;lt;/key&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;lt;string&amp;gt;Your microphone will be used to record your speech when you press the &amp;quot;Start Recording&amp;quot; button.&amp;lt;/string&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;lt;key&amp;gt;NSSpeechRecognitionUsageDescription&amp;lt;/key&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;lt;string&amp;gt;Speech recognition will be used to determine which words you speak into this device&amp;apos;s microphone.&amp;lt;/string&amp;gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;h3 id=&quot;二：用到的几个类&quot;&gt;&lt;a href=&quot;#二：用到的几个类&quot; class=&quot;headerlink&quot; title=&quot;二：用到的几个类&quot;&gt;&lt;/a&gt;二：用到的几个类&lt;/h3&gt;&lt;p&gt;&lt;code&gt;AVAudioEngine&lt;/code&gt;                           语音引擎，负责提供语音输入&lt;br&gt;&lt;code&gt;SFSpeechAudioBufferRecognitionRequest&lt;/code&gt;   处理语音识别请求&lt;br&gt;&lt;code&gt;SFSpeechRecognizer&lt;/code&gt;                       语音识别器&lt;br&gt;&lt;code&gt;SFSpeechRecognitionTask&lt;/code&gt;                 输出语音识别对象的结果&lt;br&gt;&lt;code&gt;NSLocale&lt;/code&gt;                                语言类型&lt;br&gt;语音识别一共就用到了这几个类，整体的流程也容易理解，语音识别器通过语音引擎，处理语音识别请求，把结果交给&lt;code&gt;SFSpeechRecognitionTask&lt;/code&gt;处理，最后输出文字。&lt;br&gt;&lt;code&gt;SFSpeechRecognizer&lt;/code&gt; 自身有几个代理方法，实际上，如果只是将语音转化成文字，是不需要这几个代理方法的。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="iOS技术" scheme="http://gcblog/github.io/categories/iOS%E6%8A%80%E6%9C%AF/"/>
-    
-    
-      <category term="iOS" scheme="http://gcblog/github.io/tags/iOS/"/>
-    
-      <category term="语音识别" scheme="http://gcblog/github.io/tags/%E8%AF%AD%E9%9F%B3%E8%AF%86%E5%88%AB/"/>
     
   </entry>
   
@@ -1335,50 +1378,6 @@ NSLog(@&quot;-----%@&quot;, filePaths);
       <category term="iOS" scheme="http://gcblog/github.io/tags/iOS/"/>
     
       <category term="workspace" scheme="http://gcblog/github.io/tags/workspace/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>iOS缓存机制-非结构化存储</title>
-    <link href="http://gcblog/github.io/2016/03/12/iOS%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6-%E9%9D%9E%E7%BB%93%E6%9E%84%E5%8C%96%E5%AD%98%E5%82%A8/"/>
-    <id>http://gcblog/github.io/2016/03/12/iOS缓存机制-非结构化存储/</id>
-    <published>2016-03-12T11:43:33.000Z</published>
-    <updated>2016-11-17T15:00:56.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>对于一个优秀的app来说，缓存机制必不可少。图片，视频，音频等等各种类型的文件，怎么样去更好的管理这些数据，这对于我们开发者以及用户都是息息相关的。闲话不多说，先来看看几个github开源中牛逼的几个缓存框架。</p>
-<p>它们的使用方式都很类似，都是通过键值对(key-value)的形式进行存取，跟<code>NSUserDefaults</code>用法类似。</p>
-<p>以下排名按照性能由低到高：</p>
-<h3 id="1-EGOCache"><a href="#1-EGOCache" class="headerlink" title="1.EGOCache"></a>1.EGOCache</h3><p> 只提供磁盘缓存，没有内存缓存，一个比较简易的缓存框架。</p>
-<h3 id="2-TMCache"><a href="#2-TMCache" class="headerlink" title="2.TMCache"></a>2.TMCache</h3><p> 最初由 Tumblr 开发，但现在已经不再维护了。TMMemoryCache 实现有很多 NSCache 并没有提供的功能，比如数量限制、总容量限制、存活时间限制、内存警告或应用退到后台时清空缓存等。TMMemoryCache 在设计时，主要目标是线程安全，它把所有读写操作都放到了同一个 concurrent queue 中，然后用 dispatch_barrier_async 来保证任务能顺序执行。它错误的用了大量异步 block 回调来实现存取功能，以至于产生了很大的性能和死锁问题。它有磁盘缓存和内存缓存两部分组成，个人感觉一般好点的缓存库都会由磁盘缓存和内存缓存两部分组成，在我们第一次存储一个文件到磁盘的时候，缓存库会帮我们复制一份到内存缓存中，可以让我们在下次使用该文件的时候可以更快的找到。我上家公司就是用的这个缓存框架，挺好用的，也没出什么问题。</p>
-<h3 id="3-PINCache"><a href="#3-PINCache" class="headerlink" title="3.PINCache"></a>3.PINCache</h3><p> 是 Tumblr 宣布不在维护 TMCache 后，由 Pinterest 维护和改进的一个内存缓存。它的功能和接口基本和 TMCache 一样，但修复了性能和死锁的问题。它同样也用 dispatch_semaphore 来保证线程安全，但去掉了dispatch_barrier_async，避免了线程切换带来的巨大开销，也避免了可能的死锁。相当于是TMCache的优化版，而且一直有更新。</p>
-<a id="more"></a>
-<h3 id="4-YYCache"><a href="#4-YYCache" class="headerlink" title="4.YYCache"></a>4.YYCache</h3><p> YYMemoryCache相对于 PINMemoryCache 来说，去掉了异步访问的接口，尽量优化了同步访问的性能，用 OSSpinLock 来保证线程安全。另外，缓存内部用双向链表和 NSDictionary 实现了 LRU 淘汰算法,性能好一点。TMDiskCache, PINDiskCache, SDWebImage 等缓存，都是基于文件系统的，即一个 Value 对应一个文件，通过文件读写来缓存数据。他们的实现都比较简单，性能也都相近，缺点也是同样的：不方便扩展、没有元数据、难以实现较好的淘汰算法、数据统计缓慢。YYDiskCache 也是采用的 SQLite 配合文件的存储方式，在 iPhone 6 64G 上的性能基准测试结果见下图。在存取小数据 (NSNumber) 时，YYDiskCache 的性能远远高出基于文件存储的库；而较大数据的存取性能则比较接近了。但得益于 SQLite 存储的元数据，YYDiskCache 实现了 LRU 淘汰算法、更快的数据统计，更多的容量控制选项。</p>
-<p> <img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/KVCahce/1.png" alt="image"></p>
-<p> YYCache相比较与前面几个，性能是最好的一个，但是差距也不是太大，而且他的使用需要依赖库，个人感觉用PinCache就可以了。<br> 下面是我通过PinCache改进的KVCache，在PinCahce的基础上增加了以下几个功能。</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">1. 可以设置缓存上限，设置一定时间内定时清理缓存</div><div class="line">2. 增加缓存类型，jpg，MP4，MP3，gif，等自动保存相应类型</div><div class="line">3. 增加缓存区块，不同模块的文件可以缓存到各自对应的区域</div><div class="line">4. 以上所有参数都可以根据自己的需求自行设置</div></pre></td></tr></table></figure>
-<p> <a href="https://github.com/suifengqjn/KVCache" target="_blank" rel="external">demo地址</a></p>
-<p> <a href="http://gcblog.gtihub.io" target="_blank" rel="external">github Blog同步更新</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;对于一个优秀的app来说，缓存机制必不可少。图片，视频，音频等等各种类型的文件，怎么样去更好的管理这些数据，这对于我们开发者以及用户都是息息相关的。闲话不多说，先来看看几个github开源中牛逼的几个缓存框架。&lt;/p&gt;
-&lt;p&gt;它们的使用方式都很类似，都是通过键值对(key-value)的形式进行存取，跟&lt;code&gt;NSUserDefaults&lt;/code&gt;用法类似。&lt;/p&gt;
-&lt;p&gt;以下排名按照性能由低到高：&lt;/p&gt;
-&lt;h3 id=&quot;1-EGOCache&quot;&gt;&lt;a href=&quot;#1-EGOCache&quot; class=&quot;headerlink&quot; title=&quot;1.EGOCache&quot;&gt;&lt;/a&gt;1.EGOCache&lt;/h3&gt;&lt;p&gt; 只提供磁盘缓存，没有内存缓存，一个比较简易的缓存框架。&lt;/p&gt;
-&lt;h3 id=&quot;2-TMCache&quot;&gt;&lt;a href=&quot;#2-TMCache&quot; class=&quot;headerlink&quot; title=&quot;2.TMCache&quot;&gt;&lt;/a&gt;2.TMCache&lt;/h3&gt;&lt;p&gt; 最初由 Tumblr 开发，但现在已经不再维护了。TMMemoryCache 实现有很多 NSCache 并没有提供的功能，比如数量限制、总容量限制、存活时间限制、内存警告或应用退到后台时清空缓存等。TMMemoryCache 在设计时，主要目标是线程安全，它把所有读写操作都放到了同一个 concurrent queue 中，然后用 dispatch_barrier_async 来保证任务能顺序执行。它错误的用了大量异步 block 回调来实现存取功能，以至于产生了很大的性能和死锁问题。它有磁盘缓存和内存缓存两部分组成，个人感觉一般好点的缓存库都会由磁盘缓存和内存缓存两部分组成，在我们第一次存储一个文件到磁盘的时候，缓存库会帮我们复制一份到内存缓存中，可以让我们在下次使用该文件的时候可以更快的找到。我上家公司就是用的这个缓存框架，挺好用的，也没出什么问题。&lt;/p&gt;
-&lt;h3 id=&quot;3-PINCache&quot;&gt;&lt;a href=&quot;#3-PINCache&quot; class=&quot;headerlink&quot; title=&quot;3.PINCache&quot;&gt;&lt;/a&gt;3.PINCache&lt;/h3&gt;&lt;p&gt; 是 Tumblr 宣布不在维护 TMCache 后，由 Pinterest 维护和改进的一个内存缓存。它的功能和接口基本和 TMCache 一样，但修复了性能和死锁的问题。它同样也用 dispatch_semaphore 来保证线程安全，但去掉了dispatch_barrier_async，避免了线程切换带来的巨大开销，也避免了可能的死锁。相当于是TMCache的优化版，而且一直有更新。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="iOS技术" scheme="http://gcblog/github.io/categories/iOS%E6%8A%80%E6%9C%AF/"/>
-    
-    
-      <category term="iOS" scheme="http://gcblog/github.io/tags/iOS/"/>
-    
-      <category term="缓存" scheme="http://gcblog/github.io/tags/%E7%BC%93%E5%AD%98/"/>
-    
-      <category term="性能" scheme="http://gcblog/github.io/tags/%E6%80%A7%E8%83%BD/"/>
     
   </entry>
   
