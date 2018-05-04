@@ -278,6 +278,129 @@
             
               
                 
+                <a class="post-title-link" href="/2018/05/04/slice/" itemprop="url">
+                  slice
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-05-04T11:45:23+08:00" content="2018-05-04">
+              2018-05-04
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/05/04/slice/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/05/04/slice/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>切片的几种常用操作，reslice, append, copy, delete, insert, 排序, 取最值等，这几种基本上可以解决日常开发的绝大部分的问题了。</p>
+<h3 id="slice声明和创建"><a href="#slice声明和创建" class="headerlink" title="slice声明和创建"></a>slice声明和创建</h3><p>slice 本身不是数组，它指向数组的底层<br>作为变长数组饿替代方案，可以关联底层数组的全部或者局部<br>可以直接创建，一般用make(), 也可以从底层数组获取生成<br>如果多个slice 指向相同的底层数组，一个值的改变会影响全部</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2018/05/04/slice/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2018/04/26/字符串操作/" itemprop="url">
                   字符串操作
                 </a>
@@ -655,135 +778,11 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/12/04/PhotoBatch-文件重命名-2/" itemprop="url">
-                  PhotoBatch-文件重命名(2)
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-12-04T16:50:20+08:00" content="2017-12-04">
-              2017-12-04
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/macOS/" itemprop="url" rel="index">
-                    <span itemprop="name">macOS</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/12/04/PhotoBatch-文件重命名-2/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/12/04/PhotoBatch-文件重命名-2/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>上一篇文章已经写了如何获取文件夹路径，今天实现photoBatch的第一个简单功能，图片批量重命名，当然也可以对任何文件进行重命名</p>
-<h3 id="搭建界面"><a href="#搭建界面" class="headerlink" title="搭建界面"></a>搭建界面</h3><p>搭了个简单的界面，如下图：<br><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/PhotoBatch/2_1.png" alt="布局用了purelayout框架"><br>我们需要得到重命名后的文件名前缀，以及文件格式和是否保留原文件，给这3个变量一个默认值。</p>
-<h3 id="文件夹处理"><a href="#文件夹处理" class="headerlink" title="文件夹处理"></a>文件夹处理</h3><p>获取到文件路径后处理：需要对每个文件的路径进行处理，如果是以<br><code>file://</code>开头，需要把前面的<code>file://</code>去掉，这种地址无法处理。这里是对文件夹路径的处理，处理完的路径再加上文件名就是完整的路径。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2017/12/04/PhotoBatch-文件重命名-2/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -824,7 +823,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">24</span>
+              <span class="site-state-item-count">25</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -841,7 +840,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">42</span>
+                <span class="site-state-item-count">44</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
