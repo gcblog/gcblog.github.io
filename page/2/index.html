@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="iOS, 钱佳能, 夜千寻墨, 风逝, swift" />
+  <meta name="keywords" content="iOS, 钱佳能, 夜千寻墨, 风逝, swift golang go 区块链" />
 
 
 
@@ -86,15 +86,15 @@
 
 
 
-<meta name="description" content="一介平民的修行路">
+<meta name="description" content="扫码关注微信公众号,及时获取文章更新">
 <meta property="og:type" content="website">
 <meta property="og:title" content="code随手记">
 <meta property="og:url" content="http://gcblog/github.io/page/2/index.html">
 <meta property="og:site_name" content="code随手记">
-<meta property="og:description" content="一介平民的修行路">
+<meta property="og:description" content="扫码关注微信公众号,及时获取文章更新">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="code随手记">
-<meta name="twitter:description" content="一介平民的修行路">
+<meta name="twitter:description" content="扫码关注微信公众号,及时获取文章更新">
 
 
 
@@ -256,6 +256,132 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/04/04/mac下安装go及环境变量配置/" itemprop="url">
+                  mac下安装go及环境变量配置
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-04-04T17:10:56+08:00" content="2018-04-04">
+              2018-04-04
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/04/04/mac下安装go及环境变量配置/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/04/04/mac下安装go及环境变量配置/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>以下命令都是直接在根目录下执行即可</p>
+<h3 id="方法一：homebrew"><a href="#方法一：homebrew" class="headerlink" title="方法一：homebrew"></a>方法一：homebrew</h3><p><code>homebrew</code>是Mac系统下面目前使用最多的管理软件的工具，目前已支持Go，可以通过命令直接安装Go,不过在这之前需要先安装<code>homebrew</code></p>
+<p>安装命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ brew update &amp;&amp; brew upgrade</div><div class="line">$ brew install go</div></pre></td></tr></table></figure></p>
+<p>安装完输入 <code>go env</code> 查看环境信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">GOARCH=&quot;amd64&quot;</div><div class="line">GOBIN=&quot;&quot;</div><div class="line">GOCACHE=&quot;/Users/qianjianeng/Library/Caches/go-build&quot;</div><div class="line">GOEXE=&quot;&quot;</div><div class="line">GOHOSTARCH=&quot;amd64&quot;</div><div class="line">GOHOSTOS=&quot;darwin&quot;</div><div class="line">GOOS=&quot;darwin&quot;</div><div class="line">GOPATH=&quot;/Users/qianjianeng/go&quot;</div><div class="line">GORACE=&quot;&quot;</div><div class="line">GOROOT=&quot;/usr/local/Cellar/go/1.10/libexec&quot;</div><div class="line">GOTMPDIR=&quot;&quot;</div><div class="line">GOTOOLDIR=&quot;/usr/local/Cellar/go/1.10/libexec/pkg/tool/darwin_amd64&quot;</div><div class="line">GCCGO=&quot;gccgo&quot;</div><div class="line">CC=&quot;clang&quot;</div><div class="line">CXX=&quot;clang++&quot;</div><div class="line">CGO_ENABLED=&quot;1&quot;</div><div class="line">CGO_CFLAGS=&quot;-g -O2&quot;</div><div class="line">CGO_CPPFLAGS=&quot;&quot;</div><div class="line">CGO_CXXFLAGS=&quot;-g -O2&quot;</div><div class="line">CGO_FFLAGS=&quot;-g -O2&quot;</div><div class="line">CGO_LDFLAGS=&quot;-g -O2&quot;</div><div class="line">PKG_CONFIG=&quot;pkg-config&quot;</div><div class="line">GOGCCFLAGS=&quot;-fPIC -m64 -pthread -fno-caret-diagnostics -Qunused-arguments -fmessage-length=0 -fdebug-prefix-map=/var/folders/vj/0nsxxzqd3cgdqnwkzqxqg6zr0000gn/T/go-build786549549=/tmp/go-build -gno-record-gcc-switches -fno-common&quot;</div></pre></td></tr></table></figure>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2018/04/04/mac下安装go及环境变量配置/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
     
       
 
@@ -634,129 +760,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/11/14/Gif播放与暂停/" itemprop="url">
-                  Gif播放与暂停
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-11-14T10:13:08+08:00" content="2017-11-14">
-              2017-11-14
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Swfit/" itemprop="url" rel="index">
-                    <span itemprop="name">Swfit</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/11/14/Gif播放与暂停/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/11/14/Gif播放与暂停/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="gif播放的两种方式"><a href="#gif播放的两种方式" class="headerlink" title="gif播放的两种方式"></a>gif播放的两种方式</h2><h3 id="UIWebView"><a href="#UIWebView" class="headerlink" title="UIWebView"></a>UIWebView</h3><p>这应该是播放gif文件最简单的方式了，缺点：无法暂停播放</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">//1. 把gif文件 转化成 data</div><div class="line">guard let dataPath = Bundle.main.path(forResource: &quot;demo&quot;, ofType: &quot;gif&quot;) else &#123; return &#125;</div><div class="line">guard let gifData = NSData(contentsOfFile: dataPath) else &#123; return &#125;</div><div class="line"></div><div class="line">//2. 给UIWebView 设置data</div><div class="line">let webview = UIWebView()</div><div class="line">webview.frame = CGRect(x: 0, y: 300, width: self.view.frame.size.width, height: 200)</div><div class="line">webview.scalesPageToFit = true</div><div class="line">webview.load(gifData as Data, mimeType: &quot;image/gif&quot;, textEncodingName: String(), baseURL: NSURL() as URL)</div><div class="line">self.view.addSubview(webview)</div></pre></td></tr></table></figure>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2017/11/14/Gif播放与暂停/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -797,12 +800,12 @@
                src="/images/avatar.gif"
                alt="夜千寻墨" />
           <p class="site-author-name" itemprop="name">夜千寻墨</p>
-          <p class="site-description motion-element" itemprop="description">一介平民的修行路</p>
+          <p class="site-description motion-element" itemprop="description">扫码关注微信公众号,及时获取文章更新</p>
         </div>
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-count">27</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -819,7 +822,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">46</span>
+                <span class="site-state-item-count">50</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

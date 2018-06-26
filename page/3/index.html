@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="iOS, 钱佳能, 夜千寻墨, 风逝, swift" />
+  <meta name="keywords" content="iOS, 钱佳能, 夜千寻墨, 风逝, swift golang go 区块链" />
 
 
 
@@ -86,15 +86,15 @@
 
 
 
-<meta name="description" content="一介平民的修行路">
+<meta name="description" content="扫码关注微信公众号,及时获取文章更新">
 <meta property="og:type" content="website">
 <meta property="og:title" content="code随手记">
 <meta property="og:url" content="http://gcblog/github.io/page/3/index.html">
 <meta property="og:site_name" content="code随手记">
-<meta property="og:description" content="一介平民的修行路">
+<meta property="og:description" content="扫码关注微信公众号,及时获取文章更新">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="code随手记">
-<meta name="twitter:description" content="一介平民的修行路">
+<meta name="twitter:description" content="扫码关注微信公众号,及时获取文章更新">
 
 
 
@@ -256,6 +256,129 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/11/14/Gif播放与暂停/" itemprop="url">
+                  Gif播放与暂停
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-11-14T10:13:08+08:00" content="2017-11-14">
+              2017-11-14
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Swfit/" itemprop="url" rel="index">
+                    <span itemprop="name">Swfit</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/11/14/Gif播放与暂停/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/11/14/Gif播放与暂停/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="gif播放的两种方式"><a href="#gif播放的两种方式" class="headerlink" title="gif播放的两种方式"></a>gif播放的两种方式</h2><h3 id="UIWebView"><a href="#UIWebView" class="headerlink" title="UIWebView"></a>UIWebView</h3><p>这应该是播放gif文件最简单的方式了，缺点：无法暂停播放</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">//1. 把gif文件 转化成 data</div><div class="line">guard let dataPath = Bundle.main.path(forResource: &quot;demo&quot;, ofType: &quot;gif&quot;) else &#123; return &#125;</div><div class="line">guard let gifData = NSData(contentsOfFile: dataPath) else &#123; return &#125;</div><div class="line"></div><div class="line">//2. 给UIWebView 设置data</div><div class="line">let webview = UIWebView()</div><div class="line">webview.frame = CGRect(x: 0, y: 300, width: self.view.frame.size.width, height: 200)</div><div class="line">webview.scalesPageToFit = true</div><div class="line">webview.load(gifData as Data, mimeType: &quot;image/gif&quot;, textEncodingName: String(), baseURL: NSURL() as URL)</div><div class="line">self.view.addSubview(webview)</div></pre></td></tr></table></figure>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2017/11/14/Gif播放与暂停/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
     
       
 
@@ -639,143 +762,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/11/29/Swift小结/" itemprop="url">
-                  Swift小结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-11-29T23:30:40+08:00" content="2016-11-29">
-              2016-11-29
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Swfit/" itemprop="url" rel="index">
-                    <span itemprop="name">Swfit</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/11/29/Swift小结/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/29/Swift小结/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="懒加载"><a href="#懒加载" class="headerlink" title="懒加载"></a>懒加载</h3><ul>
-<li>格式 <code>lazy var 变量: 类型 = { 创建变量代码 }()</code></li>
-<li>以 <code>lazy var</code> 开头，闭包末尾跟一个’()’</li>
-<li>懒加载的写法本质上是定义并执行一个闭包</li>
-<li>好处：没有解包的麻烦，并且 延迟创建</li>
-<li>与OC懒加载的区别：这里的懒加载只会执行一次，如果中途被设置成nil，也不会再次执行<br>懒加载完整的写法：<br>eg:懒加载一个数组</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">lazy var dataList: [String] = &#123; () -&gt; [String] in</div><div class="line">        return [&quot;zero&quot;,&quot;one&quot;, &quot;two&quot;]</div><div class="line">&#125;()</div></pre></td></tr></table></figure>
-<p>in 和 前面的代码块可以省略，写成这样</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">lazy var dataList: [String] = &#123;</div><div class="line">        return [&quot;zero&quot;,&quot;one&quot;, &quot;two&quot;]</div><div class="line">&#125;()</div></pre></td></tr></table></figure>
-<p>后面的闭包和括号也能省略,这种写法是最为简洁的懒加载形式，一般这样写就可以了</p>
-<p><code>lazy var dataList: [String] = [&quot;zero&quot;,&quot;one&quot;, &quot;two&quot;]</code></p>
-<p>比如懒加载一个label</p>
-<p><code>lazy var label: UILabel = UIlabel()</code></p>
-<p>如果对label需要添加其他属性，就可以写成带（）的</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">lazy var label :UILabel = &#123;</div><div class="line">       let label = UILabel()</div><div class="line">        label.font = UIFont.systemFont(ofSize: 15)</div><div class="line">        label.textColor = UIColor.red</div><div class="line">        return label</div><div class="line">&#125;()</div></pre></td></tr></table></figure>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/11/29/Swift小结/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -816,12 +802,12 @@
                src="/images/avatar.gif"
                alt="夜千寻墨" />
           <p class="site-author-name" itemprop="name">夜千寻墨</p>
-          <p class="site-description motion-element" itemprop="description">一介平民的修行路</p>
+          <p class="site-description motion-element" itemprop="description">扫码关注微信公众号,及时获取文章更新</p>
         </div>
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-count">27</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -838,7 +824,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">46</span>
+                <span class="site-state-item-count">50</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
