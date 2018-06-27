@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://gcblog/github.io/"/>
-  <updated>2018-06-26T11:25:42.175Z</updated>
+  <updated>2018-06-27T10:55:49.140Z</updated>
   <id>http://gcblog/github.io/</id>
   
   <author>
@@ -16,11 +16,117 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>非对称加密RSA原理简介及使用</title>
+    <link href="http://gcblog/github.io/2018/06/27/%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86RSA%E5%8E%9F%E7%90%86%E7%AE%80%E4%BB%8B%E5%8F%8A%E4%BD%BF%E7%94%A8/"/>
+    <id>http://gcblog/github.io/2018/06/27/非对称加密RSA原理简介及使用/</id>
+    <published>2018-06-27T10:54:38.000Z</published>
+    <updated>2018-06-27T10:55:49.140Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="什么是RSA"><a href="#什么是RSA" class="headerlink" title="什么是RSA"></a>什么是RSA</h2><p>RSA是一种公钥密码算法，它的名字是由它的三位开发者，即Ron Rivest、Adi Shamir 和 Leonard Adleman的姓氏的首字母组成的( Rivest-Shamir-Adleman )。</p>
+<p>RSA可以被用于公钥密码和数字签名。</p>
+<h2 id="RSA加密"><a href="#RSA加密" class="headerlink" title="RSA加密"></a>RSA加密</h2><p>在RSA中，明文、密钥和密文都是数字。RSA的加密过程可以用下列公式来表达：</p>
+<p><strong>密文=明文<sup>E</sup> mod N</strong> (RSA加密)</p>
+<p>RSA的密文是对代表明文的数字的E次方求mod N的结果。换句话说，就是将<br>明文和自己做E次乘法,然后将其结果除以N求余数，这个余数就是密文。</p>
+<p>加密公式中出现的两个数<code>E</code>和 <code>N</code>，到底都是什么数呢? RSA的加密是求明文的<br><code>E</code>次方mod <code>N</code>，因此只要知道E和N这两个数，任何人都可以完成加密的运算。所以说，<code>E</code> 和 <code>N</code>是RSA加密的密钥，也就是说，<code>E</code> 和 <code>N</code>的组合就是公钥。</p>
+<a id="more"></a>
+<h2 id="RSA解密"><a href="#RSA解密" class="headerlink" title="RSA解密"></a>RSA解密</h2><p>RSA的解密和加密一样简单，可以用下面的公式来表达:</p>
+<p><strong>明文=密文 <sup>D</sup> mod N</strong> ( RSA解密)</p>
+<p>表示密文的数字的D次方求 mod N就可以得到明文。</p>
+<p>这里所使用的数字N和加密时使用的数字N是相同的。数 <code>D</code> 和数 <code>N</code> 组合起来就是RSA的解密密钥，因此D和N的组合就是私钥。</p>
+<p>在RSA中，加密和解密的形式是相同的。加密是求“明文的E次方的 mod<br>N”，而解密则是求“密文的D次方的 mod N”。</p>
+<h2 id="生成密钥对"><a href="#生成密钥对" class="headerlink" title="生成密钥对"></a>生成密钥对</h2><p>在RSA中，加密是求“明文的E次方的 mod<br>N”，而解密则是求“密文的D次方的 mod N”。</p>
+<p>由于E和N是公钥，D和N是私钥，因此求E、D和N这三个数就是生成密钥对。</p>
+<h2 id="生成私钥公钥步骤"><a href="#生成私钥公钥步骤" class="headerlink" title="生成私钥公钥步骤"></a>生成私钥公钥步骤</h2><p>用 Linux或者mac 上自带，命令如下，完成制作非对称加密的秘钥对（公钥和私钥）</p>
+<p>1.生成 RSA 私钥（传统格式的）</p>
+<p><code>openssl genrsa -out rsa_private_key.pem 1024</code></p>
+<p>2.将传统格式的私钥转换成 PKCS#8 格式的（JAVA需要使用的私钥需要经过PKCS#8编码，PHP程序不需要，可以直接略过）,这个过程需要输入两遍密码，是针对私钥的密码，不要密码直接按回车</p>
+<p><code>openssl pkcs8 -topk8 -inform PEM -in rsa_private_key.pem -outform PEM</code></p>
+<p>3.生成 RSA 公钥</p>
+<p><code>openssl rsa -in rsa_private_key.pem -pubout -out rsa_public_key.pem</code></p>
+<p>此时在系统根目录已经生成了两个文件。可以直接使用<code>cat</code>命令查看文件中的内容</p>
+<h2 id="代码实现加密以及解密过程"><a href="#代码实现加密以及解密过程" class="headerlink" title="代码实现加密以及解密过程"></a>代码实现加密以及解密过程</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">var privateKey = []byte(`-----BEGIN RSA PRIVATE KEY-----</div><div class="line">MIICXQIBAAKBgQCQRttulLHUA3DkckkD7Bco5fY0nBDe8RlDZuIV2pu3Ry4qgZNL</div><div class="line">d7OiYkgTcow0LIXeW4HpLJZI9oxCS3p4Y+w3AAWOjmpPXZfc3NAiW0iboLa6qld0</div><div class="line">TfWogHurC2ArSkONEGzGzdgZrBUDGt8s+sdKmRxxLjPiWq1HQhmywNv3BQIDAQAB</div><div class="line">AoGAPKJ64Ct/3QGhNXFOfGaBiT+0TIH2mSusmWYoyFR6svkoTtbsJ4BkL2+sqPew</div><div class="line">MtEvZbcBjxSdCIcNhWMhUm10PTur6mOhcAABxTjdFEbIbJRHVlrsDYkyGPLOaaem</div><div class="line">UOZeTAtnNQVAnbQpXIwLmwkSSmbJPyvFc534/c7fMkHg1RUCQQDAL5kgijYHox/1</div><div class="line">ybqKoBxKrlIjwCpgJ7XIIXRu+AyCLNvzRRviIGGQQ5Q605hSKB+j/6lYKO/kjiNA</div><div class="line">Jh5pYPr7AkEAwC7VLAjLQeHD/QD8SaEwQr9WgE3WxF0LuS+AI767Kluw2N2RSDhw</div><div class="line">nfNaBhFe1j7mUQLP4C/HIFFjmi1+HiQ1/wJBAKHXM3dAjJFP4HkmAO3+OPT26Xrr</div><div class="line">t4OzzRQUgC12u2ngBvVMrFd3d1F6Z1hGmc4Ntd9wS5ZPGv14aNz7fL63CYMCQQC9</div><div class="line">T+TxwZ/nwCu+GLBtH3lY5v6g2QyM1lNsEpyZmZLpwPTOTESG7gIRtdyiSY4wYjmi</div><div class="line">57A6WRZAgawp/lJUArulAkA3LKFGfViQVjRWkoIYN65R87L6DohHH1LXVg4wUUtF</div><div class="line">IXwDFSCbHsQko+vzIlBtSXr5/hO+1CkZLtI0tisWHPCi</div><div class="line">-----END RSA PRIVATE KEY-----`)</div><div class="line"></div><div class="line">var publicKey = []byte(`-----BEGIN PUBLIC KEY-----</div><div class="line">MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCQRttulLHUA3DkckkD7Bco5fY0</div><div class="line">nBDe8RlDZuIV2pu3Ry4qgZNLd7OiYkgTcow0LIXeW4HpLJZI9oxCS3p4Y+w3AAWO</div><div class="line">jmpPXZfc3NAiW0iboLa6qld0TfWogHurC2ArSkONEGzGzdgZrBUDGt8s+sdKmRxx</div><div class="line">LjPiWq1HQhmywNv3BQIDAQAB</div><div class="line">-----END PUBLIC KEY-----`)</div><div class="line"></div><div class="line">func main()  &#123;</div><div class="line"></div><div class="line"></div><div class="line">	data := []byte(&quot;hello world&quot;)</div><div class="line"></div><div class="line">	cry := RSAEncrypt(data)</div><div class="line"></div><div class="line">	fmt.Println(hex.EncodeToString(cry))</div><div class="line"></div><div class="line"></div><div class="line">	ori := RSADecrypt(cry)</div><div class="line">	fmt.Println(string(ori))</div><div class="line"></div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">func RSAEncrypt(plaintxt []byte) []byte  &#123;</div><div class="line"></div><div class="line">	//公钥加密</div><div class="line">	block, _:= pem.Decode(publicKey)</div><div class="line"></div><div class="line">	//解析公钥</div><div class="line">	pubInterface, _ := x509.ParsePKIXPublicKey(block.Bytes)</div><div class="line"></div><div class="line">	//加载公钥</div><div class="line">	pub := pubInterface.(*rsa.PublicKey)</div><div class="line"></div><div class="line">	//加密明文</div><div class="line">	bits,_ := rsa.EncryptPKCS1v15(rand.Reader, pub, plaintxt)</div><div class="line"></div><div class="line">	//bits为最终的密文</div><div class="line">	return bits</div><div class="line">&#125;</div><div class="line"></div><div class="line">func RSADecrypt(cryptTxt []byte) []byte  &#123;</div><div class="line"></div><div class="line">	block,_:= pem.Decode(privateKey)</div><div class="line"></div><div class="line">	priv,_:= x509.ParsePKCS1PrivateKey(block.Bytes)</div><div class="line"></div><div class="line">	bits,_ := rsa.DecryptPKCS1v15(rand.Reader, priv, cryptTxt)</div><div class="line"></div><div class="line">	return bits</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">4bf96c2a3d83a71745ebc15441046f2ca0bc2cffab73a0a452bcb5c3b58ee717585e779df5046a31f71a6abf650e097f86e4ee95cb14ddd121794763a556987a965be2ec9eb47ff1cf17adcc166bc349a2471f24b924d50927b41bb61d4c0f357949a05e1f00db870582e00e7234e35923e6f1eae3021892590458af3b790f8a</div><div class="line">hello world</div></pre></td></tr></table></figure></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;什么是RSA&quot;&gt;&lt;a href=&quot;#什么是RSA&quot; class=&quot;headerlink&quot; title=&quot;什么是RSA&quot;&gt;&lt;/a&gt;什么是RSA&lt;/h2&gt;&lt;p&gt;RSA是一种公钥密码算法，它的名字是由它的三位开发者，即Ron Rivest、Adi Shamir 和 Leonard Adleman的姓氏的首字母组成的( Rivest-Shamir-Adleman )。&lt;/p&gt;
+&lt;p&gt;RSA可以被用于公钥密码和数字签名。&lt;/p&gt;
+&lt;h2 id=&quot;RSA加密&quot;&gt;&lt;a href=&quot;#RSA加密&quot; class=&quot;headerlink&quot; title=&quot;RSA加密&quot;&gt;&lt;/a&gt;RSA加密&lt;/h2&gt;&lt;p&gt;在RSA中，明文、密钥和密文都是数字。RSA的加密过程可以用下列公式来表达：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;密文=明文&lt;sup&gt;E&lt;/sup&gt; mod N&lt;/strong&gt; (RSA加密)&lt;/p&gt;
+&lt;p&gt;RSA的密文是对代表明文的数字的E次方求mod N的结果。换句话说，就是将&lt;br&gt;明文和自己做E次乘法,然后将其结果除以N求余数，这个余数就是密文。&lt;/p&gt;
+&lt;p&gt;加密公式中出现的两个数&lt;code&gt;E&lt;/code&gt;和 &lt;code&gt;N&lt;/code&gt;，到底都是什么数呢? RSA的加密是求明文的&lt;br&gt;&lt;code&gt;E&lt;/code&gt;次方mod &lt;code&gt;N&lt;/code&gt;，因此只要知道E和N这两个数，任何人都可以完成加密的运算。所以说，&lt;code&gt;E&lt;/code&gt; 和 &lt;code&gt;N&lt;/code&gt;是RSA加密的密钥，也就是说，&lt;code&gt;E&lt;/code&gt; 和 &lt;code&gt;N&lt;/code&gt;的组合就是公钥。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="加密算法" scheme="http://gcblog/github.io/categories/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"/>
+    
+    
+      <category term="非对称加密" scheme="http://gcblog/github.io/tags/%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86/"/>
+    
+      <category term="RSA" scheme="http://gcblog/github.io/tags/RSA/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>对称加密算法AES原理及实现</title>
+    <link href="http://gcblog/github.io/2018/06/27/%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95AES%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/"/>
+    <id>http://gcblog/github.io/2018/06/27/对称加密算法AES原理及实现/</id>
+    <published>2018-06-27T10:52:14.000Z</published>
+    <updated>2018-06-27T10:53:55.826Z</updated>
+    
+    <content type="html"><![CDATA[<p>AES是作为DES的替代标准出现的，全称Advanced Encryption Standard，即：高级加密标准。AES加密算法，经历了公开的选拔，最终2000年，由比利时密码学家Joan Daemen和Vincent Rijmen设计的Rijndael算法被选中，成为了AES标准。<br>　　AES明文分组长度为128位，即16个字节，密钥长度可以为16个字节、24个字节、或32个字节，即128位密钥、192位密钥、或256位密钥。<br>　　<br><a id="more"></a>
+　　</p>
+<h2 id="总体结构"><a href="#总体结构" class="headerlink" title="总体结构"></a>总体结构</h2><p>AES中没有使用Feistel网络，其结构称为SPN结构。<br>　　<br>和DES相同，AES也由多个轮组成，其中每个轮分为SubBytes、ShiftRows、MixColumns、AddRoundKey 4个步骤，即：字节代替、行移位、列混淆和轮密钥加。根据密钥长度不同，所需轮数也不同，128位、192位、256位密钥，分别需要10轮、12轮和14轮。第1轮之前有一次AddRoundKey，即轮密钥加，可以视为第0轮；之后1至N-1轮，执行SubBytes、ShiftRows、MixColumns、AddRoundKey；最后一轮仅包括：SubBytes、MixColumns、AddRoundKey。<br>　　<br>AES总体结构示意图：<br>　　<br><img src="http://olgjbx93m.bkt.clouddn.com/201801010001.png" alt="结构示意图"></p>
+<h2 id="分组密码"><a href="#分组密码" class="headerlink" title="分组密码"></a>分组密码</h2><p>密码算法可以分为分组密码和流密码两种</p>
+<ul>
+<li><p><strong>分组密码（block cipher）</strong>是每次只能处理特定长度的一块数据的一类密码算法，这里的“一块”就称为分组（block）。一个分组的比特数就称为分组长度（block lenght）。</p>
+<p>  例如 DES和3DES的分组长度都是64比特。AES的分组长度为128比特。</p>
+</li>
+<li><p><strong>流密码（stream cipher）</strong>是对数据流进行连续处理的一类密码算法。流密码中一般以1比特、8比特、或32比特等为单位进行加密和解密。</p>
+</li>
+</ul>
+<p>分组密码处理完一个分组就结束了，因此不需要通过内部状态来记录加密的进度；相对地，流密码是对一串数据进行连续处理，因此需要保持内部状态。</p>
+<h2 id="模式"><a href="#模式" class="headerlink" title="模式"></a>模式</h2><p>分组密码算法只能加密固定长度的分组，但是我们需要加密的明文长度可能会超过分组密码的分组长度，这时就需要对分组密码算法进行迭代，以便将一段很长的明文全部加密。而迭代的方法就称为分组密码的模式（mode）。</p>
+<ul>
+<li>ECB模式：Electronic CodeBook mode（电子密码模式）</li>
+<li>CBC模式：Cipher Block Chaining mode（密码分组链接模式）</li>
+<li>CFB模式：Cipher FeedBack mode（密文反馈模式）</li>
+<li>OFB模式：Output FeedBack mode（输出反馈模式）</li>
+<li>CTR模式：CounTeR mode（计数器模式）</li>
+</ul>
+<p>ECB模式存在很高的风险，下面举例后面4中模式的使用.<br>加密的过程中使用了随机流，所以每次加密的密文都不一样</p>
+<h3 id="CBC模式"><a href="#CBC模式" class="headerlink" title="CBC模式"></a>CBC模式</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div></pre></td><td class="code"><pre><div class="line">func main() &#123;</div><div class="line"></div><div class="line"></div><div class="line">	key := &quot;1234567890asdfgh&quot;</div><div class="line">	data := &quot;hollo, world!&quot;</div><div class="line"></div><div class="line">	cry := AesCBCEncrypt([]byte(data), []byte(key))</div><div class="line">	fmt.Println(hex.EncodeToString(cry))</div><div class="line"></div><div class="line">	oriData := AESCBCDECriypt(cry, []byte(key))</div><div class="line">	fmt.Println(string(oriData))</div><div class="line"></div><div class="line">&#125;</div><div class="line">// AES也是对称加密 AES 是 DES 的替代品</div><div class="line">// AES 密钥长度 只能是 16、24、32 字节</div><div class="line">//加密</div><div class="line">func AesCBCEncrypt(org []byte, key []byte) []byte  &#123;</div><div class="line"></div><div class="line">	//校验密钥</div><div class="line">	block,_ := aes.NewCipher(key)</div><div class="line"></div><div class="line">	//按照公钥长度 进行分组补码</div><div class="line">	org = PKCS7Padding(org, block.BlockSize())</div><div class="line"></div><div class="line">	//设置CBC的加密模式</div><div class="line">	blockMode := cipher.NewCBCEncrypter(block, key)</div><div class="line"></div><div class="line">	//加密处理</div><div class="line">	crypted := make([]byte, len(org))</div><div class="line">	blockMode.CryptBlocks(crypted, org)</div><div class="line"></div><div class="line">	return crypted</div><div class="line">&#125;</div><div class="line"></div><div class="line">//解密</div><div class="line">func AESCBCDECriypt(criptText []byte, key []byte) []byte  &#123;</div><div class="line"></div><div class="line">	//校验key的有效性</div><div class="line">	block,_:=aes.NewCipher(key)</div><div class="line">	//通过CBC模式解密</div><div class="line">	blockMode:=cipher.NewCBCDecrypter(block,key)</div><div class="line"></div><div class="line">	//实现解密</div><div class="line">	origData:=make([]byte,len(criptText))</div><div class="line">	blockMode.CryptBlocks(origData,criptText)</div><div class="line"></div><div class="line">	//去码</div><div class="line">	origData = PKCS7UnPadding(origData)</div><div class="line">	return origData</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">//PKCS5 分组长度只能为8</div><div class="line">//PKCs7 分组长度 1- 255</div><div class="line"></div><div class="line">func PKCS7Padding(org []byte, blockSize int) []byte  &#123;</div><div class="line"></div><div class="line">	pad := blockSize-len(org)%blockSize</div><div class="line">	padArr := bytes.Repeat([]byte&#123;byte(pad)&#125;, pad)</div><div class="line">	return  append(org, padArr...)</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">func PKCS7UnPadding(cryptText []byte) []byte  &#123;</div><div class="line">	</div><div class="line">	length := len(cryptText)</div><div class="line">	lastByte := cryptText[length - 1]</div><div class="line">	return cryptText[:length-int(lastByte)]</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ffa22c136fd3e944255d43e255c98ecc</div><div class="line">hollo, world!</div></pre></td></tr></table></figure></p>
+<h3 id="CFB模式"><a href="#CFB模式" class="headerlink" title="CFB模式"></a>CFB模式</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div></pre></td><td class="code"><pre><div class="line">func main()  &#123;</div><div class="line"></div><div class="line"></div><div class="line">	key := []byte(&quot;1234567890asdfgh&quot;)</div><div class="line">	data := []byte(&quot;abc hello world!&quot;)</div><div class="line">	cry := AESCFBEncrypt(data, key)</div><div class="line"></div><div class="line">	fmt.Println(hex.EncodeToString(cry))</div><div class="line">	//fmt.Println(base64.StdEncoding.EncodeToString(cry))</div><div class="line"></div><div class="line">	ori := AESCFBDecrypt(cry, key)</div><div class="line">	fmt.Println(string(ori))</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">//CFB分组模式加密</div><div class="line">func AESCFBEncrypt(oriData []byte, key []byte) []byte  &#123;</div><div class="line"></div><div class="line">	//校验密钥</div><div class="line">	block,_ := aes.NewCipher(key)</div><div class="line"></div><div class="line">	//拆分iv和密文</div><div class="line">	cipherText := make([]byte, aes.BlockSize + len(oriData))</div><div class="line"></div><div class="line">	iv := cipherText[:aes.BlockSize]</div><div class="line"></div><div class="line">	//向iv切片数组初始化 reader（随机内存流）</div><div class="line">	io.ReadFull(rand.Reader, iv)</div><div class="line"></div><div class="line">	//设置加密模式CFB</div><div class="line">	stream := cipher.NewCFBEncrypter(block,iv)</div><div class="line"></div><div class="line">	//加密</div><div class="line">	stream.XORKeyStream(cipherText[aes.BlockSize:], oriData)</div><div class="line"></div><div class="line">	return  cipherText</div><div class="line"></div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">//解密</div><div class="line">func AESCFBDecrypt(cryptText []byte, key []byte) []byte &#123;</div><div class="line"></div><div class="line">	//校验密钥</div><div class="line">	block,_ := aes.NewCipher(key)</div><div class="line"></div><div class="line">	//拆分iv 和密文</div><div class="line">	iv := cryptText[:aes.BlockSize]</div><div class="line">	cipherText := cryptText[aes.BlockSize:]</div><div class="line"></div><div class="line"></div><div class="line">	//设置解密模式</div><div class="line">	stream := cipher.NewCFBDecrypter(block, iv)</div><div class="line"></div><div class="line">	var des = make([]byte, len(cipherText))</div><div class="line"></div><div class="line">	//解密</div><div class="line">	stream.XORKeyStream(des, cipherText)</div><div class="line"></div><div class="line">	return des</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">92e5c5d7bc54b337a7edbb548ee1a62c8c3c079b71f465a3f0566c0d74b8d513</div><div class="line">abc hello world!</div></pre></td></tr></table></figure></p>
+<h3 id="OFB模式"><a href="#OFB模式" class="headerlink" title="OFB模式"></a>OFB模式</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line">func main()  &#123;</div><div class="line"></div><div class="line">	key := []byte(&quot;1234567890asdfgh&quot;)</div><div class="line">	data := []byte(&quot;abcd hello world!&quot;)</div><div class="line">	cry := AESOFBEncrypt(data, key)</div><div class="line"></div><div class="line">	fmt.Println(hex.EncodeToString(cry))</div><div class="line"></div><div class="line">	ori := AESOFBDecrypt(cry, key)</div><div class="line">	fmt.Println(string(ori))</div><div class="line">&#125;</div><div class="line"></div><div class="line">//AES OFB分组加密模式  CTR也是一样</div><div class="line">func AESOFBEncrypt(plaintxt []byte, key []byte) []byte  &#123;</div><div class="line"></div><div class="line">	//校验密钥</div><div class="line">	block,_ := aes.NewCipher(key)</div><div class="line"></div><div class="line">	cipherText := make([]byte, aes.BlockSize + len(plaintxt))</div><div class="line"></div><div class="line">	iv := cipherText[:aes.BlockSize]</div><div class="line"></div><div class="line">	//向iv切片数组初始化 reader（随机内存流）</div><div class="line">	io.ReadFull(rand.Reader, iv)</div><div class="line"></div><div class="line">	//设置加密模式CFB</div><div class="line">	stream := cipher.NewOFB(block,iv)</div><div class="line"></div><div class="line">	//加密</div><div class="line">	stream.XORKeyStream(cipherText[aes.BlockSize:], plaintxt)</div><div class="line"></div><div class="line">	return  cipherText</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">//解密</div><div class="line">func AESOFBDecrypt(cryptText []byte, key []byte) []byte &#123;</div><div class="line"></div><div class="line">	//校验密钥</div><div class="line">	block,_ := aes.NewCipher(key)</div><div class="line"></div><div class="line">	//拆分iv 和 密文</div><div class="line">	iv := cryptText[:aes.BlockSize]</div><div class="line">	plaintxt := make([]byte, len(cryptText)-aes.BlockSize)</div><div class="line"></div><div class="line"></div><div class="line">	//设置解密模式</div><div class="line">	stream := cipher.NewOFB(block, iv)</div><div class="line"></div><div class="line">	//解密</div><div class="line">	stream.XORKeyStream(plaintxt, cryptText[aes.BlockSize:])</div><div class="line"></div><div class="line">	return plaintxt</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">9ee409f8513e3fcba2f1ba726da0b2a5d80251efa073544220b44c8e8fee18fce4</div><div class="line">abcd hello world!</div></pre></td></tr></table></figure></p>
+<h3 id="CTR模式"><a href="#CTR模式" class="headerlink" title="CTR模式"></a>CTR模式</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line">func main()  &#123;</div><div class="line"></div><div class="line">	key := []byte(&quot;1234567890asdfgh&quot;)</div><div class="line">	data := []byte(&quot;abcd hello world!&quot;)</div><div class="line">	cry := AESCTREncrypt(data, key)</div><div class="line"></div><div class="line">	fmt.Println(hex.EncodeToString(cry))</div><div class="line"></div><div class="line">	ori := AESCTRDecrypt(cry, key)</div><div class="line">	fmt.Println(string(ori))</div><div class="line">&#125;</div><div class="line"></div><div class="line">//AES CTR分组加密模式</div><div class="line">func AESCTREncrypt(plaintxt []byte, key []byte) []byte  &#123;</div><div class="line"></div><div class="line">	//校验密钥</div><div class="line">	block,_ := aes.NewCipher(key)</div><div class="line"></div><div class="line">	cipherText := make([]byte, aes.BlockSize + len(plaintxt))</div><div class="line"></div><div class="line">	iv := cipherText[:aes.BlockSize]</div><div class="line"></div><div class="line">	//向iv切片数组初始化 reader（随机内存流）</div><div class="line">	io.ReadFull(rand.Reader, iv)</div><div class="line"></div><div class="line">	//设置加密模式CTR</div><div class="line">	stream := cipher.NewCTR(block,iv)</div><div class="line"></div><div class="line">	//加密</div><div class="line">	stream.XORKeyStream(cipherText[aes.BlockSize:], plaintxt)</div><div class="line"></div><div class="line">	return  cipherText</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">//解密</div><div class="line">func AESCTRDecrypt(cryptText []byte, key []byte) []byte &#123;</div><div class="line"></div><div class="line">	//校验密钥</div><div class="line">	block,_ := aes.NewCipher(key)</div><div class="line"></div><div class="line">	//拆分iv 和 密文</div><div class="line">	iv := cryptText[:aes.BlockSize]</div><div class="line">	plaintxt := make([]byte, len(cryptText)-aes.BlockSize)</div><div class="line"></div><div class="line"></div><div class="line">	//设置解密模式</div><div class="line">	stream := cipher.NewCTR(block, iv)</div><div class="line"></div><div class="line">	//解密</div><div class="line">	stream.XORKeyStream(plaintxt, cryptText[aes.BlockSize:])</div><div class="line"></div><div class="line">	return plaintxt</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">c645da2d14896d2b75d41a538a5a3efe3c7721f51f2eb2e92b0c5b8ba141caf534</div><div class="line">abcd hello world!</div></pre></td></tr></table></figure></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;AES是作为DES的替代标准出现的，全称Advanced Encryption Standard，即：高级加密标准。AES加密算法，经历了公开的选拔，最终2000年，由比利时密码学家Joan Daemen和Vincent Rijmen设计的Rijndael算法被选中，成为了AES标准。&lt;br&gt;　　AES明文分组长度为128位，即16个字节，密钥长度可以为16个字节、24个字节、或32个字节，即128位密钥、192位密钥、或256位密钥。&lt;br&gt;　　&lt;br&gt;
+    
+    </summary>
+    
+      <category term="加密算法" scheme="http://gcblog/github.io/categories/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"/>
+    
+    
+      <category term="AES" scheme="http://gcblog/github.io/tags/AES/"/>
+    
+      <category term="对称加密" scheme="http://gcblog/github.io/tags/%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86/"/>
+    
+  </entry>
+  
+  <entry>
     <title>对称加密算法DES原理及实现</title>
     <link href="http://gcblog/github.io/2018/06/26/%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95DES%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/"/>
     <id>http://gcblog/github.io/2018/06/26/对称加密算法DES原理及实现/</id>
     <published>2018-06-26T11:24:12.000Z</published>
-    <updated>2018-06-26T11:25:42.175Z</updated>
+    <updated>2018-06-27T10:50:44.651Z</updated>
     
     <content type="html"><![CDATA[<h2 id="DES加密算法"><a href="#DES加密算法" class="headerlink" title="DES加密算法"></a>DES加密算法</h2><p>DES加密算法，为对称加密算法中的一种。70年代初由IBM研发，后1977年被美国国家标准局采纳为数据加密标准，即DES全称的由来：Data Encryption Standard。对称加密算法，是相对于非对称加密算法而言的。两者区别在于，对称加密在加密和解密时使用同一密钥，而非对称加密在加密和解密时使用不同的密钥，即公钥和私钥。常见的DES、3DES、AES均为对称加密算法，而RSA、椭圆曲线加密算法，均为非对称加密算法。<br> <br>　　DES是以64比特的明文为一个单位来进行加密的，超过64比特的数据，要求按固定的64比特的大小分组，分组有很多模式，后续单独总结，暂时先介绍DES加密算法。DES使用的密钥长度为64比特，但由于每隔7个比特设置一个奇偶校验位，因此其密钥长度实际为56比特。奇偶校验为最简单的错误检测码，即根据一组二进制代码中1的个数是奇数或偶数来检测错误。<br>　　<br><a id="more"></a></p>
 <h2 id="Feistel网络"><a href="#Feistel网络" class="headerlink" title="Feistel网络"></a>Feistel网络</h2><p>DES的基本结构，由IBM公司的Horst Feistel设计，因此称Feistel网络。在Feistel网络中，加密的每个步骤称为轮，经过初始置换后的64位明文，进行了16轮Feistel轮的加密过程，最后经过终结置换后形成最终的64位密文。如下为Feistel网络的示意图：</p>
@@ -54,7 +160,7 @@
       <category term="加密算法" scheme="http://gcblog/github.io/categories/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"/>
     
     
-      <category term="加密算法" scheme="http://gcblog/github.io/tags/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"/>
+      <category term="对称加密" scheme="http://gcblog/github.io/tags/%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86/"/>
     
       <category term="DES" scheme="http://gcblog/github.io/tags/DES/"/>
     
@@ -1032,71 +1138,6 @@ NSLog(@&quot;-----%@&quot;, filePaths);
   </entry>
   
   <entry>
-    <title>iOS语音识别</title>
-    <link href="http://gcblog/github.io/2016/11/16/IOS10%E8%AF%AD%E9%9F%B3%E8%AF%86%E5%88%AB%E8%AF%A6%E8%A7%A3/"/>
-    <id>http://gcblog/github.io/2016/11/16/IOS10语音识别详解/</id>
-    <published>2016-11-16T15:05:20.000Z</published>
-    <updated>2016-11-17T14:57:21.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>公司项目需要实现语音搜索，正好记录一下这个iOS10新出的API。</p>
-<pre><code>iOS10是一个变化比价大的版本，开放了很多接口，这样也更方便开发者自定义各种功能。本文主要讲解一下新增的Speech框架，有了这个框架，我们想要为自己的app增加语音识别功能，不要依赖第三方的服务，几十行代码就可以轻松搞定。demo地址在文章末尾。
-</code></pre><h3 id="一：基本配置"><a href="#一：基本配置" class="headerlink" title="一：基本配置"></a>一：基本配置</h3><ul>
-<li>Xcode8，iOS10系统真机</li>
-<li>导入头文件：OC <code>#import&lt;Speech/Speech.h&gt;</code>   swift <code>import Speech</code></li>
-<li>配置info.plist文件:配置两个权限，语音识别和麦克风</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;key&gt;NSMicrophoneUsageDescription&lt;/key&gt;</div><div class="line">    &lt;string&gt;Your microphone will be used to record your speech when you press the &quot;Start Recording&quot; button.&lt;/string&gt;</div><div class="line">    </div><div class="line">    &lt;key&gt;NSSpeechRecognitionUsageDescription&lt;/key&gt;</div><div class="line">    &lt;string&gt;Speech recognition will be used to determine which words you speak into this device&apos;s microphone.&lt;/string&gt;</div></pre></td></tr></table></figure>
-<h3 id="二：用到的几个类"><a href="#二：用到的几个类" class="headerlink" title="二：用到的几个类"></a>二：用到的几个类</h3><p><code>AVAudioEngine</code>                           语音引擎，负责提供语音输入<br><code>SFSpeechAudioBufferRecognitionRequest</code>   处理语音识别请求<br><code>SFSpeechRecognizer</code>                       语音识别器<br><code>SFSpeechRecognitionTask</code>                 输出语音识别对象的结果<br><code>NSLocale</code>                                语言类型<br>语音识别一共就用到了这几个类，整体的流程也容易理解，语音识别器通过语音引擎，处理语音识别请求，把结果交给<code>SFSpeechRecognitionTask</code>处理，最后输出文字。<br><code>SFSpeechRecognizer</code> 自身有几个代理方法，实际上，如果只是将语音转化成文字，是不需要这几个代理方法的。<br><a id="more"></a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">//当开始检测音频源中的语音时首先调用此方法</div><div class="line">-(void)speechRecognitionDidDetectSpeech:(SFSpeechRecognitionTask *)task</div><div class="line">&#123;</div><div class="line">  </div><div class="line">&#125;</div><div class="line">//当识别出一条可用的信息后 会调用</div><div class="line">/*需要注意，apple的语音识别服务会根据提供的音频源识别出多个可能的结果 每有一条结果可用 都会调用此方法 */</div><div class="line">-(void)speechRecognitionTask:(SFSpeechRecognitionTask *)task didHypothesizeTranscription:(SFTranscription *)transcription</div><div class="line">&#123;</div><div class="line">   </div><div class="line">&#125;</div><div class="line">//当识别完成所有可用的结果后调用</div><div class="line">- (void)speechRecognitionTask:(SFSpeechRecognitionTask *)task didFinishRecognition:(SFSpeechRecognitionResult *)recognitionResult</div><div class="line">&#123;</div><div class="line">    </div><div class="line">&#125;</div><div class="line">//当不再接受音频输入时调用 即开始处理语音识别任务时调用</div><div class="line">- (void)speechRecognitionTaskFinishedReadingAudio:(SFSpeechRecognitionTask *)task</div><div class="line">&#123;</div><div class="line">    </div><div class="line">&#125;</div><div class="line">//当语音识别任务被取消时调用</div><div class="line">- (void)speechRecognitionTaskWasCancelled:(SFSpeechRecognitionTask *)task</div><div class="line">&#123;</div><div class="line">    </div><div class="line">&#125;</div><div class="line">//语音识别任务完成时被调用</div><div class="line">- (void)speechRecognitionTask:(SFSpeechRecognitionTask *)task didFinishSuccessfully:(BOOL)successfully</div><div class="line">&#123;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h3 id="三：重点代码"><a href="#三：重点代码" class="headerlink" title="三：重点代码"></a>三：重点代码</h3><p>有两点需要注意：</p>
-<ul>
-<li>语音识别会很耗电以及会使用很多数据</li>
-<li>语音识别一次只持续大概一分钟的时间</li>
-</ul>
-<p>我先定义了这几个属性</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">@property (nonatomic, strong) AVAudioEngine         *audioEngine;</div><div class="line">@property (nonatomic, strong) SFSpeechRecognizer    *speechRecognizer;</div><div class="line">@property (nonatomic, strong) SFSpeechAudioBufferRecognitionRequest     *recognitionRequest;</div><div class="line">@property (nonatomic, strong) SFSpeechRecognitionTask   *recognitionTask;</div><div class="line">@property (nonatomic, strong) NSLocale                  *locale;</div></pre></td></tr></table></figure>
-<ol>
-<li><p>语音权限的判断</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">[SFSpeechRecognizer requestAuthorization:^(SFSpeechRecognizerAuthorizationStatus status) &#123;</div><div class="line">        BOOL isAuthorized = NO;</div><div class="line">       switch (status) &#123;</div><div class="line">                //结果未知 用户尚未进行选择</div><div class="line">            case SFSpeechRecognizerAuthorizationStatusNotDetermined:</div><div class="line">                isAuthorized = NO;</div><div class="line">                break;</div><div class="line">                //用户拒绝授权语音识别</div><div class="line">            case SFSpeechRecognizerAuthorizationStatusDenied:</div><div class="line">                isAuthorized = NO;</div><div class="line">                break;</div><div class="line">                //设备不支持语音识别功能</div><div class="line">            case SFSpeechRecognizerAuthorizationStatusRestricted:</div><div class="line">                isAuthorized = NO;</div><div class="line">                break;</div><div class="line">                //用户授权语音识别</div><div class="line">            case SFSpeechRecognizerAuthorizationStatusAuthorized:</div><div class="line">                isAuthorized = YES;</div><div class="line">                </div><div class="line">                break;</div><div class="line">                </div><div class="line">            default:</div><div class="line">                break;</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        if (callback) &#123;</div><div class="line">            callback(isAuthorized, status);</div><div class="line">        &#125;</div><div class="line">    &#125;];</div></pre></td></tr></table></figure>
-</li>
-<li><p>将语音引擎得到的语音数据添加到语音识别的请求中，这个过程也就是开始录音后的流程</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">AVAudioFormat *recordingFormat = [[self.audioEngine inputNode] outputFormatForBus:0];</div><div class="line">    [[self.audioEngine inputNode] installTapOnBus:0 bufferSize:1024 format:recordingFormat block:^(AVAudioPCMBuffer * _Nonnull buffer, AVAudioTime * _Nonnull when) &#123;</div><div class="line">        [self.recognitionRequest appendAudioPCMBuffer:buffer];</div><div class="line">    &#125;];</div></pre></td></tr></table></figure>
-</li>
-<li><p><code>SFSpeechRecognitionTask</code> 把上一过程中得到的语音请求转化成文字，这个过程是试试进行的。</p>
-</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">self.recognitionTask = [self.speechRecognizer recognitionTaskWithRequest:self.recognitionRequest resultHandler:^(SFSpeechRecognitionResult * _Nullable result, NSError * _Nullable error) &#123;</div><div class="line">        BOOL isFinal = NO;</div><div class="line">        NSString *bestResult = [[result bestTranscription] formattedString];</div><div class="line">        isFinal = result.isFinal;</div><div class="line">        if (error || isFinal) &#123;</div><div class="line">            [self endTask];</div><div class="line">            if (self.delegate &amp;&amp; [self.delegate respondsToSelector:@selector(recognizeFail:)]) &#123;</div><div class="line">                [self.delegate recognizeFail:error];</div><div class="line">            &#125;</div><div class="line">        &#125; else &#123;</div><div class="line">            if (self.delegate &amp;&amp; [self.delegate respondsToSelector:@selector(recognizeSuccess:)]) &#123;</div><div class="line">                [self.delegate recognizeSuccess:bestResult];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;];</div></pre></td></tr></table></figure>
-<h3 id="四：提取录音文件中的文字"><a href="#四：提取录音文件中的文字" class="headerlink" title="四：提取录音文件中的文字"></a>四：提取录音文件中的文字</h3><ol>
-<li>也需要先获取用户的授权，授权代码与上面一致。</li>
-<li>对文件的处理相对较为简单<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">//初始化一个识别器</div><div class="line">SFSpeechRecognizer *recognizer = [[SFSpeechRecognizer alloc] initWithLocale:[NSLocale localeWithLocaleIdentifier:@&quot;zh_CN&quot;]];</div><div class="line">//初始化mp3的url</div><div class="line">NSURL *url = [[NSBundle mainBundle] URLForResource:@&quot;test.mp3&quot; withExtension:nil];</div><div class="line">//初始化一个识别的请求</div><div class="line">SFSpeechURLRecognitionRequest *request = [[SFSpeechURLRecognitionRequest alloc] initWithURL:url];</div><div class="line">//发起请求</div><div class="line">[recognizer recognitionTaskWithRequest:request resultHandler:^(SFSpeechRecognitionResult * _Nullable result, NSError * _Nullable error) &#123;</div><div class="line">    if(error != nil)</div><div class="line">    &#123;</div><div class="line">        NSLog(@&quot;识别错误:%@&quot;,error);</div><div class="line">    &#125;</div><div class="line">    NSString *resultString = result.bestTranscription.formattedString;</div><div class="line">    NSLog(@&quot;%@&quot;,resultString);</div><div class="line">    </div><div class="line">&#125;];</div></pre></td></tr></table></figure>
-</li>
-</ol>
-<p><a href="https://github.com/suifengqjn/IOS10Speech" target="_blank" rel="external">github地址：https://github.com/suifengqjn/IOS10Speech</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;公司项目需要实现语音搜索，正好记录一下这个iOS10新出的API。&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;iOS10是一个变化比价大的版本，开放了很多接口，这样也更方便开发者自定义各种功能。本文主要讲解一下新增的Speech框架，有了这个框架，我们想要为自己的app增加语音识别功能，不要依赖第三方的服务，几十行代码就可以轻松搞定。demo地址在文章末尾。
-&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;一：基本配置&quot;&gt;&lt;a href=&quot;#一：基本配置&quot; class=&quot;headerlink&quot; title=&quot;一：基本配置&quot;&gt;&lt;/a&gt;一：基本配置&lt;/h3&gt;&lt;ul&gt;
-&lt;li&gt;Xcode8，iOS10系统真机&lt;/li&gt;
-&lt;li&gt;导入头文件：OC &lt;code&gt;#import&amp;lt;Speech/Speech.h&amp;gt;&lt;/code&gt;   swift &lt;code&gt;import Speech&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;配置info.plist文件:配置两个权限，语音识别和麦克风&lt;/li&gt;
-&lt;/ul&gt;
-&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;&amp;lt;key&amp;gt;NSMicrophoneUsageDescription&amp;lt;/key&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;lt;string&amp;gt;Your microphone will be used to record your speech when you press the &amp;quot;Start Recording&amp;quot; button.&amp;lt;/string&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;lt;key&amp;gt;NSSpeechRecognitionUsageDescription&amp;lt;/key&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;lt;string&amp;gt;Speech recognition will be used to determine which words you speak into this device&amp;apos;s microphone.&amp;lt;/string&amp;gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;h3 id=&quot;二：用到的几个类&quot;&gt;&lt;a href=&quot;#二：用到的几个类&quot; class=&quot;headerlink&quot; title=&quot;二：用到的几个类&quot;&gt;&lt;/a&gt;二：用到的几个类&lt;/h3&gt;&lt;p&gt;&lt;code&gt;AVAudioEngine&lt;/code&gt;                           语音引擎，负责提供语音输入&lt;br&gt;&lt;code&gt;SFSpeechAudioBufferRecognitionRequest&lt;/code&gt;   处理语音识别请求&lt;br&gt;&lt;code&gt;SFSpeechRecognizer&lt;/code&gt;                       语音识别器&lt;br&gt;&lt;code&gt;SFSpeechRecognitionTask&lt;/code&gt;                 输出语音识别对象的结果&lt;br&gt;&lt;code&gt;NSLocale&lt;/code&gt;                                语言类型&lt;br&gt;语音识别一共就用到了这几个类，整体的流程也容易理解，语音识别器通过语音引擎，处理语音识别请求，把结果交给&lt;code&gt;SFSpeechRecognitionTask&lt;/code&gt;处理，最后输出文字。&lt;br&gt;&lt;code&gt;SFSpeechRecognizer&lt;/code&gt; 自身有几个代理方法，实际上，如果只是将语音转化成文字，是不需要这几个代理方法的。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="iOS技术" scheme="http://gcblog/github.io/categories/iOS%E6%8A%80%E6%9C%AF/"/>
-    
-    
-      <category term="iOS" scheme="http://gcblog/github.io/tags/iOS/"/>
-    
-      <category term="语音识别" scheme="http://gcblog/github.io/tags/%E8%AF%AD%E9%9F%B3%E8%AF%86%E5%88%AB/"/>
-    
-  </entry>
-  
-  <entry>
     <title>自定义刷新控件</title>
     <link href="http://gcblog/github.io/2016/11/16/%E8%87%AA%E5%AE%9A%E4%B9%89%E5%88%B7%E6%96%B0%E6%8E%A7%E4%BB%B6/"/>
     <id>http://gcblog/github.io/2016/11/16/自定义刷新控件/</id>
@@ -1204,6 +1245,71 @@ NSLog(@&quot;-----%@&quot;, filePaths);
       <category term="iOS" scheme="http://gcblog/github.io/tags/iOS/"/>
     
       <category term="UIRefreshControl" scheme="http://gcblog/github.io/tags/UIRefreshControl/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>iOS语音识别</title>
+    <link href="http://gcblog/github.io/2016/11/16/IOS10%E8%AF%AD%E9%9F%B3%E8%AF%86%E5%88%AB%E8%AF%A6%E8%A7%A3/"/>
+    <id>http://gcblog/github.io/2016/11/16/IOS10语音识别详解/</id>
+    <published>2016-11-16T15:05:20.000Z</published>
+    <updated>2016-11-17T14:57:21.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>公司项目需要实现语音搜索，正好记录一下这个iOS10新出的API。</p>
+<pre><code>iOS10是一个变化比价大的版本，开放了很多接口，这样也更方便开发者自定义各种功能。本文主要讲解一下新增的Speech框架，有了这个框架，我们想要为自己的app增加语音识别功能，不要依赖第三方的服务，几十行代码就可以轻松搞定。demo地址在文章末尾。
+</code></pre><h3 id="一：基本配置"><a href="#一：基本配置" class="headerlink" title="一：基本配置"></a>一：基本配置</h3><ul>
+<li>Xcode8，iOS10系统真机</li>
+<li>导入头文件：OC <code>#import&lt;Speech/Speech.h&gt;</code>   swift <code>import Speech</code></li>
+<li>配置info.plist文件:配置两个权限，语音识别和麦克风</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;key&gt;NSMicrophoneUsageDescription&lt;/key&gt;</div><div class="line">    &lt;string&gt;Your microphone will be used to record your speech when you press the &quot;Start Recording&quot; button.&lt;/string&gt;</div><div class="line">    </div><div class="line">    &lt;key&gt;NSSpeechRecognitionUsageDescription&lt;/key&gt;</div><div class="line">    &lt;string&gt;Speech recognition will be used to determine which words you speak into this device&apos;s microphone.&lt;/string&gt;</div></pre></td></tr></table></figure>
+<h3 id="二：用到的几个类"><a href="#二：用到的几个类" class="headerlink" title="二：用到的几个类"></a>二：用到的几个类</h3><p><code>AVAudioEngine</code>                           语音引擎，负责提供语音输入<br><code>SFSpeechAudioBufferRecognitionRequest</code>   处理语音识别请求<br><code>SFSpeechRecognizer</code>                       语音识别器<br><code>SFSpeechRecognitionTask</code>                 输出语音识别对象的结果<br><code>NSLocale</code>                                语言类型<br>语音识别一共就用到了这几个类，整体的流程也容易理解，语音识别器通过语音引擎，处理语音识别请求，把结果交给<code>SFSpeechRecognitionTask</code>处理，最后输出文字。<br><code>SFSpeechRecognizer</code> 自身有几个代理方法，实际上，如果只是将语音转化成文字，是不需要这几个代理方法的。<br><a id="more"></a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">//当开始检测音频源中的语音时首先调用此方法</div><div class="line">-(void)speechRecognitionDidDetectSpeech:(SFSpeechRecognitionTask *)task</div><div class="line">&#123;</div><div class="line">  </div><div class="line">&#125;</div><div class="line">//当识别出一条可用的信息后 会调用</div><div class="line">/*需要注意，apple的语音识别服务会根据提供的音频源识别出多个可能的结果 每有一条结果可用 都会调用此方法 */</div><div class="line">-(void)speechRecognitionTask:(SFSpeechRecognitionTask *)task didHypothesizeTranscription:(SFTranscription *)transcription</div><div class="line">&#123;</div><div class="line">   </div><div class="line">&#125;</div><div class="line">//当识别完成所有可用的结果后调用</div><div class="line">- (void)speechRecognitionTask:(SFSpeechRecognitionTask *)task didFinishRecognition:(SFSpeechRecognitionResult *)recognitionResult</div><div class="line">&#123;</div><div class="line">    </div><div class="line">&#125;</div><div class="line">//当不再接受音频输入时调用 即开始处理语音识别任务时调用</div><div class="line">- (void)speechRecognitionTaskFinishedReadingAudio:(SFSpeechRecognitionTask *)task</div><div class="line">&#123;</div><div class="line">    </div><div class="line">&#125;</div><div class="line">//当语音识别任务被取消时调用</div><div class="line">- (void)speechRecognitionTaskWasCancelled:(SFSpeechRecognitionTask *)task</div><div class="line">&#123;</div><div class="line">    </div><div class="line">&#125;</div><div class="line">//语音识别任务完成时被调用</div><div class="line">- (void)speechRecognitionTask:(SFSpeechRecognitionTask *)task didFinishSuccessfully:(BOOL)successfully</div><div class="line">&#123;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="三：重点代码"><a href="#三：重点代码" class="headerlink" title="三：重点代码"></a>三：重点代码</h3><p>有两点需要注意：</p>
+<ul>
+<li>语音识别会很耗电以及会使用很多数据</li>
+<li>语音识别一次只持续大概一分钟的时间</li>
+</ul>
+<p>我先定义了这几个属性</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">@property (nonatomic, strong) AVAudioEngine         *audioEngine;</div><div class="line">@property (nonatomic, strong) SFSpeechRecognizer    *speechRecognizer;</div><div class="line">@property (nonatomic, strong) SFSpeechAudioBufferRecognitionRequest     *recognitionRequest;</div><div class="line">@property (nonatomic, strong) SFSpeechRecognitionTask   *recognitionTask;</div><div class="line">@property (nonatomic, strong) NSLocale                  *locale;</div></pre></td></tr></table></figure>
+<ol>
+<li><p>语音权限的判断</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">[SFSpeechRecognizer requestAuthorization:^(SFSpeechRecognizerAuthorizationStatus status) &#123;</div><div class="line">        BOOL isAuthorized = NO;</div><div class="line">       switch (status) &#123;</div><div class="line">                //结果未知 用户尚未进行选择</div><div class="line">            case SFSpeechRecognizerAuthorizationStatusNotDetermined:</div><div class="line">                isAuthorized = NO;</div><div class="line">                break;</div><div class="line">                //用户拒绝授权语音识别</div><div class="line">            case SFSpeechRecognizerAuthorizationStatusDenied:</div><div class="line">                isAuthorized = NO;</div><div class="line">                break;</div><div class="line">                //设备不支持语音识别功能</div><div class="line">            case SFSpeechRecognizerAuthorizationStatusRestricted:</div><div class="line">                isAuthorized = NO;</div><div class="line">                break;</div><div class="line">                //用户授权语音识别</div><div class="line">            case SFSpeechRecognizerAuthorizationStatusAuthorized:</div><div class="line">                isAuthorized = YES;</div><div class="line">                </div><div class="line">                break;</div><div class="line">                </div><div class="line">            default:</div><div class="line">                break;</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        if (callback) &#123;</div><div class="line">            callback(isAuthorized, status);</div><div class="line">        &#125;</div><div class="line">    &#125;];</div></pre></td></tr></table></figure>
+</li>
+<li><p>将语音引擎得到的语音数据添加到语音识别的请求中，这个过程也就是开始录音后的流程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">AVAudioFormat *recordingFormat = [[self.audioEngine inputNode] outputFormatForBus:0];</div><div class="line">    [[self.audioEngine inputNode] installTapOnBus:0 bufferSize:1024 format:recordingFormat block:^(AVAudioPCMBuffer * _Nonnull buffer, AVAudioTime * _Nonnull when) &#123;</div><div class="line">        [self.recognitionRequest appendAudioPCMBuffer:buffer];</div><div class="line">    &#125;];</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>SFSpeechRecognitionTask</code> 把上一过程中得到的语音请求转化成文字，这个过程是试试进行的。</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">self.recognitionTask = [self.speechRecognizer recognitionTaskWithRequest:self.recognitionRequest resultHandler:^(SFSpeechRecognitionResult * _Nullable result, NSError * _Nullable error) &#123;</div><div class="line">        BOOL isFinal = NO;</div><div class="line">        NSString *bestResult = [[result bestTranscription] formattedString];</div><div class="line">        isFinal = result.isFinal;</div><div class="line">        if (error || isFinal) &#123;</div><div class="line">            [self endTask];</div><div class="line">            if (self.delegate &amp;&amp; [self.delegate respondsToSelector:@selector(recognizeFail:)]) &#123;</div><div class="line">                [self.delegate recognizeFail:error];</div><div class="line">            &#125;</div><div class="line">        &#125; else &#123;</div><div class="line">            if (self.delegate &amp;&amp; [self.delegate respondsToSelector:@selector(recognizeSuccess:)]) &#123;</div><div class="line">                [self.delegate recognizeSuccess:bestResult];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;];</div></pre></td></tr></table></figure>
+<h3 id="四：提取录音文件中的文字"><a href="#四：提取录音文件中的文字" class="headerlink" title="四：提取录音文件中的文字"></a>四：提取录音文件中的文字</h3><ol>
+<li>也需要先获取用户的授权，授权代码与上面一致。</li>
+<li>对文件的处理相对较为简单<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">//初始化一个识别器</div><div class="line">SFSpeechRecognizer *recognizer = [[SFSpeechRecognizer alloc] initWithLocale:[NSLocale localeWithLocaleIdentifier:@&quot;zh_CN&quot;]];</div><div class="line">//初始化mp3的url</div><div class="line">NSURL *url = [[NSBundle mainBundle] URLForResource:@&quot;test.mp3&quot; withExtension:nil];</div><div class="line">//初始化一个识别的请求</div><div class="line">SFSpeechURLRecognitionRequest *request = [[SFSpeechURLRecognitionRequest alloc] initWithURL:url];</div><div class="line">//发起请求</div><div class="line">[recognizer recognitionTaskWithRequest:request resultHandler:^(SFSpeechRecognitionResult * _Nullable result, NSError * _Nullable error) &#123;</div><div class="line">    if(error != nil)</div><div class="line">    &#123;</div><div class="line">        NSLog(@&quot;识别错误:%@&quot;,error);</div><div class="line">    &#125;</div><div class="line">    NSString *resultString = result.bestTranscription.formattedString;</div><div class="line">    NSLog(@&quot;%@&quot;,resultString);</div><div class="line">    </div><div class="line">&#125;];</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><a href="https://github.com/suifengqjn/IOS10Speech" target="_blank" rel="external">github地址：https://github.com/suifengqjn/IOS10Speech</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;公司项目需要实现语音搜索，正好记录一下这个iOS10新出的API。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;iOS10是一个变化比价大的版本，开放了很多接口，这样也更方便开发者自定义各种功能。本文主要讲解一下新增的Speech框架，有了这个框架，我们想要为自己的app增加语音识别功能，不要依赖第三方的服务，几十行代码就可以轻松搞定。demo地址在文章末尾。
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;一：基本配置&quot;&gt;&lt;a href=&quot;#一：基本配置&quot; class=&quot;headerlink&quot; title=&quot;一：基本配置&quot;&gt;&lt;/a&gt;一：基本配置&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;Xcode8，iOS10系统真机&lt;/li&gt;
+&lt;li&gt;导入头文件：OC &lt;code&gt;#import&amp;lt;Speech/Speech.h&amp;gt;&lt;/code&gt;   swift &lt;code&gt;import Speech&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;配置info.plist文件:配置两个权限，语音识别和麦克风&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;&amp;lt;key&amp;gt;NSMicrophoneUsageDescription&amp;lt;/key&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;lt;string&amp;gt;Your microphone will be used to record your speech when you press the &amp;quot;Start Recording&amp;quot; button.&amp;lt;/string&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;lt;key&amp;gt;NSSpeechRecognitionUsageDescription&amp;lt;/key&amp;gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;lt;string&amp;gt;Speech recognition will be used to determine which words you speak into this device&amp;apos;s microphone.&amp;lt;/string&amp;gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h3 id=&quot;二：用到的几个类&quot;&gt;&lt;a href=&quot;#二：用到的几个类&quot; class=&quot;headerlink&quot; title=&quot;二：用到的几个类&quot;&gt;&lt;/a&gt;二：用到的几个类&lt;/h3&gt;&lt;p&gt;&lt;code&gt;AVAudioEngine&lt;/code&gt;                           语音引擎，负责提供语音输入&lt;br&gt;&lt;code&gt;SFSpeechAudioBufferRecognitionRequest&lt;/code&gt;   处理语音识别请求&lt;br&gt;&lt;code&gt;SFSpeechRecognizer&lt;/code&gt;                       语音识别器&lt;br&gt;&lt;code&gt;SFSpeechRecognitionTask&lt;/code&gt;                 输出语音识别对象的结果&lt;br&gt;&lt;code&gt;NSLocale&lt;/code&gt;                                语言类型&lt;br&gt;语音识别一共就用到了这几个类，整体的流程也容易理解，语音识别器通过语音引擎，处理语音识别请求，把结果交给&lt;code&gt;SFSpeechRecognitionTask&lt;/code&gt;处理，最后输出文字。&lt;br&gt;&lt;code&gt;SFSpeechRecognizer&lt;/code&gt; 自身有几个代理方法，实际上，如果只是将语音转化成文字，是不需要这几个代理方法的。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="iOS技术" scheme="http://gcblog/github.io/categories/iOS%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="iOS" scheme="http://gcblog/github.io/tags/iOS/"/>
+    
+      <category term="语音识别" scheme="http://gcblog/github.io/tags/%E8%AF%AD%E9%9F%B3%E8%AF%86%E5%88%AB/"/>
     
   </entry>
   
@@ -1322,105 +1428,6 @@ NSLog(@&quot;-----%@&quot;, filePaths);
       <category term="runtime" scheme="http://gcblog/github.io/tags/runtime/"/>
     
       <category term="Method Swizzling" scheme="http://gcblog/github.io/tags/Method-Swizzling/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>iOS release,debug版设置不同的AppIcon</title>
-    <link href="http://gcblog/github.io/2016/04/13/iOS-release-debug%E7%89%88%E8%AE%BE%E7%BD%AE%E4%B8%8D%E5%90%8C%E7%9A%84AppIcon/"/>
-    <id>http://gcblog/github.io/2016/04/13/iOS-release-debug版设置不同的AppIcon/</id>
-    <published>2016-04-13T10:41:56.000Z</published>
-    <updated>2016-11-17T13:51:12.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>也许你也遇到过这种情况，产品经理或者测试让你给装个测试包，一会装正式环境的，一会又装测试环境的，一会又装个灰度环境的。弄来弄去的有时候自己都搞不清楚测试包是什么环境下的。</p>
-<p>通过判断debug还是release环境，我们可以用很多种方法来区分这两种环境，这里最简单而且效果非常好的一种方法。不同的环境下采用不同的图标，这样软件一安装上就可以非常明显的分辨出来。</p>
-<h4 id="第一步"><a href="#第一步" class="headerlink" title="第一步"></a>第一步</h4><p>创建一个新的AppIcon</p>
-<p><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/AppIcon/1.png" alt="image"></p>
-<a id="more"></a>
-<h4 id="第二步"><a href="#第二步" class="headerlink" title="第二步"></a>第二步</h4><p>给两个AppIcon分别加入不同的图片</p>
-<p><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/AppIcon/2.png" alt="image"></p>
-<h4 id="第三步"><a href="#第三步" class="headerlink" title="第三步"></a>第三步</h4><p>在build Setting 里面搜索 icon，找到Asset catalog AppIcon set name</p>
-<p><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/AppIcon/3.png" alt="image"></p>
-<h4 id="第四步"><a href="#第四步" class="headerlink" title="第四步"></a>第四步</h4><p>分别给debug和release设置不同的AppIcon。到这里就全部完成了，快去试试吧。<br><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/AppIcon/4.png" alt="image"></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;也许你也遇到过这种情况，产品经理或者测试让你给装个测试包，一会装正式环境的，一会又装测试环境的，一会又装个灰度环境的。弄来弄去的有时候自己都搞不清楚测试包是什么环境下的。&lt;/p&gt;
-&lt;p&gt;通过判断debug还是release环境，我们可以用很多种方法来区分这两种环境，这里最简单而且效果非常好的一种方法。不同的环境下采用不同的图标，这样软件一安装上就可以非常明显的分辨出来。&lt;/p&gt;
-&lt;h4 id=&quot;第一步&quot;&gt;&lt;a href=&quot;#第一步&quot; class=&quot;headerlink&quot; title=&quot;第一步&quot;&gt;&lt;/a&gt;第一步&lt;/h4&gt;&lt;p&gt;创建一个新的AppIcon&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/suifengqjn/demoimages/master/AppIcon/1.png&quot; alt=&quot;image&quot;&gt;&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="iOS配置" scheme="http://gcblog/github.io/categories/iOS%E9%85%8D%E7%BD%AE/"/>
-    
-    
-      <category term="iOS" scheme="http://gcblog/github.io/tags/iOS/"/>
-    
-      <category term="配置" scheme="http://gcblog/github.io/tags/%E9%85%8D%E7%BD%AE/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>iOS公共库</title>
-    <link href="http://gcblog/github.io/2016/04/06/iOS%E5%85%AC%E5%85%B1%E5%BA%93/"/>
-    <id>http://gcblog/github.io/2016/04/06/iOS公共库/</id>
-    <published>2016-04-06T08:59:52.000Z</published>
-    <updated>2016-11-17T15:01:14.000Z</updated>
-    
-    <content type="html"><![CDATA[<h3 id="第一步"><a href="#第一步" class="headerlink" title="第一步"></a>第一步</h3><blockquote>
-<p>打开Xcode，file-&gt;new-&gt;WorkSpace,我们使用WorkSpace来管理工程和依赖库</p>
-</blockquote>
-<p><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/%E5%85%AC%E5%85%B1%E4%BE%9D%E8%B5%96%E5%BA%93/1.png" alt="image"></p>
-<a id="more"></a>
-<h3 id="第二步"><a href="#第二步" class="headerlink" title="第二步"></a>第二步</h3><blockquote>
-<p>file-&gt;new-&gt;project-&gt;Application,创建我们的工程，创建好后关闭工程</p>
-</blockquote>
-<p><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/%E5%85%AC%E5%85%B1%E4%BE%9D%E8%B5%96%E5%BA%93/2.png" alt="image"></p>
-<h3 id="第三步"><a href="#第三步" class="headerlink" title="第三步"></a>第三步</h3><blockquote>
-<p>file-&gt;new-&gt;project-&gt;Framework&amp;Library-&gt;Cocoa Touch Framework,创建依赖库</p>
-</blockquote>
-<p><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/%E5%85%AC%E5%85%B1%E4%BE%9D%E8%B5%96%E5%BA%93/3.png" alt="image"></p>
-<h3 id="第四步"><a href="#第四步" class="headerlink" title="第四步"></a>第四步</h3><blockquote>
-<p>新建一个Tool类，然后在Amy.h里面引入，引入的方式：<code>#import&lt;Amy/Tool.h&gt;</code></p>
-</blockquote>
-<p><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/%E5%85%AC%E5%85%B1%E4%BE%9D%E8%B5%96%E5%BA%93/4.png" alt="image"></p>
-<h3 id="第五步"><a href="#第五步" class="headerlink" title="第五步"></a>第五步</h3><blockquote>
-<p>回到我们的workspace目录，workspace，依赖库和工程最好放到同一目录下面。</p>
-</blockquote>
-<p><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/%E5%85%AC%E5%85%B1%E4%BE%9D%E8%B5%96%E5%BA%93/5.png" alt="image"></p>
-<h3 id="第六步"><a href="#第六步" class="headerlink" title="第六步"></a>第六步</h3><blockquote>
-<p>打开workspace，通过 <code>file-&gt; AddFile to</code> 依次把工程和依赖添加到workspace中。</p>
-</blockquote>
-<p><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/%E5%85%AC%E5%85%B1%E4%BE%9D%E8%B5%96%E5%BA%93/6.png" alt="image"></p>
-<h3 id="第七步"><a href="#第七步" class="headerlink" title="第七步"></a>第七步</h3><blockquote>
-<p>在workspace中选中工程，然后点击Build Phases，选择 link Binary With Libraries 点击 + 号，添加Amy.framework</p>
-</blockquote>
-<p><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/%E5%85%AC%E5%85%B1%E4%BE%9D%E8%B5%96%E5%BA%93/7.png" alt="image"></p>
-<p><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/%E5%85%AC%E5%85%B1%E4%BE%9D%E8%B5%96%E5%BA%93/8.png" alt="image"></p>
-<h3 id="第八步"><a href="#第八步" class="headerlink" title="第八步"></a>第八步</h3><blockquote>
-<p>在我们的工程中可以引入依赖使用了。<br>引入方式：<code>#import&lt;Amy/Tool.h&gt;</code><br><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/%E5%85%AC%E5%85%B1%E4%BE%9D%E8%B5%96%E5%BA%93/9.png" alt="image"></p>
-</blockquote>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h3 id=&quot;第一步&quot;&gt;&lt;a href=&quot;#第一步&quot; class=&quot;headerlink&quot; title=&quot;第一步&quot;&gt;&lt;/a&gt;第一步&lt;/h3&gt;&lt;blockquote&gt;
-&lt;p&gt;打开Xcode，file-&amp;gt;new-&amp;gt;WorkSpace,我们使用WorkSpace来管理工程和依赖库&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/suifengqjn/demoimages/master/%E5%85%AC%E5%85%B1%E4%BE%9D%E8%B5%96%E5%BA%93/1.png&quot; alt=&quot;image&quot;&gt;&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="iOS技术" scheme="http://gcblog/github.io/categories/iOS%E6%8A%80%E6%9C%AF/"/>
-    
-    
-      <category term="iOS" scheme="http://gcblog/github.io/tags/iOS/"/>
-    
-      <category term="workspace" scheme="http://gcblog/github.io/tags/workspace/"/>
-    
-      <category term="公共库" scheme="http://gcblog/github.io/tags/%E5%85%AC%E5%85%B1%E5%BA%93/"/>
     
   </entry>
   

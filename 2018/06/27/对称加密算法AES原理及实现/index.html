@@ -1,0 +1,907 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="AES,对称加密," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="code随手记" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="AES是作为DES的替代标准出现的，全称Advanced Encryption Standard，即：高级加密标准。AES加密算法，经历了公开的选拔，最终2000年，由比利时密码学家Joan Daemen和Vincent Rijmen设计的Rijndael算法被选中，成为了AES标准。　　AES明文分组长度为128位，即16个字节，密钥长度可以为16个字节、24个字节、或32个字节，即128位密钥">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对称加密算法AES原理及实现">
+<meta property="og:url" content="http://gcblog/github.io/2018/06/27/对称加密算法AES原理及实现/index.html">
+<meta property="og:site_name" content="code随手记">
+<meta property="og:description" content="AES是作为DES的替代标准出现的，全称Advanced Encryption Standard，即：高级加密标准。AES加密算法，经历了公开的选拔，最终2000年，由比利时密码学家Joan Daemen和Vincent Rijmen设计的Rijndael算法被选中，成为了AES标准。　　AES明文分组长度为128位，即16个字节，密钥长度可以为16个字节、24个字节、或32个字节，即128位密钥">
+<meta property="og:image" content="http://olgjbx93m.bkt.clouddn.com/201801010001.png">
+<meta property="og:updated_time" content="2018-06-27T10:53:55.826Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="对称加密算法AES原理及实现">
+<meta name="twitter:description" content="AES是作为DES的替代标准出现的，全称Advanced Encryption Standard，即：高级加密标准。AES加密算法，经历了公开的选拔，最终2000年，由比利时密码学家Joan Daemen和Vincent Rijmen设计的Rijndael算法被选中，成为了AES标准。　　AES明文分组长度为128位，即16个字节，密钥长度可以为16个字节、24个字节、或32个字节，即128位密钥">
+<meta name="twitter:image" content="http://olgjbx93m.bkt.clouddn.com/201801010001.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> 对称加密算法AES原理及实现 | code随手记 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">code随手记</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Practice from here</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                对称加密算法AES原理及实现
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-06-27T18:52:14+08:00" content="2018-06-27">
+              2018-06-27
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/加密算法/" itemprop="url" rel="index">
+                    <span itemprop="name">加密算法</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/06/27/对称加密算法AES原理及实现/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/06/27/对称加密算法AES原理及实现/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i></i> 浏览
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>AES是作为DES的替代标准出现的，全称Advanced Encryption Standard，即：高级加密标准。AES加密算法，经历了公开的选拔，最终2000年，由比利时密码学家Joan Daemen和Vincent Rijmen设计的Rijndael算法被选中，成为了AES标准。<br>　　AES明文分组长度为128位，即16个字节，密钥长度可以为16个字节、24个字节、或32个字节，即128位密钥、192位密钥、或256位密钥。<br>　　<br><a id="more"></a>
+　　</p>
+<h2 id="总体结构"><a href="#总体结构" class="headerlink" title="总体结构"></a>总体结构</h2><p>AES中没有使用Feistel网络，其结构称为SPN结构。<br>　　<br>和DES相同，AES也由多个轮组成，其中每个轮分为SubBytes、ShiftRows、MixColumns、AddRoundKey 4个步骤，即：字节代替、行移位、列混淆和轮密钥加。根据密钥长度不同，所需轮数也不同，128位、192位、256位密钥，分别需要10轮、12轮和14轮。第1轮之前有一次AddRoundKey，即轮密钥加，可以视为第0轮；之后1至N-1轮，执行SubBytes、ShiftRows、MixColumns、AddRoundKey；最后一轮仅包括：SubBytes、MixColumns、AddRoundKey。<br>　　<br>AES总体结构示意图：<br>　　<br><img src="http://olgjbx93m.bkt.clouddn.com/201801010001.png" alt="结构示意图"></p>
+<h2 id="分组密码"><a href="#分组密码" class="headerlink" title="分组密码"></a>分组密码</h2><p>密码算法可以分为分组密码和流密码两种</p>
+<ul>
+<li><p><strong>分组密码（block cipher）</strong>是每次只能处理特定长度的一块数据的一类密码算法，这里的“一块”就称为分组（block）。一个分组的比特数就称为分组长度（block lenght）。</p>
+<p>  例如 DES和3DES的分组长度都是64比特。AES的分组长度为128比特。</p>
+</li>
+<li><p><strong>流密码（stream cipher）</strong>是对数据流进行连续处理的一类密码算法。流密码中一般以1比特、8比特、或32比特等为单位进行加密和解密。</p>
+</li>
+</ul>
+<p>分组密码处理完一个分组就结束了，因此不需要通过内部状态来记录加密的进度；相对地，流密码是对一串数据进行连续处理，因此需要保持内部状态。</p>
+<h2 id="模式"><a href="#模式" class="headerlink" title="模式"></a>模式</h2><p>分组密码算法只能加密固定长度的分组，但是我们需要加密的明文长度可能会超过分组密码的分组长度，这时就需要对分组密码算法进行迭代，以便将一段很长的明文全部加密。而迭代的方法就称为分组密码的模式（mode）。</p>
+<ul>
+<li>ECB模式：Electronic CodeBook mode（电子密码模式）</li>
+<li>CBC模式：Cipher Block Chaining mode（密码分组链接模式）</li>
+<li>CFB模式：Cipher FeedBack mode（密文反馈模式）</li>
+<li>OFB模式：Output FeedBack mode（输出反馈模式）</li>
+<li>CTR模式：CounTeR mode（计数器模式）</li>
+</ul>
+<p>ECB模式存在很高的风险，下面举例后面4中模式的使用.<br>加密的过程中使用了随机流，所以每次加密的密文都不一样</p>
+<h3 id="CBC模式"><a href="#CBC模式" class="headerlink" title="CBC模式"></a>CBC模式</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div></pre></td><td class="code"><pre><div class="line">func main() &#123;</div><div class="line"></div><div class="line"></div><div class="line">	key := &quot;1234567890asdfgh&quot;</div><div class="line">	data := &quot;hollo, world!&quot;</div><div class="line"></div><div class="line">	cry := AesCBCEncrypt([]byte(data), []byte(key))</div><div class="line">	fmt.Println(hex.EncodeToString(cry))</div><div class="line"></div><div class="line">	oriData := AESCBCDECriypt(cry, []byte(key))</div><div class="line">	fmt.Println(string(oriData))</div><div class="line"></div><div class="line">&#125;</div><div class="line">// AES也是对称加密 AES 是 DES 的替代品</div><div class="line">// AES 密钥长度 只能是 16、24、32 字节</div><div class="line">//加密</div><div class="line">func AesCBCEncrypt(org []byte, key []byte) []byte  &#123;</div><div class="line"></div><div class="line">	//校验密钥</div><div class="line">	block,_ := aes.NewCipher(key)</div><div class="line"></div><div class="line">	//按照公钥长度 进行分组补码</div><div class="line">	org = PKCS7Padding(org, block.BlockSize())</div><div class="line"></div><div class="line">	//设置CBC的加密模式</div><div class="line">	blockMode := cipher.NewCBCEncrypter(block, key)</div><div class="line"></div><div class="line">	//加密处理</div><div class="line">	crypted := make([]byte, len(org))</div><div class="line">	blockMode.CryptBlocks(crypted, org)</div><div class="line"></div><div class="line">	return crypted</div><div class="line">&#125;</div><div class="line"></div><div class="line">//解密</div><div class="line">func AESCBCDECriypt(criptText []byte, key []byte) []byte  &#123;</div><div class="line"></div><div class="line">	//校验key的有效性</div><div class="line">	block,_:=aes.NewCipher(key)</div><div class="line">	//通过CBC模式解密</div><div class="line">	blockMode:=cipher.NewCBCDecrypter(block,key)</div><div class="line"></div><div class="line">	//实现解密</div><div class="line">	origData:=make([]byte,len(criptText))</div><div class="line">	blockMode.CryptBlocks(origData,criptText)</div><div class="line"></div><div class="line">	//去码</div><div class="line">	origData = PKCS7UnPadding(origData)</div><div class="line">	return origData</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">//PKCS5 分组长度只能为8</div><div class="line">//PKCs7 分组长度 1- 255</div><div class="line"></div><div class="line">func PKCS7Padding(org []byte, blockSize int) []byte  &#123;</div><div class="line"></div><div class="line">	pad := blockSize-len(org)%blockSize</div><div class="line">	padArr := bytes.Repeat([]byte&#123;byte(pad)&#125;, pad)</div><div class="line">	return  append(org, padArr...)</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">func PKCS7UnPadding(cryptText []byte) []byte  &#123;</div><div class="line">	</div><div class="line">	length := len(cryptText)</div><div class="line">	lastByte := cryptText[length - 1]</div><div class="line">	return cryptText[:length-int(lastByte)]</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ffa22c136fd3e944255d43e255c98ecc</div><div class="line">hollo, world!</div></pre></td></tr></table></figure></p>
+<h3 id="CFB模式"><a href="#CFB模式" class="headerlink" title="CFB模式"></a>CFB模式</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div></pre></td><td class="code"><pre><div class="line">func main()  &#123;</div><div class="line"></div><div class="line"></div><div class="line">	key := []byte(&quot;1234567890asdfgh&quot;)</div><div class="line">	data := []byte(&quot;abc hello world!&quot;)</div><div class="line">	cry := AESCFBEncrypt(data, key)</div><div class="line"></div><div class="line">	fmt.Println(hex.EncodeToString(cry))</div><div class="line">	//fmt.Println(base64.StdEncoding.EncodeToString(cry))</div><div class="line"></div><div class="line">	ori := AESCFBDecrypt(cry, key)</div><div class="line">	fmt.Println(string(ori))</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">//CFB分组模式加密</div><div class="line">func AESCFBEncrypt(oriData []byte, key []byte) []byte  &#123;</div><div class="line"></div><div class="line">	//校验密钥</div><div class="line">	block,_ := aes.NewCipher(key)</div><div class="line"></div><div class="line">	//拆分iv和密文</div><div class="line">	cipherText := make([]byte, aes.BlockSize + len(oriData))</div><div class="line"></div><div class="line">	iv := cipherText[:aes.BlockSize]</div><div class="line"></div><div class="line">	//向iv切片数组初始化 reader（随机内存流）</div><div class="line">	io.ReadFull(rand.Reader, iv)</div><div class="line"></div><div class="line">	//设置加密模式CFB</div><div class="line">	stream := cipher.NewCFBEncrypter(block,iv)</div><div class="line"></div><div class="line">	//加密</div><div class="line">	stream.XORKeyStream(cipherText[aes.BlockSize:], oriData)</div><div class="line"></div><div class="line">	return  cipherText</div><div class="line"></div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">//解密</div><div class="line">func AESCFBDecrypt(cryptText []byte, key []byte) []byte &#123;</div><div class="line"></div><div class="line">	//校验密钥</div><div class="line">	block,_ := aes.NewCipher(key)</div><div class="line"></div><div class="line">	//拆分iv 和密文</div><div class="line">	iv := cryptText[:aes.BlockSize]</div><div class="line">	cipherText := cryptText[aes.BlockSize:]</div><div class="line"></div><div class="line"></div><div class="line">	//设置解密模式</div><div class="line">	stream := cipher.NewCFBDecrypter(block, iv)</div><div class="line"></div><div class="line">	var des = make([]byte, len(cipherText))</div><div class="line"></div><div class="line">	//解密</div><div class="line">	stream.XORKeyStream(des, cipherText)</div><div class="line"></div><div class="line">	return des</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">92e5c5d7bc54b337a7edbb548ee1a62c8c3c079b71f465a3f0566c0d74b8d513</div><div class="line">abc hello world!</div></pre></td></tr></table></figure></p>
+<h3 id="OFB模式"><a href="#OFB模式" class="headerlink" title="OFB模式"></a>OFB模式</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line">func main()  &#123;</div><div class="line"></div><div class="line">	key := []byte(&quot;1234567890asdfgh&quot;)</div><div class="line">	data := []byte(&quot;abcd hello world!&quot;)</div><div class="line">	cry := AESOFBEncrypt(data, key)</div><div class="line"></div><div class="line">	fmt.Println(hex.EncodeToString(cry))</div><div class="line"></div><div class="line">	ori := AESOFBDecrypt(cry, key)</div><div class="line">	fmt.Println(string(ori))</div><div class="line">&#125;</div><div class="line"></div><div class="line">//AES OFB分组加密模式  CTR也是一样</div><div class="line">func AESOFBEncrypt(plaintxt []byte, key []byte) []byte  &#123;</div><div class="line"></div><div class="line">	//校验密钥</div><div class="line">	block,_ := aes.NewCipher(key)</div><div class="line"></div><div class="line">	cipherText := make([]byte, aes.BlockSize + len(plaintxt))</div><div class="line"></div><div class="line">	iv := cipherText[:aes.BlockSize]</div><div class="line"></div><div class="line">	//向iv切片数组初始化 reader（随机内存流）</div><div class="line">	io.ReadFull(rand.Reader, iv)</div><div class="line"></div><div class="line">	//设置加密模式CFB</div><div class="line">	stream := cipher.NewOFB(block,iv)</div><div class="line"></div><div class="line">	//加密</div><div class="line">	stream.XORKeyStream(cipherText[aes.BlockSize:], plaintxt)</div><div class="line"></div><div class="line">	return  cipherText</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">//解密</div><div class="line">func AESOFBDecrypt(cryptText []byte, key []byte) []byte &#123;</div><div class="line"></div><div class="line">	//校验密钥</div><div class="line">	block,_ := aes.NewCipher(key)</div><div class="line"></div><div class="line">	//拆分iv 和 密文</div><div class="line">	iv := cryptText[:aes.BlockSize]</div><div class="line">	plaintxt := make([]byte, len(cryptText)-aes.BlockSize)</div><div class="line"></div><div class="line"></div><div class="line">	//设置解密模式</div><div class="line">	stream := cipher.NewOFB(block, iv)</div><div class="line"></div><div class="line">	//解密</div><div class="line">	stream.XORKeyStream(plaintxt, cryptText[aes.BlockSize:])</div><div class="line"></div><div class="line">	return plaintxt</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">9ee409f8513e3fcba2f1ba726da0b2a5d80251efa073544220b44c8e8fee18fce4</div><div class="line">abcd hello world!</div></pre></td></tr></table></figure></p>
+<h3 id="CTR模式"><a href="#CTR模式" class="headerlink" title="CTR模式"></a>CTR模式</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line">func main()  &#123;</div><div class="line"></div><div class="line">	key := []byte(&quot;1234567890asdfgh&quot;)</div><div class="line">	data := []byte(&quot;abcd hello world!&quot;)</div><div class="line">	cry := AESCTREncrypt(data, key)</div><div class="line"></div><div class="line">	fmt.Println(hex.EncodeToString(cry))</div><div class="line"></div><div class="line">	ori := AESCTRDecrypt(cry, key)</div><div class="line">	fmt.Println(string(ori))</div><div class="line">&#125;</div><div class="line"></div><div class="line">//AES CTR分组加密模式</div><div class="line">func AESCTREncrypt(plaintxt []byte, key []byte) []byte  &#123;</div><div class="line"></div><div class="line">	//校验密钥</div><div class="line">	block,_ := aes.NewCipher(key)</div><div class="line"></div><div class="line">	cipherText := make([]byte, aes.BlockSize + len(plaintxt))</div><div class="line"></div><div class="line">	iv := cipherText[:aes.BlockSize]</div><div class="line"></div><div class="line">	//向iv切片数组初始化 reader（随机内存流）</div><div class="line">	io.ReadFull(rand.Reader, iv)</div><div class="line"></div><div class="line">	//设置加密模式CTR</div><div class="line">	stream := cipher.NewCTR(block,iv)</div><div class="line"></div><div class="line">	//加密</div><div class="line">	stream.XORKeyStream(cipherText[aes.BlockSize:], plaintxt)</div><div class="line"></div><div class="line">	return  cipherText</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">//解密</div><div class="line">func AESCTRDecrypt(cryptText []byte, key []byte) []byte &#123;</div><div class="line"></div><div class="line">	//校验密钥</div><div class="line">	block,_ := aes.NewCipher(key)</div><div class="line"></div><div class="line">	//拆分iv 和 密文</div><div class="line">	iv := cryptText[:aes.BlockSize]</div><div class="line">	plaintxt := make([]byte, len(cryptText)-aes.BlockSize)</div><div class="line"></div><div class="line"></div><div class="line">	//设置解密模式</div><div class="line">	stream := cipher.NewCTR(block, iv)</div><div class="line"></div><div class="line">	//解密</div><div class="line">	stream.XORKeyStream(plaintxt, cryptText[aes.BlockSize:])</div><div class="line"></div><div class="line">	return plaintxt</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">c645da2d14896d2b75d41a538a5a3efe3c7721f51f2eb2e92b0c5b8ba141caf534</div><div class="line">abcd hello world!</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/weixin.jpg" alt="夜千寻墨 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/zhifubao.jpg" alt="夜千寻墨 Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/AES/" rel="tag">#AES</a>
+          
+            <a href="/tags/对称加密/" rel="tag">#对称加密</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/26/对称加密算法DES原理及实现/" rel="next" title="对称加密算法DES原理及实现">
+                <i class="fa fa-chevron-left"></i> 对称加密算法DES原理及实现
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/27/非对称加密RSA原理简介及使用/" rel="prev" title="非对称加密RSA原理简介及使用">
+                非对称加密RSA原理简介及使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/06/27/对称加密算法AES原理及实现/"
+           data-title="对称加密算法AES原理及实现" data-url="http://gcblog/github.io/2018/06/27/对称加密算法AES原理及实现/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="夜千寻墨" />
+          <p class="site-author-name" itemprop="name">夜千寻墨</p>
+          <p class="site-description motion-element" itemprop="description">扫码关注微信公众号,及时获取文章更新</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">30</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/suifengqjn" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/dearqjn?source=blog&is_all=1" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/527ecf8c8753/latest_articles" target="_blank" title="简书">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  简书
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.instagram.com/yeqianxun/" target="_blank" title="instagram">
+                  
+                    <i class="fa fa-fw fa-instagram"></i>
+                  
+                  instagram
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#总体结构"><span class="nav-number">1.</span> <span class="nav-text">总体结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分组密码"><span class="nav-number">2.</span> <span class="nav-text">分组密码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模式"><span class="nav-number">3.</span> <span class="nav-text">模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CBC模式"><span class="nav-number">3.1.</span> <span class="nav-text">CBC模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CFB模式"><span class="nav-number">3.2.</span> <span class="nav-text">CFB模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OFB模式"><span class="nav-number">3.3.</span> <span class="nav-text">OFB模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CTR模式"><span class="nav-number">3.4.</span> <span class="nav-text">CTR模式</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">夜千寻墨</span>
+</div>
+
+<div class="powered-by">
+  powered by <a class="theme-link">Hexo</a>
+</div>
+
+<div class="theme-info">
+  theme -
+  <a class="theme-link">
+    Next
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">本站访客数<span class="busuanzi-value" id="busuanzi_value_site_uv"></span>人次</span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i> 总访问量<span class="busuanzi-value" id="busuanzi_value_site_pv"></span>次</span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"yqxm"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';                
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+                            
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').mousedown(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+  
+
+  
+
+  
+
+</body>
+</html>
