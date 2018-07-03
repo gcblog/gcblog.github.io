@@ -1,0 +1,904 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="拜占庭,PBFT," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="code随手记" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="PBFT（拜占庭容错）基于拜占庭将军问题，一致性的确保主要分为这三个阶段：预准备（pre-prepare）、准备(prepare)和确认(commit)。流程如下图所示：
+
+其中C为发送请求端，0123为服务端，3为宕机的服务端，具体步骤如下：
+
+Request：请求端C发送请求到任意一节点，这里是0
+Pre-Prepare：服务端0收到C的请求后进行广播，扩散至123
+Prepare：123,收">
+<meta property="og:type" content="article">
+<meta property="og:title" content="拜占庭PBFT简单实现">
+<meta property="og:url" content="http://gcblog/github.io/2018/07/03/拜占庭PBFT简单实现/index.html">
+<meta property="og:site_name" content="code随手记">
+<meta property="og:description" content="PBFT（拜占庭容错）基于拜占庭将军问题，一致性的确保主要分为这三个阶段：预准备（pre-prepare）、准备(prepare)和确认(commit)。流程如下图所示：
+
+其中C为发送请求端，0123为服务端，3为宕机的服务端，具体步骤如下：
+
+Request：请求端C发送请求到任意一节点，这里是0
+Pre-Prepare：服务端0收到C的请求后进行广播，扩散至123
+Prepare：123,收">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/971366-43e9a641f22f4faf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700">
+<meta property="og:updated_time" content="2018-07-03T11:00:39.238Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="拜占庭PBFT简单实现">
+<meta name="twitter:description" content="PBFT（拜占庭容错）基于拜占庭将军问题，一致性的确保主要分为这三个阶段：预准备（pre-prepare）、准备(prepare)和确认(commit)。流程如下图所示：
+
+其中C为发送请求端，0123为服务端，3为宕机的服务端，具体步骤如下：
+
+Request：请求端C发送请求到任意一节点，这里是0
+Pre-Prepare：服务端0收到C的请求后进行广播，扩散至123
+Prepare：123,收">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/971366-43e9a641f22f4faf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> 拜占庭PBFT简单实现 | code随手记 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">code随手记</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Practice from here</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                拜占庭PBFT简单实现
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-03T18:57:53+08:00" content="2018-07-03">
+              2018-07-03
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/共识算法/" itemprop="url" rel="index">
+                    <span itemprop="name">共识算法</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/07/03/拜占庭PBFT简单实现/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/07/03/拜占庭PBFT简单实现/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i></i> 浏览
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="PBFT（拜占庭容错）"><a href="#PBFT（拜占庭容错）" class="headerlink" title="PBFT（拜占庭容错）"></a>PBFT（拜占庭容错）</h2><p>基于拜占庭将军问题，一致性的确保主要分为这三个阶段：预准备（pre-prepare）、准备(prepare)和确认(commit)。流程如下图所示：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/971366-43e9a641f22f4faf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700" alt="image"></p>
+<p>其中C为发送请求端，0123为服务端，3为宕机的服务端，具体步骤如下：</p>
+<ol>
+<li>Request：请求端C发送请求到任意一节点，这里是0</li>
+<li>Pre-Prepare：服务端0收到C的请求后进行广播，扩散至123</li>
+<li>Prepare：123,收到后记录并再次广播，1-&gt;023，2-&gt;013，3因为宕机无法广播</li>
+<li>Commit：0123节点在Prepare阶段，若收到超过一定数量的相同请求，则进入Commit阶段，广播Commit请求<br>5.Reply：0123节点在Commit阶段，若收到超过一定数量的相同请求，则对C进行反馈</li>
+</ol>
+<a id="more"></a>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div></pre></td><td class="code"><pre><div class="line">package main</div><div class="line"></div><div class="line">import (</div><div class="line">	&quot;os&quot;</div><div class="line">	&quot;fmt&quot;</div><div class="line">	&quot;net/http&quot;</div><div class="line">	&quot;io&quot;</div><div class="line">)</div><div class="line"></div><div class="line">//声明节点信息,代表各个小国家</div><div class="line">type nodeInfo struct &#123;</div><div class="line">	//标示</div><div class="line">	id string</div><div class="line">	//准备访问的方法</div><div class="line">	path string</div><div class="line">	//服务器做出的相应</div><div class="line">	writer http.ResponseWriter</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">//存放四个国家的地址</div><div class="line">var nodeTable = make(map[string]string)</div><div class="line"></div><div class="line">//拜占庭在Fabric中的使用</div><div class="line">func main() &#123;</div><div class="line"></div><div class="line">	//获取执行的参数</div><div class="line">	userId :=os.Args[1]//获取执行的第一个参数</div><div class="line">	fmt.Println(userId)</div><div class="line"></div><div class="line">	//./main Apple</div><div class="line"></div><div class="line">	//创建四个国家的地址</div><div class="line">	nodeTable = map[string]string &#123;</div><div class="line">		&quot;Apple&quot;:&quot;localhost:1111&quot;,</div><div class="line">		&quot;MS&quot;:&quot;localhost:1112&quot;,</div><div class="line">		&quot;Google&quot;:&quot;localhost:1113&quot;,</div><div class="line">		&quot;IBM&quot;:&quot;localhost:1114&quot;,</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	node:=nodeInfo&#123;userId,nodeTable[userId],nil&#125;</div><div class="line">	fmt.Println(node)</div><div class="line"></div><div class="line">	//http协议的回调函数</div><div class="line">	//http://localhost:1111/req?warTime=8888</div><div class="line">	http.HandleFunc(&quot;/req&quot;,node.request)</div><div class="line">	http.HandleFunc(&quot;/prePrepare&quot;,node.prePrepare)</div><div class="line">	http.HandleFunc(&quot;/prepare&quot;,node.prepare)</div><div class="line">	http.HandleFunc(&quot;/commit&quot;,node.commit)</div><div class="line"></div><div class="line">	//启动服务器</div><div class="line">	if err:=http.ListenAndServe(node.path,nil);err!=nil &#123;</div><div class="line">		fmt.Print(err)</div><div class="line">	&#125;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">//此函数是http访问时候req命令的请求回调函数</div><div class="line">func (node *nodeInfo)request(writer http.ResponseWriter,request *http.Request)&#123;</div><div class="line">	//设置允许解析参数</div><div class="line">	request.ParseForm()</div><div class="line">	//如果有参数值，则继续处理</div><div class="line">	if (len(request.Form[&quot;warTime&quot;])&gt;0)&#123;</div><div class="line">		node.writer = writer</div><div class="line">		//激活主节点后，广播给其他节点,通过Ａpple向其他节点做广播</div><div class="line">		node.broadcast(request.Form[&quot;warTime&quot;][0],&quot;/prePrepare&quot;)</div><div class="line"></div><div class="line">	&#125;</div><div class="line"></div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">//由主节点向其他节点做广播</div><div class="line">func (node *nodeInfo)broadcast(msg string ,path string )&#123;</div><div class="line">	//遍历所有的国家</div><div class="line">	for nodeId,url:=range nodeTable &#123;</div><div class="line"></div><div class="line">		if nodeId == node.id &#123;</div><div class="line">			continue</div><div class="line">		&#125;</div><div class="line">		//调用Get请求</div><div class="line">		//http.Get(&quot;http://localhost:1112/prePrepare?warTime=8888&amp;nodeId=Apple&quot;)</div><div class="line">		http.Get(&quot;http://&quot;+url+path+&quot;?warTime=&quot;+msg+&quot;&amp;nodeId=&quot;+node.id)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">func (node *nodeInfo)prePrepare(writer http.ResponseWriter,request *http.Request) &#123;</div><div class="line">	request.ParseForm()</div><div class="line">	//fmt.Println(&quot;hello world&quot;)</div><div class="line">	//在做分发</div><div class="line">	if(len(request.Form[&quot;warTime&quot;])&gt;0)&#123;</div><div class="line">		//分发给其他三个人</div><div class="line">		node.broadcast(request.Form[&quot;warTime&quot;][0],&quot;/prepare&quot;)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">func (node *nodeInfo)prepare(writer http.ResponseWriter,request *http.Request)&#123;</div><div class="line"></div><div class="line">	request.ParseForm()</div><div class="line">	//调用验证</div><div class="line">	if len(request.Form[&quot;warTime&quot;])&gt;0&#123;</div><div class="line">		fmt.Println(request.Form[&quot;warTime&quot;][0])</div><div class="line">	&#125;</div><div class="line">	if len(request.Form[&quot;nodeId&quot;])&gt;0 &#123;</div><div class="line">		fmt.Println(request.Form[&quot;nodeId&quot;][0])</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	node.authentication(request)</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">var authenticationsuccess = true</div><div class="line">var authenticationMap = make(map[string]string)</div><div class="line">//获得除了本节点外的其他节点数据</div><div class="line">func (node *nodeInfo)authentication(request *http.Request) &#123;</div><div class="line"></div><div class="line">	//接收参数</div><div class="line">	request.ParseForm()</div><div class="line"></div><div class="line">	if authenticationsuccess!=false  &#123;</div><div class="line">		if len(request.Form[&quot;nodeId&quot;])&gt;0 &#123;</div><div class="line">			authenticationMap[request.Form[&quot;nodeId&quot;][0]]=&quot;ok&quot;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	if len(authenticationMap)&gt;len(nodeTable)/3 &#123;</div><div class="line">		//则拜占庭原理实现,通过commit反馈给浏览器</div><div class="line">		node.broadcast(request.Form[&quot;warTime&quot;][0],&quot;/commit&quot;)</div><div class="line"></div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">func (node *nodeInfo)commit(writer http.ResponseWriter,request *http.Request)&#123;</div><div class="line"></div><div class="line">	//给浏览器反馈相应</div><div class="line">	io.WriteString(node.writer,&quot;ok&quot;)</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如何运行：开启4个终端，eg：go run main.go Apple  …<br>然后在浏览器输入：<code>http://localhost:1112/req?warTime=1234</code></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/weixin.jpg" alt="夜千寻墨 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/zhifubao.jpg" alt="夜千寻墨 Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/拜占庭/" rel="tag">#拜占庭</a>
+          
+            <a href="/tags/PBFT/" rel="tag">#PBFT</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/29/共识算法DPOS原理及实现/" rel="next" title="共识算法DPOS原理及实现">
+                <i class="fa fa-chevron-left"></i> 共识算法DPOS原理及实现
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/07/03/拜占庭PBFT简单实现/"
+           data-title="拜占庭PBFT简单实现" data-url="http://gcblog/github.io/2018/07/03/拜占庭PBFT简单实现/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="夜千寻墨" />
+          <p class="site-author-name" itemprop="name">夜千寻墨</p>
+          <p class="site-description motion-element" itemprop="description">扫码关注微信公众号,及时获取文章更新</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">36</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">66</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/suifengqjn" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/dearqjn?source=blog&is_all=1" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/527ecf8c8753/latest_articles" target="_blank" title="简书">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  简书
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.instagram.com/yeqianxun/" target="_blank" title="instagram">
+                  
+                    <i class="fa fa-fw fa-instagram"></i>
+                  
+                  instagram
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#PBFT（拜占庭容错）"><span class="nav-number">1.</span> <span class="nav-text">PBFT（拜占庭容错）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码实现"><span class="nav-number">2.</span> <span class="nav-text">代码实现</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">夜千寻墨</span>
+</div>
+
+<div class="powered-by">
+  powered by <a class="theme-link">Hexo</a>
+</div>
+
+<div class="theme-info">
+  theme -
+  <a class="theme-link">
+    Next
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">本站访客数<span class="busuanzi-value" id="busuanzi_value_site_uv"></span>人次</span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i> 总访问量<span class="busuanzi-value" id="busuanzi_value_site_pv"></span>次</span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"yqxm"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';                
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+                            
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').mousedown(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+  
+
+  
+
+  
+
+</body>
+</html>

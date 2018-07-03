@@ -278,8 +278,8 @@
             
               
                 
-                <a class="post-title-link" href="/2018/06/28/ESA和ECC签名验签/" itemprop="url">
-                  ESA和ECC签名验签
+                <a class="post-title-link" href="/2018/07/03/拜占庭PBFT简单实现/" itemprop="url">
+                  拜占庭PBFT简单实现
                 </a>
               
             
@@ -292,8 +292,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-06-28T18:52:24+08:00" content="2018-06-28">
-              2018-06-28
+            <time itemprop="dateCreated" datetime="2018-07-03T18:57:53+08:00" content="2018-07-03">
+              2018-07-03
             </time>
           </span>
 
@@ -306,8 +306,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/加密算法/" itemprop="url" rel="index">
-                    <span itemprop="name">加密算法</span>
+                  <a href="/categories/共识算法/" itemprop="url" rel="index">
+                    <span itemprop="name">共识算法</span>
                   </a>
                 </span>
 
@@ -322,8 +322,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2018/06/28/ESA和ECC签名验签/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/06/28/ESA和ECC签名验签/" itemprop="commentsCount"></span>
+                <a href="/2018/07/03/拜占庭PBFT简单实现/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/07/03/拜占庭PBFT简单实现/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -347,9 +347,17 @@
 
       
         
-          <h2 id="ESA"><a href="#ESA" class="headerlink" title="ESA"></a>ESA</h2><p>DSA 是专业用于数字签名和验签，并且只有这个作用, 不能用于加密和解密。<br>在安全性上，DSA和RSA差不多，但是速度比RSA快很多。</p>
+          <h2 id="PBFT（拜占庭容错）"><a href="#PBFT（拜占庭容错）" class="headerlink" title="PBFT（拜占庭容错）"></a>PBFT（拜占庭容错）</h2><p>基于拜占庭将军问题，一致性的确保主要分为这三个阶段：预准备（pre-prepare）、准备(prepare)和确认(commit)。流程如下图所示：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/971366-43e9a641f22f4faf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700" alt="image"></p>
+<p>其中C为发送请求端，0123为服务端，3为宕机的服务端，具体步骤如下：</p>
+<ol>
+<li>Request：请求端C发送请求到任意一节点，这里是0</li>
+<li>Pre-Prepare：服务端0收到C的请求后进行广播，扩散至123</li>
+<li>Prepare：123,收到后记录并再次广播，1-&gt;023，2-&gt;013，3因为宕机无法广播</li>
+<li>Commit：0123节点在Prepare阶段，若收到超过一定数量的相同请求，则进入Commit阶段，广播Commit请求<br>5.Reply：0123节点在Commit阶段，若收到超过一定数量的相同请求，则对C进行反馈</li>
+</ol>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2018/06/28/ESA和ECC签名验签/#more" rel="contents">
+            <a class="btn" href="/2018/07/03/拜占庭PBFT简单实现/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -400,8 +408,8 @@
             
               
                 
-                <a class="post-title-link" href="/2018/06/28/RSA签名验签/" itemprop="url">
-                  RSA签名验签
+                <a class="post-title-link" href="/2018/06/29/共识算法DPOS原理及实现/" itemprop="url">
+                  共识算法DPOS原理及实现
                 </a>
               
             
@@ -414,8 +422,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-06-28T18:51:55+08:00" content="2018-06-28">
-              2018-06-28
+            <time itemprop="dateCreated" datetime="2018-06-29T19:31:58+08:00" content="2018-06-29">
+              2018-06-29
             </time>
           </span>
 
@@ -428,8 +436,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/加密算法/" itemprop="url" rel="index">
-                    <span itemprop="name">加密算法</span>
+                  <a href="/categories/共识算法/" itemprop="url" rel="index">
+                    <span itemprop="name">共识算法</span>
                   </a>
                 </span>
 
@@ -444,8 +452,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2018/06/28/RSA签名验签/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/06/28/RSA签名验签/" itemprop="commentsCount"></span>
+                <a href="/2018/06/29/共识算法DPOS原理及实现/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/06/29/共识算法DPOS原理及实现/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -469,10 +477,10 @@
 
       
         
-          <h2 id="什么是数字签名"><a href="#什么是数字签名" class="headerlink" title="什么是数字签名"></a>什么是数字签名</h2><p>数字签名就是只有信息的发送者才能产生的别人无法伪造的一段数字串，这段数字串同时也是对信息的发送者发送信息真实性的一个有效证明。</p>
-<h2 id="签名的生成和验证"><a href="#签名的生成和验证" class="headerlink" title="签名的生成和验证"></a>签名的生成和验证</h2><h3 id="生成消息签名的行为"><a href="#生成消息签名的行为" class="headerlink" title="生成消息签名的行为"></a>生成消息签名的行为</h3><p>生成消息签名这一行为是由消息的发送者来完成的，也称为“对消息签名”。生成签名就是根据消息内容计算数字签名的值，这个行为意味着“我认可该消息的内容”。</p>
+          <h2 id="原理简介"><a href="#原理简介" class="headerlink" title="原理简介"></a>原理简介</h2><p>DPOS：Delegated Proof of Stake，委任权益证明<br>它的原理是让每一个持有币的人进行投票，由此产生n位代表 , 我们可以将其理解为n个超级节点或者矿池，而这n个超级节点彼此的权利是完全相等的。从某种角度来看，DPOS有点像是议会制度或人民代表大会制度。如果代表不能履行他们的职责（当轮到他们时，没能生成区块），他们会被除名，网络会选出新的超级节点来取代他们。EOS就是采用DPOS共识算法。</p>
+<h2 id="算法具体实现原理"><a href="#算法具体实现原理" class="headerlink" title="算法具体实现原理"></a>算法具体实现原理</h2><p>假设n为21，竞选的节点有几百个，持币人对这些节点进行投票，选出票数最多的21位，由这21位轮流来出块。</p>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2018/06/28/RSA签名验签/#more" rel="contents">
+            <a class="btn" href="/2018/06/29/共识算法DPOS原理及实现/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -523,8 +531,8 @@
             
               
                 
-                <a class="post-title-link" href="/2018/06/27/非对称加密RSA原理简介及使用/" itemprop="url">
-                  非对称加密RSA原理简介及使用
+                <a class="post-title-link" href="/2018/06/29/共识算法POS原理及实现/" itemprop="url">
+                  共识算法POS原理及实现
                 </a>
               
             
@@ -537,8 +545,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-06-27T18:54:38+08:00" content="2018-06-27">
-              2018-06-27
+            <time itemprop="dateCreated" datetime="2018-06-29T19:31:41+08:00" content="2018-06-29">
+              2018-06-29
             </time>
           </span>
 
@@ -551,8 +559,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/加密算法/" itemprop="url" rel="index">
-                    <span itemprop="name">加密算法</span>
+                  <a href="/categories/共识算法/" itemprop="url" rel="index">
+                    <span itemprop="name">共识算法</span>
                   </a>
                 </span>
 
@@ -567,8 +575,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2018/06/27/非对称加密RSA原理简介及使用/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/06/27/非对称加密RSA原理简介及使用/" itemprop="commentsCount"></span>
+                <a href="/2018/06/29/共识算法POS原理及实现/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/06/29/共识算法POS原理及实现/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -592,14 +600,10 @@
 
       
         
-          <h2 id="什么是RSA"><a href="#什么是RSA" class="headerlink" title="什么是RSA"></a>什么是RSA</h2><p>RSA是一种公钥密码算法，它的名字是由它的三位开发者，即Ron Rivest、Adi Shamir 和 Leonard Adleman的姓氏的首字母组成的( Rivest-Shamir-Adleman )。</p>
-<p>RSA可以被用于公钥密码和数字签名。</p>
-<h2 id="RSA加密"><a href="#RSA加密" class="headerlink" title="RSA加密"></a>RSA加密</h2><p>在RSA中，明文、密钥和密文都是数字。RSA的加密过程可以用下列公式来表达：</p>
-<p><strong>密文=明文<sup>E</sup> mod N</strong> (RSA加密)</p>
-<p>RSA的密文是对代表明文的数字的E次方求mod N的结果。换句话说，就是将<br>明文和自己做E次乘法,然后将其结果除以N求余数，这个余数就是密文。</p>
-<p>加密公式中出现的两个数<code>E</code>和 <code>N</code>，到底都是什么数呢? RSA的加密是求明文的<br><code>E</code>次方mod <code>N</code>，因此只要知道E和N这两个数，任何人都可以完成加密的运算。所以说，<code>E</code> 和 <code>N</code>是RSA加密的密钥，也就是说，<code>E</code> 和 <code>N</code>的组合就是公钥。</p>
+          <h2 id="POS简介"><a href="#POS简介" class="headerlink" title="POS简介"></a>POS简介</h2><p>POS：Proof of Stake，股权证明<br>类似于财产储存在银行，这种模式会根据你持有数字货币的量和时间，分配给你相应的利息。<br>简单来说，就是一个根据你持有货币的量和时间，给你发利息的一个制度，在股权证明POS模式下，有一个名词叫币龄，每个币每天产生1币龄，比如你持有100个币，总共持有了30天，那么，此时你的币龄就为3000，这个时候，如果你发现了一个POS区块，你的币龄就会被清空为0。你每被清空365币龄，你将会从区块中获得0.05个币的利息(假定利息可理解为年利率5%)，那么在这个案例中，利息 = 3000 * 5% / 365 = 0.41个币，这下就很有意思了，持币有利息。以太坊就是采用POS共识算法。</p>
+<h2 id="算法具体实现原理"><a href="#算法具体实现原理" class="headerlink" title="算法具体实现原理"></a>算法具体实现原理</h2><p>每个旷工都有出块(即挖矿)的权力，只要出块成功，就有系统给出的奖励，这里不需要通过复杂的计算来挖矿，问题只在于谁来出块，股权越大，出块的概率就越大，反之，则相反。POS有很多变种，股权可以是持有币的数量，或者支付的数量等等。</p>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2018/06/27/非对称加密RSA原理简介及使用/#more" rel="contents">
+            <a class="btn" href="/2018/06/29/共识算法POS原理及实现/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -650,8 +654,8 @@
             
               
                 
-                <a class="post-title-link" href="/2018/06/27/对称加密算法AES原理及实现/" itemprop="url">
-                  对称加密算法AES原理及实现
+                <a class="post-title-link" href="/2018/06/29/共识算法POW原理及实现/" itemprop="url">
+                  共识算法POW原理及实现
                 </a>
               
             
@@ -664,8 +668,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-06-27T18:52:14+08:00" content="2018-06-27">
-              2018-06-27
+            <time itemprop="dateCreated" datetime="2018-06-29T19:31:22+08:00" content="2018-06-29">
+              2018-06-29
             </time>
           </span>
 
@@ -678,8 +682,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/加密算法/" itemprop="url" rel="index">
-                    <span itemprop="name">加密算法</span>
+                  <a href="/categories/共识算法/" itemprop="url" rel="index">
+                    <span itemprop="name">共识算法</span>
                   </a>
                 </span>
 
@@ -694,8 +698,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2018/06/27/对称加密算法AES原理及实现/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/06/27/对称加密算法AES原理及实现/" itemprop="commentsCount"></span>
+                <a href="/2018/06/29/共识算法POW原理及实现/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/06/29/共识算法POW原理及实现/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -719,9 +723,10 @@
 
       
         
-          <p>AES是作为DES的替代标准出现的，全称Advanced Encryption Standard，即：高级加密标准。AES加密算法，经历了公开的选拔，最终2000年，由比利时密码学家Joan Daemen和Vincent Rijmen设计的Rijndael算法被选中，成为了AES标准。<br>　　AES明文分组长度为128位，即16个字节，密钥长度可以为16个字节、24个字节、或32个字节，即128位密钥、192位密钥、或256位密钥。<br>　　<br>
+          <h2 id="POW简介"><a href="#POW简介" class="headerlink" title="POW简介"></a>POW简介</h2><p>Proof of Work，工作证明。<br>POW共识算法主要是通过计算难度值来决定谁来出块。POW的工作量是指方程式求解，谁先解出来，谁就有权利出块。方程式是通过前一个区块的哈希值和随机值nonce来计算下一个区块的哈希值，谁先找到nonce，谁就能最先计算出下一个区块的哈希值，这种方式之所以被称为计算难度值是因为方程式没有固定解法，只能不断的尝试，这种解方程式的方式称为哈希碰撞，是概率事件，碰撞的次数越多，方程式求解的难度就会越大。比特币就是采用POW共识算法</p>
+<h2 id="算法具体实现原理"><a href="#算法具体实现原理" class="headerlink" title="算法具体实现原理"></a>算法具体实现原理</h2><p>这里涉及到两个重要的概念，一个是难度系数，一个是nonce，nonce可以理解为一个随机数，就是挖矿中要找到一个符合条件的nonce值。<br>这里假设难度系数是4(比特币初始难度系数就是4)，将一个区块中的数据加上nonce值打包，nonce值从0开始一直递增，将这打包的数据计算hash值，hash满足最前面有4个0，就是挖矿成功。难度系数为多少，hash最前面就需要满足多少个0。</p>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2018/06/27/对称加密算法AES原理及实现/#more" rel="contents">
+            <a class="btn" href="/2018/06/29/共识算法POW原理及实现/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -755,7 +760,7 @@
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -796,7 +801,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">32</span>
+              <span class="site-state-item-count">36</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -804,7 +809,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -813,7 +818,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">60</span>
+                <span class="site-state-item-count">66</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
