@@ -1,0 +1,896 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="etcd,分布式,服务器集群," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="code随手记" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="下载安装 etcd1234$ mkdir -p $GOPATH/src/github.com/coreos$ git clone https://github.com/coreos/etcd.git$ cd etcd$ ./build">
+<meta property="og:type" content="article">
+<meta property="og:title" content="etcd多台服务器集群环境搭建使用">
+<meta property="og:url" content="http://gcblog/github.io/2018/07/05/etcd多台服务器集群环境搭建使用/index.html">
+<meta property="og:site_name" content="code随手记">
+<meta property="og:description" content="下载安装 etcd1234$ mkdir -p $GOPATH/src/github.com/coreos$ git clone https://github.com/coreos/etcd.git$ cd etcd$ ./build">
+<meta property="og:updated_time" content="2018-07-05T11:42:35.250Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="etcd多台服务器集群环境搭建使用">
+<meta name="twitter:description" content="下载安装 etcd1234$ mkdir -p $GOPATH/src/github.com/coreos$ git clone https://github.com/coreos/etcd.git$ cd etcd$ ./build">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> etcd多台服务器集群环境搭建使用 | code随手记 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">code随手记</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Practice from here</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                etcd多台服务器集群环境搭建使用
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-05T19:41:22+08:00" content="2018-07-05">
+              2018-07-05
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/区块链/" itemprop="url" rel="index">
+                    <span itemprop="name">区块链</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/07/05/etcd多台服务器集群环境搭建使用/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/07/05/etcd多台服务器集群环境搭建使用/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i></i> 浏览
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="下载安装-etcd"><a href="#下载安装-etcd" class="headerlink" title="下载安装 etcd"></a>下载安装 etcd</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ mkdir -p $GOPATH/src/github.com/coreos</div><div class="line">$ git clone https://github.com/coreos/etcd.git</div><div class="line">$ cd etcd</div><div class="line">$ ./build</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h2><p>每个节点都要执行以下配置，HOST_1、HOST_2、HOST_3 分别设置为多台服务器的IP</p>
+<p>进入到bin目录下<br><code>$ cd $GOPATH/src/github.com/coreos/etcd/bin</code></p>
+<p>3个ip分别换成3太服务器真实的ip</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">TOKEN=token-03</div><div class="line">CLUSTER_STATE=new</div><div class="line">NAME_1=machine-1</div><div class="line">NAME_2=machine-2</div><div class="line">NAME_3=machine-3</div><div class="line">HOST_1=192.168.1.105</div><div class="line">HOST_2=192.168.1.143</div><div class="line">HOST_3=192.168.1.103</div><div class="line">CLUSTER=$&#123;NAME_1&#125;=http://$&#123;HOST_1&#125;:2380,$&#123;NAME_2&#125;=http://$&#123;HOST_2&#125;:2380,$&#123;NAME_3&#125;=http://$&#123;HOST_3&#125;:2380</div></pre></td></tr></table></figure>
+<p><strong>machine 1</strong> 执行如下命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ cd $GOPATH/src/github.com/coreos/etcd/bin</div><div class="line"></div><div class="line"># For machine 1</div><div class="line">THIS_NAME=$&#123;NAME_1&#125;</div><div class="line">THIS_IP=$&#123;HOST_1&#125;</div><div class="line">./etcd --data-dir=data.etcd --name $&#123;THIS_NAME&#125; --initial-advertise-peer-urls http://$&#123;THIS_IP&#125;:2380 --listen-peer-urls http://$&#123;THIS_IP&#125;:2380 --advertise-client-urls http://$&#123;THIS_IP&#125;:2379 --listen-client-urls http://$&#123;THIS_IP&#125;:2379 --initial-cluster $&#123;CLUSTER&#125; --initial-cluster-state $&#123;CLUSTER_STATE&#125; --initial-cluster-token $&#123;TOKEN&#125;</div></pre></td></tr></table></figure>
+<p><strong>machine 2</strong> 执行如下命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ cd $GOPATH/src/github.com/coreos/etcd/bin</div><div class="line"></div><div class="line"># For machine 2</div><div class="line">THIS_NAME=$&#123;NAME_2&#125;</div><div class="line">THIS_IP=$&#123;HOST_2&#125;</div><div class="line">./etcd --data-dir=data.etcd --name $&#123;THIS_NAME&#125; --initial-advertise-peer-urls http://$&#123;THIS_IP&#125;:2380 --listen-peer-urls http://$&#123;THIS_IP&#125;:2380 --advertise-client-urls http://$&#123;THIS_IP&#125;:2379 --listen-client-urls http://$&#123;THIS_IP&#125;:2379 --initial-cluster $&#123;CLUSTER&#125; --initial-cluster-state $&#123;CLUSTER_STATE&#125; --initial-cluster-token $&#123;TOKEN&#125;</div></pre></td></tr></table></figure>
+<p><strong>machine 3</strong> 执行如下命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ cd $GOPATH/src/github.com/coreos/etcd/bin</div><div class="line"></div><div class="line"># For machine 3</div><div class="line">THIS_NAME=$&#123;NAME_3&#125;</div><div class="line">THIS_IP=$&#123;HOST_3&#125;</div><div class="line">./etcd --data-dir=data.etcd --name $&#123;THIS_NAME&#125; --initial-advertise-peer-urls http://$&#123;THIS_IP&#125;:2380 --listen-peer-urls http://$&#123;THIS_IP&#125;:2380 --advertise-client-urls http://$&#123;THIS_IP&#125;:2379 --listen-client-urls http://$&#123;THIS_IP&#125;:2379 --initial-cluster $&#123;CLUSTER&#125; --initial-cluster-state $&#123;CLUSTER_STATE&#125; --initial-cluster-token $&#123;TOKEN&#125;</div></pre></td></tr></table></figure>
+<p>检测服务器运行是否正常</p>
+<p>3个ip分别换成3太服务器真实的ip</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ cd $GOPATH/src/github.com/coreos/etcd/bin</div><div class="line"></div><div class="line">export ETCDCTL_API=3</div><div class="line">HOST_1=192.168.1.105</div><div class="line">HOST_2=192.168.1.143</div><div class="line">HOST_3=192.168.1.103</div><div class="line">ENDPOINTS=$HOST_1:2379,$HOST_2:2379,$HOST_3:2379</div></pre></td></tr></table></figure>
+<p>查看进入集群的服务器列表<br><code>./etcdctl --endpoints=$ENDPOINTS member list</code></p>
+<h2 id="存储数据"><a href="#存储数据" class="headerlink" title="存储数据"></a>存储数据</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">./etcdctl --endpoints=$ENDPOINTS put foo &quot;Hello World!&quot;</div><div class="line"></div><div class="line">./etcdctl --endpoints=$ENDPOINTS get foo</div><div class="line">./etcdctl --endpoints=$ENDPOINTS --write-out=&quot;json&quot; get foo</div></pre></td></tr></table></figure>
+<h2 id="根据前缀查询"><a href="#根据前缀查询" class="headerlink" title="根据前缀查询"></a>根据前缀查询</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">./etcdctl --endpoints=$ENDPOINTS put web1 value1</div><div class="line">./etcdctl --endpoints=$ENDPOINTS put web2 value2</div><div class="line">./etcdctl --endpoints=$ENDPOINTS put web3 value3</div><div class="line"></div><div class="line">./etcdctl --endpoints=$ENDPOINTS get web --prefix</div><div class="line"></div><div class="line">web1</div><div class="line">value1</div><div class="line">web2</div><div class="line">value2</div><div class="line">web3</div><div class="line">value3</div></pre></td></tr></table></figure>
+<h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">./etcdctl --endpoints=$ENDPOINTS put key myvalue</div><div class="line">./etcdctl --endpoints=$ENDPOINTS del key</div><div class="line"></div><div class="line">./etcdctl --endpoints=$ENDPOINTS put k1 value1</div><div class="line">./etcdctl --endpoints=$ENDPOINTS put k2 value2</div><div class="line">./etcdctl --endpoints=$ENDPOINTS del k --prefix</div></pre></td></tr></table></figure>
+<h2 id="事务写入"><a href="#事务写入" class="headerlink" title="事务写入"></a>事务写入</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">$ ./etcdctl --endpoints=$ENDPOINTS put user1 bad</div><div class="line">OK</div><div class="line"></div><div class="line">$ ./etcdctl --endpoints=$ENDPOINTS txn --interactive</div><div class="line"></div><div class="line">compares:</div><div class="line">// 输入以下内容，输入结束按 两次回车</div><div class="line">value(&quot;user1&quot;) = &quot;bad&quot;      </div><div class="line"></div><div class="line">//如果 user1 = bad，则执行 get user1 </div><div class="line">success requests (get, put, del):</div><div class="line">get user1</div><div class="line"></div><div class="line">//如果 user1 != bad，则执行 put user1 good</div><div class="line">failure requests (get, put, del):</div><div class="line">put user1 good</div><div class="line"></div><div class="line">// 运行结果，执行 success</div><div class="line">SUCCESS</div><div class="line"></div><div class="line">user1</div><div class="line">bad</div><div class="line"></div><div class="line"></div><div class="line">$ ./etcdctl --endpoints=$ENDPOINTS txn --interactive</div><div class="line">compares:</div><div class="line">value(&quot;user1&quot;) = &quot;111&quot;  </div><div class="line"></div><div class="line">// 如果 user1 = 111，则执行 get user1 </div><div class="line">success requests (get, put, del):</div><div class="line">get user1</div><div class="line"></div><div class="line">//如果 user1 != 111，则执行 put user1 2222</div><div class="line">failure requests (get, put, del):</div><div class="line">put user1 2222</div><div class="line"></div><div class="line">// 运行结果，执行 failure</div><div class="line">FAILURE</div><div class="line"></div><div class="line">OK</div><div class="line"></div><div class="line">$ ./etcdctl --endpoints=$ENDPOINTS get user1</div><div class="line">user1</div><div class="line">2222</div></pre></td></tr></table></figure>
+<h2 id="watch"><a href="#watch" class="headerlink" title="watch"></a>watch</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">// 当 stock1 的数值改变（ put 方法）的时候，watch 会收到通知</div><div class="line">./etcdctl --endpoints=$ENDPOINTS watch stock1</div><div class="line"></div><div class="line">// 新打开终端</div><div class="line">$ cd $GOPATH/src/github.com/coreos/etcd/bin</div><div class="line"></div><div class="line">export ETCDCTL_API=3</div><div class="line">HOST_1=192.168.1.126</div><div class="line">HOST_2=192.168.1.119</div><div class="line">HOST_3=192.168.1.103</div><div class="line">ENDPOINTS=$HOST_1:2379,$HOST_2:2379,$HOST_3:2379</div><div class="line">./etcdctl --endpoints=$ENDPOINTS put stock1 1000</div><div class="line"></div><div class="line">./etcdctl --endpoints=$ENDPOINTS watch stock --prefix</div><div class="line"></div><div class="line">./etcdctl --endpoints=$ENDPOINTS put stock1 10</div><div class="line">./etcdctl --endpoints=$ENDPOINTS put stock2 20</div></pre></td></tr></table></figure>
+<h2 id="更多操作"><a href="#更多操作" class="headerlink" title="更多操作"></a>更多操作</h2><p><a href="https://coreos.com/etcd/docs/latest/demo.html" target="_blank" rel="external">https://coreos.com/etcd/docs/latest/demo.html</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/weixin.jpg" alt="夜千寻墨 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/zhifubao.jpg" alt="夜千寻墨 Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/etcd/" rel="tag">#etcd</a>
+          
+            <a href="/tags/分布式/" rel="tag">#分布式</a>
+          
+            <a href="/tags/服务器集群/" rel="tag">#服务器集群</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/05/etcd在golang中的使用/" rel="next" title="etcd在golang中的使用">
+                <i class="fa fa-chevron-left"></i> etcd在golang中的使用
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/07/05/etcd多台服务器集群环境搭建使用/"
+           data-title="etcd多台服务器集群环境搭建使用" data-url="http://gcblog/github.io/2018/07/05/etcd多台服务器集群环境搭建使用/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="夜千寻墨" />
+          <p class="site-author-name" itemprop="name">夜千寻墨</p>
+          <p class="site-description motion-element" itemprop="description">扫码关注微信公众号,及时获取文章更新</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">39</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">70</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/suifengqjn" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/dearqjn?source=blog&is_all=1" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/527ecf8c8753/latest_articles" target="_blank" title="简书">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  简书
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.instagram.com/yeqianxun/" target="_blank" title="instagram">
+                  
+                    <i class="fa fa-fw fa-instagram"></i>
+                  
+                  instagram
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#下载安装-etcd"><span class="nav-number">1.</span> <span class="nav-text">下载安装 etcd</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#启动服务"><span class="nav-number">2.</span> <span class="nav-text">启动服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#存储数据"><span class="nav-number">3.</span> <span class="nav-text">存储数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#根据前缀查询"><span class="nav-number">4.</span> <span class="nav-text">根据前缀查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#删除"><span class="nav-number">5.</span> <span class="nav-text">删除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事务写入"><span class="nav-number">6.</span> <span class="nav-text">事务写入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#watch"><span class="nav-number">7.</span> <span class="nav-text">watch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更多操作"><span class="nav-number">8.</span> <span class="nav-text">更多操作</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">夜千寻墨</span>
+</div>
+
+<div class="powered-by">
+  powered by <a class="theme-link">Hexo</a>
+</div>
+
+<div class="theme-info">
+  theme -
+  <a class="theme-link">
+    Next
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">本站访客数<span class="busuanzi-value" id="busuanzi_value_site_uv"></span>人次</span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i> 总访问量<span class="busuanzi-value" id="busuanzi_value_site_pv"></span>次</span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"yqxm"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';                
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+                            
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').mousedown(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+  
+
+  
+
+  
+
+</body>
+</html>
