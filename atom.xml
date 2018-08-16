@@ -405,9 +405,9 @@
       <category term="共识算法" scheme="http://gcblog/github.io/categories/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
     
     
-      <category term="共识算法" scheme="http://gcblog/github.io/tags/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
-    
       <category term="POS" scheme="http://gcblog/github.io/tags/POS/"/>
+    
+      <category term="共识算法" scheme="http://gcblog/github.io/tags/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
     
   </entry>
   
@@ -436,18 +436,18 @@
       <category term="共识算法" scheme="http://gcblog/github.io/categories/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
     
     
-      <category term="POW" scheme="http://gcblog/github.io/tags/POW/"/>
-    
       <category term="共识算法" scheme="http://gcblog/github.io/tags/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="POW" scheme="http://gcblog/github.io/tags/POW/"/>
     
   </entry>
   
   <entry>
-    <title>ESA和ECC签名验签</title>
+    <title>DSA和ECC签名验签</title>
     <link href="http://gcblog/github.io/2018/06/28/DSA%E5%92%8CECC%E7%AD%BE%E5%90%8D%E9%AA%8C%E7%AD%BE/"/>
     <id>http://gcblog/github.io/2018/06/28/DSA和ECC签名验签/</id>
     <published>2018-06-28T10:52:24.000Z</published>
-    <updated>2018-08-15T11:09:07.004Z</updated>
+    <updated>2018-08-16T01:07:26.498Z</updated>
     
     <content type="html"><![CDATA[<h2 id="DSA"><a href="#DSA" class="headerlink" title="DSA"></a>DSA</h2><p>DSA 是专业用于数字签名和验签，并且只有这个作用, 不能用于加密和解密。<br>在安全性上，DSA和RSA差不多，但是速度比RSA快很多。</p>
 <a id="more"></a>
@@ -458,8 +458,7 @@
 <li>安全性高。160位ECC加密安全性相当于1024位RSA加密，210位ECC加密安全性相当于2048位RSA加密。</li>
 <li>计算量小,处理速度快,在私钥的处理速度上(解密和签名),ECC远比RSA、DSA快得多</li>
 <li>存储空间占用小,ECC的密钥尺寸和系统参数与RSA、DSA相比要小得多, 所以占用的存储进空间小得多</li>
-<li>带宽要求低使得ECC具有广泛得应用前景
-　　　</li>
+<li>带宽要求低使得ECC具有广泛得应用前景</li>
 </ul>
 <h3 id="椭圆曲线"><a href="#椭圆曲线" class="headerlink" title="椭圆曲线"></a>椭圆曲线</h3><p>一般情况下，椭圆曲线可用下列方程式来表示，其中a,b,c,d为系数。</p>
 <blockquote>
