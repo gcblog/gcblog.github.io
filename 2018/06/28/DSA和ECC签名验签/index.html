@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="iOS, 钱佳能, 夜千寻墨, 风逝, swift golang go 区块链" />
+  <meta name="keywords" content="DSA,ECC,签名,验签," />
 
 
 
@@ -86,15 +86,18 @@
 
 
 
-<meta name="description" content="扫码关注微信公众号,及时获取文章更新">
-<meta property="og:type" content="website">
-<meta property="og:title" content="code随手记">
-<meta property="og:url" content="http://gcblog/github.io/tags/ECC/index.html">
+<meta name="description" content="DSADSA 是专业用于数字签名和验签，并且只有这个作用, 不能用于加密和解密。在安全性上，DSA和RSA差不多，但是速度比RSA快很多。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ESA和ECC签名验签">
+<meta property="og:url" content="http://gcblog/github.io/2018/06/28/DSA和ECC签名验签/index.html">
 <meta property="og:site_name" content="code随手记">
-<meta property="og:description" content="扫码关注微信公众号,及时获取文章更新">
+<meta property="og:description" content="DSADSA 是专业用于数字签名和验签，并且只有这个作用, 不能用于加密和解密。在安全性上，DSA和RSA差不多，但是速度比RSA快很多。">
+<meta property="og:image" content="http://olgjbx93m.bkt.clouddn.com/20180117-211235.png">
+<meta property="og:updated_time" content="2018-08-15T11:09:07.004Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="code随手记">
-<meta name="twitter:description" content="扫码关注微信公众号,及时获取文章更新">
+<meta name="twitter:title" content="ESA和ECC签名验签">
+<meta name="twitter:description" content="DSADSA 是专业用于数字签名和验签，并且只有这个作用, 不能用于加密和解密。在安全性上，DSA和RSA差不多，但是速度比RSA快很多。">
+<meta name="twitter:image" content="http://olgjbx93m.bkt.clouddn.com/20180117-211235.png">
 
 
 
@@ -112,7 +115,7 @@
   };
 </script>
 
-  <title> 标签: ECC | code随手记 </title>
+  <title> ESA和ECC签名验签 | code随手记 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -133,7 +136,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left  ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -254,46 +257,205 @@
           <div id="content" class="content">
             
 
-  <div id="posts" class="posts-collapse">
-    <div class="collection-title">
-      <h2 >
-        ECC
-        <small>标签</small>
-      </h2>
-    </div>
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
 
     
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                ESA和ECC签名验签
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-06-28T18:52:24+08:00" content="2018-06-28">
+              2018-06-28
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/加密算法/" itemprop="url" rel="index">
+                    <span itemprop="name">加密算法</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/06/28/DSA和ECC签名验签/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/06/28/DSA和ECC签名验签/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i></i> 浏览
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
       
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+      
+        <h2 id="DSA"><a href="#DSA" class="headerlink" title="DSA"></a>DSA</h2><p>DSA 是专业用于数字签名和验签，并且只有这个作用, 不能用于加密和解密。<br>在安全性上，DSA和RSA差不多，但是速度比RSA快很多。</p>
+<a id="more"></a>
+<h3 id="DSA签名和验签"><a href="#DSA签名和验签" class="headerlink" title="DSA签名和验签"></a>DSA签名和验签</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">func main()  &#123;</div><div class="line"></div><div class="line">	//设置私钥使用的参数</div><div class="line">	var param dsa.Parameters</div><div class="line">	dsa.GenerateParameters(&amp;param, rand.Reader, dsa.L1024N160)</div><div class="line"></div><div class="line">	//创建私钥</div><div class="line">	var pri dsa.PrivateKey</div><div class="line">	pri.Parameters = param</div><div class="line">	dsa.GenerateKey(&amp;pri, rand.Reader)</div><div class="line"></div><div class="line"></div><div class="line">	//生成公钥</div><div class="line">	pub := pri.PublicKey</div><div class="line"></div><div class="line"></div><div class="line">	//签名</div><div class="line">	message := []byte(&quot;hello&quot;)</div><div class="line">	r,s,_ := dsa.Sign(rand.Reader, &amp;pri, message)</div><div class="line"></div><div class="line"></div><div class="line">	//验证</div><div class="line">	if dsa.Verify(&amp;pub, message, r, s)&#123;</div><div class="line">		fmt.Println(&quot;验签成功&quot;)</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="ECC"><a href="#ECC" class="headerlink" title="ECC"></a>ECC</h2><p>椭圆曲线加密算法，即：Elliptic Curve Cryptography，简称ECC，是基于椭圆曲线数学理论实现的一种非对称加密算法。相比RSA，ECC优势是可以使用更短的密钥，来实现与RSA相当或更高的安全。</p>
+<p>椭圆曲线在密码学中的使用，是1985年由Neal Koblitz和Victor Miller分别独立提出的。<br>比特币就是用ECC来做签名和验签。</p>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
+<li>安全性高。160位ECC加密安全性相当于1024位RSA加密，210位ECC加密安全性相当于2048位RSA加密。</li>
+<li>计算量小,处理速度快,在私钥的处理速度上(解密和签名),ECC远比RSA、DSA快得多</li>
+<li>存储空间占用小,ECC的密钥尺寸和系统参数与RSA、DSA相比要小得多, 所以占用的存储进空间小得多</li>
+<li>带宽要求低使得ECC具有广泛得应用前景
+　　　</li>
+</ul>
+<h3 id="椭圆曲线"><a href="#椭圆曲线" class="headerlink" title="椭圆曲线"></a>椭圆曲线</h3><p>一般情况下，椭圆曲线可用下列方程式来表示，其中a,b,c,d为系数。</p>
+<blockquote>
+<p>E:y<sup>2</sup>=ax<sup>3</sup>+ bx<sup>2</sup>+cx+d</p>
+</blockquote>
+<p>例如，当a=1,b=0,c=-2,d=4时，所得到的椭圆曲线为:</p>
+<blockquote>
+<p>E:y<sup>2</sup>=x<sup>3</sup>-2x+4</p>
+</blockquote>
+<p>该椭圆曲线E的图像如图X-1所示，可以看出根本就不是椭圆形。　　</p>
+<p><img src="http://olgjbx93m.bkt.clouddn.com/20180117-211235.png" alt=""></p>
+<h3 id="ECC签名和验签"><a href="#ECC签名和验签" class="headerlink" title="ECC签名和验签"></a>ECC签名和验签</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">func main()  &#123;</div><div class="line"></div><div class="line">	message := []byte(&quot;hello&quot;)</div><div class="line"></div><div class="line">	//设置生成的私钥为256位</div><div class="line">	privatekey,_ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)</div><div class="line"></div><div class="line">	//创建公钥</div><div class="line">	publicKey := privatekey.PublicKey</div><div class="line"></div><div class="line">	//hash散列明文</div><div class="line">	digest := sha256.Sum256(message)</div><div class="line"></div><div class="line"></div><div class="line">	//用私钥签名</div><div class="line">	r,s,_:= ecdsa.Sign(rand.Reader,privatekey, digest[:])</div><div class="line"></div><div class="line">	//设置私钥的参数类型</div><div class="line">	param := privatekey.Curve.Params()</div><div class="line"></div><div class="line">	//获取私钥的长度（字节）</div><div class="line">	curveOrderBytes:=param.P.BitLen()/8</div><div class="line"></div><div class="line">	//获得签名返回的字节</div><div class="line">	rByte,sByte := r.Bytes(), s.Bytes()</div><div class="line"></div><div class="line">	//创建数组合并字节</div><div class="line">	signature := make([]byte,curveOrderBytes*2)</div><div class="line">	copy(signature[:len(rByte)], rByte)</div><div class="line">	copy(signature[len(sByte):], sByte)</div><div class="line"></div><div class="line">	//现在signature中就存放了完整的签名的结果</div><div class="line"></div><div class="line">	//验签</div><div class="line">	digest = sha256.Sum256(message)</div><div class="line">	//获得公钥的字节长度</div><div class="line">	curveOrderBytes= publicKey.Curve.Params().P.BitLen()/8</div><div class="line"></div><div class="line">	//创建大整数类型保存rbyte,sbyte</div><div class="line">	r,s = new(big.Int),new(big.Int)</div><div class="line"></div><div class="line">	r.SetBytes(signature[:curveOrderBytes])</div><div class="line">	s.SetBytes(signature[curveOrderBytes:])</div><div class="line"></div><div class="line"></div><div class="line">	//开始认证</div><div class="line">	e:=ecdsa.Verify(&amp;publicKey,digest[:],r,s)</div><div class="line">	if e== true &#123;</div><div class="line">		fmt.Println(&quot;验签成功&quot;)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
-      <h1 class="post-title">
+      
+    </div>
+
+    <div>
+      
         
-            <a class="post-title-link" href="/2018/06/28/DSA和ECC签名验签/" itemprop="url">
-              
-                <span itemprop="name">ESA和ECC签名验签</span>
-              
-            </a>
+      
+    </div>
+
+    <div>
+      
         
-      </h1>
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/weixin.jpg" alt="夜千寻墨 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/zhifubao.jpg" alt="夜千寻墨 Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-06-28T18:52:24+08:00"
-              content="2018-06-28" >
-          06-28
-        </time>
-      </div>
 
-    </header>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/DSA/" rel="tag">#DSA</a>
+          
+            <a href="/tags/ECC/" rel="tag">#ECC</a>
+          
+            <a href="/tags/签名/" rel="tag">#签名</a>
+          
+            <a href="/tags/验签/" rel="tag">#验签</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/28/RSA签名验签/" rel="next" title="RSA签名验签">
+                <i class="fa fa-chevron-left"></i> RSA签名验签
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/29/共识算法POW原理及实现/" rel="prev" title="共识算法POW原理及实现">
+                共识算法POW原理及实现 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </article>
 
 
-    
-  </div>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -301,6 +463,14 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/06/28/DSA和ECC签名验签/"
+           data-title="ESA和ECC签名验签" data-url="http://gcblog/github.io/2018/06/28/DSA和ECC签名验签/">
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -320,8 +490,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -416,6 +595,17 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#DSA"><span class="nav-number">1.</span> <span class="nav-text">DSA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DSA签名和验签"><span class="nav-number">1.1.</span> <span class="nav-text">DSA签名和验签</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ECC"><span class="nav-number">2.</span> <span class="nav-text">ECC</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优点"><span class="nav-number">2.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#椭圆曲线"><span class="nav-number">2.2.</span> <span class="nav-text">椭圆曲线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ECC签名和验签"><span class="nav-number">2.3.</span> <span class="nav-text">ECC签名和验签</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -535,6 +725,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
 
   
 

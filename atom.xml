@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://gcblog/github.io/"/>
-  <updated>2018-07-09T13:02:50.022Z</updated>
+  <updated>2018-07-09T13:02:50.023Z</updated>
   <id>http://gcblog/github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://gcblog/github.io/2018/07/09/mac%E4%B8%8B%E4%BD%BF%E7%94%A8golang%E6%93%8D%E4%BD%9Cmongodb/"/>
     <id>http://gcblog/github.io/2018/07/09/mac下使用golang操作mongodb/</id>
     <published>2018-07-09T12:01:50.000Z</published>
-    <updated>2018-07-09T13:02:50.022Z</updated>
+    <updated>2018-07-09T13:02:50.023Z</updated>
     
     <content type="html"><![CDATA[<h3 id="MongoDB简介"><a href="#MongoDB简介" class="headerlink" title="MongoDB简介"></a>MongoDB简介</h3><p>MongoDB是一个介于关系数据库和非关系数据库之间的产品，是非关系数据库当中功能最丰富，最像关系数据库的。他支持的数据结构非常松散，是类似json的bson格式，因此可以存储比较复杂的数据类型。</p>
 <h3 id="NoSql数据库的CAP理论"><a href="#NoSql数据库的CAP理论" class="headerlink" title="NoSql数据库的CAP理论"></a>NoSql数据库的CAP理论</h3><p>CAP理论，指的是在一个分布式系统中，Consistency（一致性）、 Availability（可用性）、Partition tolerance（分区容错性），三者不可得兼。<br><a id="more"></a><br><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/blog/cap.png" alt=""></p>
@@ -75,7 +75,7 @@
     <link href="http://gcblog/github.io/2018/07/05/etcd%E5%A4%9A%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%9B%86%E7%BE%A4%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BD%BF%E7%94%A8/"/>
     <id>http://gcblog/github.io/2018/07/05/etcd多台服务器集群环境搭建使用/</id>
     <published>2018-07-05T11:41:22.000Z</published>
-    <updated>2018-07-05T11:42:35.250Z</updated>
+    <updated>2018-07-05T11:42:35.251Z</updated>
     
     <content type="html"><![CDATA[<h2 id="下载安装-etcd"><a href="#下载安装-etcd" class="headerlink" title="下载安装 etcd"></a>下载安装 etcd</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ mkdir -p $GOPATH/src/github.com/coreos</div><div class="line">$ git clone https://github.com/coreos/etcd.git</div><div class="line">$ cd etcd</div><div class="line">$ ./build</div></pre></td></tr></table></figure>
 <a id="more"></a>
@@ -123,7 +123,7 @@
     <link href="http://gcblog/github.io/2018/07/05/etcd%E5%9C%A8golang%E4%B8%AD%E7%9A%84%E4%BD%BF%E7%94%A8/"/>
     <id>http://gcblog/github.io/2018/07/05/etcd在golang中的使用/</id>
     <published>2018-07-05T11:35:05.000Z</published>
-    <updated>2018-07-05T11:36:17.136Z</updated>
+    <updated>2018-07-05T11:36:17.137Z</updated>
     
     <content type="html"><![CDATA[<h2 id="什么是etcd"><a href="#什么是etcd" class="headerlink" title="什么是etcd"></a>什么是etcd</h2><p>ETCD是用于共享配置和服务发现的分布式，一致性的KV存储系统<br>etcd作为一个受到ZooKeeper与doozer启发而催生的项目，除了拥有与之类似的功能外，更专注于以下四点。</p>
 <pre><code>1.    简单：基于HTTP+JSON的API让你用curl就可以轻松使用。
@@ -356,7 +356,7 @@
     <link href="http://gcblog/github.io/2018/06/29/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95DPOS%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/"/>
     <id>http://gcblog/github.io/2018/06/29/共识算法DPOS原理及实现/</id>
     <published>2018-06-29T11:31:58.000Z</published>
-    <updated>2018-06-29T11:34:46.150Z</updated>
+    <updated>2018-06-29T11:34:46.151Z</updated>
     
     <content type="html"><![CDATA[<h2 id="原理简介"><a href="#原理简介" class="headerlink" title="原理简介"></a>原理简介</h2><p>DPOS：Delegated Proof of Stake，委任权益证明<br>它的原理是让每一个持有币的人进行投票，由此产生n位代表 , 我们可以将其理解为n个超级节点或者矿池，而这n个超级节点彼此的权利是完全相等的。从某种角度来看，DPOS有点像是议会制度或人民代表大会制度。如果代表不能履行他们的职责（当轮到他们时，没能生成区块），他们会被除名，网络会选出新的超级节点来取代他们。EOS就是采用DPOS共识算法。</p>
 <h2 id="算法具体实现原理"><a href="#算法具体实现原理" class="headerlink" title="算法具体实现原理"></a>算法具体实现原理</h2><p>假设n为21，竞选的节点有几百个，持币人对这些节点进行投票，选出票数最多的21位，由这21位轮流来出块。</p>
@@ -375,9 +375,9 @@
       <category term="共识算法" scheme="http://gcblog/github.io/categories/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
     
     
-      <category term="DPOS" scheme="http://gcblog/github.io/tags/DPOS/"/>
-    
       <category term="共识算法" scheme="http://gcblog/github.io/tags/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="DPOS" scheme="http://gcblog/github.io/tags/DPOS/"/>
     
   </entry>
   
@@ -416,7 +416,7 @@
     <link href="http://gcblog/github.io/2018/06/29/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95POW%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/"/>
     <id>http://gcblog/github.io/2018/06/29/共识算法POW原理及实现/</id>
     <published>2018-06-29T11:31:22.000Z</published>
-    <updated>2018-06-29T11:33:06.996Z</updated>
+    <updated>2018-06-29T11:33:06.997Z</updated>
     
     <content type="html"><![CDATA[<h2 id="POW简介"><a href="#POW简介" class="headerlink" title="POW简介"></a>POW简介</h2><p>Proof of Work，工作证明。<br>POW共识算法主要是通过计算难度值来决定谁来出块。POW的工作量是指方程式求解，谁先解出来，谁就有权利出块。方程式是通过前一个区块的哈希值和随机值nonce来计算下一个区块的哈希值，谁先找到nonce，谁就能最先计算出下一个区块的哈希值，这种方式之所以被称为计算难度值是因为方程式没有固定解法，只能不断的尝试，这种解方程式的方式称为哈希碰撞，是概率事件，碰撞的次数越多，方程式求解的难度就会越大。比特币就是采用POW共识算法</p>
 <h2 id="算法具体实现原理"><a href="#算法具体实现原理" class="headerlink" title="算法具体实现原理"></a>算法具体实现原理</h2><p>这里涉及到两个重要的概念，一个是难度系数，一个是nonce，nonce可以理解为一个随机数，就是挖矿中要找到一个符合条件的nonce值。<br>这里假设难度系数是4(比特币初始难度系数就是4)，将一个区块中的数据加上nonce值打包，nonce值从0开始一直递增，将这打包的数据计算hash值，hash满足最前面有4个0，就是挖矿成功。难度系数为多少，hash最前面就需要满足多少个0。</p>
@@ -436,22 +436,22 @@
       <category term="共识算法" scheme="http://gcblog/github.io/categories/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
     
     
-      <category term="共识算法" scheme="http://gcblog/github.io/tags/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
-    
       <category term="POW" scheme="http://gcblog/github.io/tags/POW/"/>
+    
+      <category term="共识算法" scheme="http://gcblog/github.io/tags/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
     
   </entry>
   
   <entry>
     <title>ESA和ECC签名验签</title>
-    <link href="http://gcblog/github.io/2018/06/28/ESA%E5%92%8CECC%E7%AD%BE%E5%90%8D%E9%AA%8C%E7%AD%BE/"/>
-    <id>http://gcblog/github.io/2018/06/28/ESA和ECC签名验签/</id>
+    <link href="http://gcblog/github.io/2018/06/28/DSA%E5%92%8CECC%E7%AD%BE%E5%90%8D%E9%AA%8C%E7%AD%BE/"/>
+    <id>http://gcblog/github.io/2018/06/28/DSA和ECC签名验签/</id>
     <published>2018-06-28T10:52:24.000Z</published>
-    <updated>2018-06-28T11:01:12.395Z</updated>
+    <updated>2018-08-15T11:09:07.004Z</updated>
     
-    <content type="html"><![CDATA[<h2 id="ESA"><a href="#ESA" class="headerlink" title="ESA"></a>ESA</h2><p>DSA 是专业用于数字签名和验签，并且只有这个作用, 不能用于加密和解密。<br>在安全性上，DSA和RSA差不多，但是速度比RSA快很多。</p>
+    <content type="html"><![CDATA[<h2 id="DSA"><a href="#DSA" class="headerlink" title="DSA"></a>DSA</h2><p>DSA 是专业用于数字签名和验签，并且只有这个作用, 不能用于加密和解密。<br>在安全性上，DSA和RSA差不多，但是速度比RSA快很多。</p>
 <a id="more"></a>
-<h3 id="ESA签名和验签"><a href="#ESA签名和验签" class="headerlink" title="ESA签名和验签"></a>ESA签名和验签</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">func main()  &#123;</div><div class="line"></div><div class="line">	//设置私钥使用的参数</div><div class="line">	var param dsa.Parameters</div><div class="line">	dsa.GenerateParameters(&amp;param, rand.Reader, dsa.L1024N160)</div><div class="line"></div><div class="line">	//创建私钥</div><div class="line">	var pri dsa.PrivateKey</div><div class="line">	pri.Parameters = param</div><div class="line">	dsa.GenerateKey(&amp;pri, rand.Reader)</div><div class="line"></div><div class="line"></div><div class="line">	//生成公钥</div><div class="line">	pub := pri.PublicKey</div><div class="line"></div><div class="line"></div><div class="line">	//签名</div><div class="line">	message := []byte(&quot;hello&quot;)</div><div class="line">	r,s,_ := dsa.Sign(rand.Reader, &amp;pri, message)</div><div class="line"></div><div class="line"></div><div class="line">	//验证</div><div class="line">	if dsa.Verify(&amp;pub, message, r, s)&#123;</div><div class="line">		fmt.Println(&quot;验签成功&quot;)</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="DSA签名和验签"><a href="#DSA签名和验签" class="headerlink" title="DSA签名和验签"></a>DSA签名和验签</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">func main()  &#123;</div><div class="line"></div><div class="line">	//设置私钥使用的参数</div><div class="line">	var param dsa.Parameters</div><div class="line">	dsa.GenerateParameters(&amp;param, rand.Reader, dsa.L1024N160)</div><div class="line"></div><div class="line">	//创建私钥</div><div class="line">	var pri dsa.PrivateKey</div><div class="line">	pri.Parameters = param</div><div class="line">	dsa.GenerateKey(&amp;pri, rand.Reader)</div><div class="line"></div><div class="line"></div><div class="line">	//生成公钥</div><div class="line">	pub := pri.PublicKey</div><div class="line"></div><div class="line"></div><div class="line">	//签名</div><div class="line">	message := []byte(&quot;hello&quot;)</div><div class="line">	r,s,_ := dsa.Sign(rand.Reader, &amp;pri, message)</div><div class="line"></div><div class="line"></div><div class="line">	//验证</div><div class="line">	if dsa.Verify(&amp;pub, message, r, s)&#123;</div><div class="line">		fmt.Println(&quot;验签成功&quot;)</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h2 id="ECC"><a href="#ECC" class="headerlink" title="ECC"></a>ECC</h2><p>椭圆曲线加密算法，即：Elliptic Curve Cryptography，简称ECC，是基于椭圆曲线数学理论实现的一种非对称加密算法。相比RSA，ECC优势是可以使用更短的密钥，来实现与RSA相当或更高的安全。</p>
 <p>椭圆曲线在密码学中的使用，是1985年由Neal Koblitz和Victor Miller分别独立提出的。<br>比特币就是用ECC来做签名和验签。</p>
 <h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
@@ -476,14 +476,14 @@
     
     <summary type="html">
     
-      &lt;h2 id=&quot;ESA&quot;&gt;&lt;a href=&quot;#ESA&quot; class=&quot;headerlink&quot; title=&quot;ESA&quot;&gt;&lt;/a&gt;ESA&lt;/h2&gt;&lt;p&gt;DSA 是专业用于数字签名和验签，并且只有这个作用, 不能用于加密和解密。&lt;br&gt;在安全性上，DSA和RSA差不多，但是速度比RSA快很多。&lt;/p&gt;
+      &lt;h2 id=&quot;DSA&quot;&gt;&lt;a href=&quot;#DSA&quot; class=&quot;headerlink&quot; title=&quot;DSA&quot;&gt;&lt;/a&gt;DSA&lt;/h2&gt;&lt;p&gt;DSA 是专业用于数字签名和验签，并且只有这个作用, 不能用于加密和解密。&lt;br&gt;在安全性上，DSA和RSA差不多，但是速度比RSA快很多。&lt;/p&gt;
     
     </summary>
     
       <category term="加密算法" scheme="http://gcblog/github.io/categories/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"/>
     
     
-      <category term="ESA" scheme="http://gcblog/github.io/tags/ESA/"/>
+      <category term="DSA" scheme="http://gcblog/github.io/tags/DSA/"/>
     
       <category term="ECC" scheme="http://gcblog/github.io/tags/ECC/"/>
     
@@ -498,7 +498,7 @@
     <link href="http://gcblog/github.io/2018/06/28/RSA%E7%AD%BE%E5%90%8D%E9%AA%8C%E7%AD%BE/"/>
     <id>http://gcblog/github.io/2018/06/28/RSA签名验签/</id>
     <published>2018-06-28T10:51:55.000Z</published>
-    <updated>2018-06-28T10:54:08.920Z</updated>
+    <updated>2018-06-28T10:54:08.921Z</updated>
     
     <content type="html"><![CDATA[<h2 id="什么是数字签名"><a href="#什么是数字签名" class="headerlink" title="什么是数字签名"></a>什么是数字签名</h2><p>数字签名就是只有信息的发送者才能产生的别人无法伪造的一段数字串，这段数字串同时也是对信息的发送者发送信息真实性的一个有效证明。</p>
 <h2 id="签名的生成和验证"><a href="#签名的生成和验证" class="headerlink" title="签名的生成和验证"></a>签名的生成和验证</h2><h3 id="生成消息签名的行为"><a href="#生成消息签名的行为" class="headerlink" title="生成消息签名的行为"></a>生成消息签名的行为</h3><p>生成消息签名这一行为是由消息的发送者来完成的，也称为“对消息签名”。生成签名就是根据消息内容计算数字签名的值，这个行为意味着“我认可该消息的内容”。</p>
@@ -536,7 +536,7 @@
     <link href="http://gcblog/github.io/2018/06/27/%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86RSA%E5%8E%9F%E7%90%86%E7%AE%80%E4%BB%8B%E5%8F%8A%E4%BD%BF%E7%94%A8/"/>
     <id>http://gcblog/github.io/2018/06/27/非对称加密RSA原理简介及使用/</id>
     <published>2018-06-27T10:54:38.000Z</published>
-    <updated>2018-06-28T10:36:59.783Z</updated>
+    <updated>2018-06-28T10:36:59.784Z</updated>
     
     <content type="html"><![CDATA[<h2 id="什么是RSA"><a href="#什么是RSA" class="headerlink" title="什么是RSA"></a>什么是RSA</h2><p>RSA是一种公钥密码算法，它的名字是由它的三位开发者，即Ron Rivest、Adi Shamir 和 Leonard Adleman的姓氏的首字母组成的( Rivest-Shamir-Adleman )。</p>
 <p>RSA可以被用于公钥密码和数字签名。</p>
@@ -643,7 +643,7 @@
     <link href="http://gcblog/github.io/2018/06/26/%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95DES%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/"/>
     <id>http://gcblog/github.io/2018/06/26/对称加密算法DES原理及实现/</id>
     <published>2018-06-26T11:24:12.000Z</published>
-    <updated>2018-06-27T10:50:44.651Z</updated>
+    <updated>2018-06-27T10:50:44.652Z</updated>
     
     <content type="html"><![CDATA[<h2 id="DES加密算法"><a href="#DES加密算法" class="headerlink" title="DES加密算法"></a>DES加密算法</h2><p>DES加密算法，为对称加密算法中的一种。70年代初由IBM研发，后1977年被美国国家标准局采纳为数据加密标准，即DES全称的由来：Data Encryption Standard。对称加密算法，是相对于非对称加密算法而言的。两者区别在于，对称加密在加密和解密时使用同一密钥，而非对称加密在加密和解密时使用不同的密钥，即公钥和私钥。常见的DES、3DES、AES均为对称加密算法，而RSA、椭圆曲线加密算法，均为非对称加密算法。<br> <br>　　DES是以64比特的明文为一个单位来进行加密的，超过64比特的数据，要求按固定的64比特的大小分组，分组有很多模式，后续单独总结，暂时先介绍DES加密算法。DES使用的密钥长度为64比特，但由于每隔7个比特设置一个奇偶校验位，因此其密钥长度实际为56比特。奇偶校验为最简单的错误检测码，即根据一组二进制代码中1的个数是奇数或偶数来检测错误。<br>　　<br><a id="more"></a></p>
 <h2 id="Feistel网络"><a href="#Feistel网络" class="headerlink" title="Feistel网络"></a>Feistel网络</h2><p>DES的基本结构，由IBM公司的Horst Feistel设计，因此称Feistel网络。在Feistel网络中，加密的每个步骤称为轮，经过初始置换后的64位明文，进行了16轮Feistel轮的加密过程，最后经过终结置换后形成最终的64位密文。如下为Feistel网络的示意图：</p>
@@ -690,7 +690,7 @@
     <link href="http://gcblog/github.io/2018/06/26/hash%E7%AE%97%E6%B3%95/"/>
     <id>http://gcblog/github.io/2018/06/26/hash算法/</id>
     <published>2018-06-26T11:00:51.000Z</published>
-    <updated>2018-06-26T11:04:32.437Z</updated>
+    <updated>2018-06-26T11:04:32.438Z</updated>
     
     <content type="html"><![CDATA[<h2 id="什么是-hash-算法"><a href="#什么是-hash-算法" class="headerlink" title="什么是 hash 算法"></a>什么是 hash 算法</h2><p>散列方法的主要思想是根据结点的关键码值来确定其存储地址：以关键码值K为自变量，通过一定的函数关系h(K)(称为散列函数)，计算出对应的函数值来，把这个值解释为结点的存储地址，将结点存入到此存储单元中。检索时，用同样的方法计算地址，然后到相应的单元里去取要找的结点。通过散列方法可以对结点进行快速检索。散列（hash，也称“哈希”）是一种重要的存储方式，也是一种常见的检索方法。</p>
 <p>散列算法（Hash Algorithm），又称哈希算法，杂凑算法，是一种从任意文件中创造小的数字「指纹」的方法。与指纹一样，散列算法就是一种以较短的信息来保证文件唯一性的标志，这种标志与文件的每一个字节都相关，而且难以找到逆向规律。因此，当原有文件发生改变时，其标志值也会发生改变，从而告诉文件使用者当前的文件已经不是你所需求的文件。</p>
@@ -847,7 +847,7 @@
     <link href="http://gcblog/github.io/2018/04/26/%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%93%8D%E4%BD%9C/"/>
     <id>http://gcblog/github.io/2018/04/26/字符串操作/</id>
     <published>2018-04-26T03:30:20.000Z</published>
-    <updated>2018-04-27T08:06:16.170Z</updated>
+    <updated>2018-04-27T08:06:16.171Z</updated>
     
     <content type="html"><![CDATA[<h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p>本文列举关于字符串最常用的几个操作，都会举例说明</p>
 <ul>
@@ -1038,7 +1038,7 @@
     <link href="http://gcblog/github.io/2018/04/18/go%E6%95%B0%E7%BB%84/"/>
     <id>http://gcblog/github.io/2018/04/18/go数组/</id>
     <published>2018-04-18T06:59:13.000Z</published>
-    <updated>2018-04-18T07:01:46.365Z</updated>
+    <updated>2018-04-18T07:01:46.366Z</updated>
     
     <content type="html"><![CDATA[<h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><ul>
 <li>在Go语言中数组是一个值类型（value type）。是真真实实的数组，而不是一个指向数组内存起始位置的指针，也不能和同类型的指针进行转化，这一点严重不同于C语言。所有的值类型变量在赋值和作为参数传递时都将产生一次复制动作。如果将数组作为函数的参数类型，则在函数调用时该参数将发生数据复制。因此，在函数体中无法修改传入的数组的内容，因为函数内操作的只是所传入数组的一个副本。</li>
@@ -1094,7 +1094,7 @@
     <link href="http://gcblog/github.io/2018/04/04/mac%E4%B8%8B%E5%AE%89%E8%A3%85go%E5%8F%8A%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E9%85%8D%E7%BD%AE/"/>
     <id>http://gcblog/github.io/2018/04/04/mac下安装go及环境变量配置/</id>
     <published>2018-04-04T09:10:56.000Z</published>
-    <updated>2018-05-04T09:13:19.221Z</updated>
+    <updated>2018-05-04T09:13:19.222Z</updated>
     
     <content type="html"><![CDATA[<p>以下命令都是直接在根目录下执行即可</p>
 <h3 id="方法一：homebrew"><a href="#方法一：homebrew" class="headerlink" title="方法一：homebrew"></a>方法一：homebrew</h3><p><code>homebrew</code>是Mac系统下面目前使用最多的管理软件的工具，目前已支持Go，可以通过命令直接安装Go,不过在这之前需要先安装<code>homebrew</code></p>
@@ -1184,7 +1184,7 @@
     <link href="http://gcblog/github.io/2017/12/04/PhotoBatch-%E6%96%87%E4%BB%B6%E9%87%8D%E5%91%BD%E5%90%8D-2/"/>
     <id>http://gcblog/github.io/2017/12/04/PhotoBatch-文件重命名-2/</id>
     <published>2017-12-04T08:50:20.000Z</published>
-    <updated>2017-12-04T08:52:53.477Z</updated>
+    <updated>2017-12-04T08:52:53.478Z</updated>
     
     <content type="html"><![CDATA[<p>上一篇文章已经写了如何获取文件夹路径，今天实现photoBatch的第一个简单功能，图片批量重命名，当然也可以对任何文件进行重命名</p>
 <h3 id="搭建界面"><a href="#搭建界面" class="headerlink" title="搭建界面"></a>搭建界面</h3><p>搭了个简单的界面，如下图：<br><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/PhotoBatch/2_1.png" alt="布局用了purelayout框架"><br>我们需要得到重命名后的文件名前缀，以及文件格式和是否保留原文件，给这3个变量一个默认值。</p>
