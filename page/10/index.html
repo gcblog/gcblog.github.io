@@ -348,9 +348,9 @@
 
       
         
-          <p>有几篇博客写到了怎么实现环形进度条，大多是使用Core Graph来实现，实现比较麻烦且效率略低，只是一个小小的进度条而已，我们当然是用最简单而且效率高的方式来实现。<br>先看一下这篇博客，博客地址：<a href="http://www.brighttj.com/ios/ios-implement-loop-progress.html">http://www.brighttj.com/ios/ios-implement-loop-progress.html</a><br>这篇博客写的不错，不过看上去还是略微复杂了，我自己根据自己的思路整理了一下，当然目的是为了更加简洁易懂。</p>
+          <p>有几篇博客写到了怎么实现环形进度条，大多是使用Core Graph来实现，实现比较麻烦且效率略低，只是一个小小的进度条而已，我们当然是用最简单而且效率高的方式来实现。<br>先看一下这篇博客，博客地址：<a href="http://www.brighttj.com/ios/ios-implement-loop-progress.html" target="_blank" rel="noopener">http://www.brighttj.com/ios/ios-implement-loop-progress.html</a><br>这篇博客写的不错，不过看上去还是略微复杂了，我自己根据自己的思路整理了一下，当然目的是为了更加简洁易懂。</p>
 <h3 id="一：先制作一个不带颜色渐变的进度条"><a href="#一：先制作一个不带颜色渐变的进度条" class="headerlink" title="一：先制作一个不带颜色渐变的进度条"></a>一：先制作一个不带颜色渐变的进度条</h3><p>自定义一个cycleView，在.m 中实现drawRect方法</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">- (void)drawRect:(CGRect)rect &#123;</div><div class="line">    </div><div class="line">    CGContextRef ctx = UIGraphicsGetCurrentContext();//获取上下文</div><div class="line">    </div><div class="line">    CGPoint center = CGPointMake(100, 100);  //设置圆心位置</div><div class="line">    CGFloat radius = 90;  //设置半径</div><div class="line">    CGFloat startA = - M_PI_2;  //圆起点位置</div><div class="line">    CGFloat endA = -M_PI_2 + M_PI * 2 * _progress;  //圆终点位置</div><div class="line">    </div><div class="line">    UIBezierPath *path = [UIBezierPath bezierPathWithArcCenter:center radius:radius startAngle:startA endAngle:endA clockwise:YES];</div><div class="line">    </div><div class="line">    CGContextSetLineWidth(ctx, 10); //设置线条宽度</div><div class="line">    [[UIColor blueColor] setStroke]; //设置描边颜色</div><div class="line">    </div><div class="line">    CGContextAddPath(ctx, path.CGPath); //把路径添加到上下文</div><div class="line">    </div><div class="line">    CGContextStrokePath(ctx);  //渲染</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">- (void)drawRect:(CGRect)rect &#123;</span><br><span class="line">    </span><br><span class="line">    CGContextRef ctx = UIGraphicsGetCurrentContext();//获取上下文</span><br><span class="line">    </span><br><span class="line">    CGPoint center = CGPointMake(100, 100);  //设置圆心位置</span><br><span class="line">    CGFloat radius = 90;  //设置半径</span><br><span class="line">    CGFloat startA = - M_PI_2;  //圆起点位置</span><br><span class="line">    CGFloat endA = -M_PI_2 + M_PI * 2 * _progress;  //圆终点位置</span><br><span class="line">    </span><br><span class="line">    UIBezierPath *path = [UIBezierPath bezierPathWithArcCenter:center radius:radius startAngle:startA endAngle:endA clockwise:YES];</span><br><span class="line">    </span><br><span class="line">    CGContextSetLineWidth(ctx, 10); //设置线条宽度</span><br><span class="line">    [[UIColor blueColor] setStroke]; //设置描边颜色</span><br><span class="line">    </span><br><span class="line">    CGContextAddPath(ctx, path.CGPath); //把路径添加到上下文</span><br><span class="line">    </span><br><span class="line">    CGContextStrokePath(ctx);  //渲染</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/02/27/一分钟学会环形进度条/#more" rel="contents">
               阅读全文 &raquo;
@@ -597,7 +597,7 @@
           <p>google搜索“iOS视频变下边播”，有好几篇博客写到了实现方法，其实只有一篇，其他都是copy的，不过他们都是使用的本地代理服务器的方式，原理很简单，但是缺点也很明显，需要自己写一个本地代理服务器或者使用第三方库httpSever。如果使用httpSever作为本地代理服务器，如果只缓存一个视频是没有问题的，如果缓存多个视频互相切换，本地代理服务器提供的数据很不稳定，crash概率非常大。</p>
 <hr>
 <p>这里我采用ios7以后系统自带的方法实现视频边下边播，这里的边下边播不是单独开一个子线程去下载，而是把视频播放的数据给保存到本地。简而言之，就是使用一遍的流量，既播放了视频，也保存了视频。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">用到的框架：&lt;AVFoundation/AVFoundation.h&gt;</div><div class="line"></div><div class="line">用到的播放器：AVplayer</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">用到的框架：&lt;AVFoundation/AVFoundation.h&gt;</span><br><span class="line"></span><br><span class="line">用到的播放器：AVplayer</span><br></pre></td></tr></table></figure>
 <p>先说一下avplayer自身的播放原理，当我们给播放器设置好url等一些参数后，播放器就会向url所在的服务器发送请求(请求参数有两个值，一个是offset偏移量，另一个是length长度，其实就相当于NSRange一样)，服务器就根据range参数给播放器返回数据。这就是大致的原理，当然实际的过程还是略微比较复杂。</p>
 <hr>
 <p><br></p>
@@ -812,7 +812,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -821,7 +821,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">74</span>
+                <span class="site-state-item-count">73</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

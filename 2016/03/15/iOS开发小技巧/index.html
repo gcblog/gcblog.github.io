@@ -370,8 +370,8 @@
 <p>二：使用xctool进行自动打包，是FaceBook开源的一个命令行工具，可使用brew安装（安装命令：sudo brew install xctool）</p>
 <h4 id="如果项目没有使用cocoapods-1"><a href="#如果项目没有使用cocoapods-1" class="headerlink" title="如果项目没有使用cocoapods:"></a>如果项目没有使用cocoapods:</h4><p>xctool -scheme Demo archive -archivePath “Demo/“(会生成.xcarchive文件)<br><br>xcrun -sdk iphoneos -v PackageApplication ./Demo.xcarchive/Products/Applications/Demo.app -o ~/Desktop/Demo.ipa</p>
 <h4 id="如果使用cocoapods-1"><a href="#如果使用cocoapods-1" class="headerlink" title="如果使用cocoapods:"></a>如果使用cocoapods:</h4><p>xctool -workspace Demo.xcworkspace -scheme Demo archive -archivePath “Demo”<br><br>xcrun -sdk iphoneos -v PackageApplication ./Demo.xcarchive/Products/Applications/Demo.app -o ~/Desktop/Demo.ipa</p>
-<h3 id="Xcode历史版本下载地址"><a href="#Xcode历史版本下载地址" class="headerlink" title="Xcode历史版本下载地址"></a>Xcode历史版本下载地址</h3><p><a href="https://developer.apple.com/downloads/" target="_blank" rel="external">https://developer.apple.com/downloads/</a></p>
-<h3 id="加急审核渠道链接-并非只是加急，包括向苹果申诉、修改appstore上相关信息等"><a href="#加急审核渠道链接-并非只是加急，包括向苹果申诉、修改appstore上相关信息等" class="headerlink" title="加急审核渠道链接(并非只是加急，包括向苹果申诉、修改appstore上相关信息等)"></a>加急审核渠道链接(并非只是加急，包括向苹果申诉、修改appstore上相关信息等)</h3><p><a href="https://developer.apple.com/appstore/contact/appreviewteam/index.html" target="_blank" rel="external">https://developer.apple.com/appstore/contact/appreviewteam/index.html</a><br>也可以直接从ITunes右下角contact us也可以  但是无法填写相关文字描述</p>
+<h3 id="Xcode历史版本下载地址"><a href="#Xcode历史版本下载地址" class="headerlink" title="Xcode历史版本下载地址"></a>Xcode历史版本下载地址</h3><p><a href="https://developer.apple.com/downloads/" target="_blank" rel="noopener">https://developer.apple.com/downloads/</a></p>
+<h3 id="加急审核渠道链接-并非只是加急，包括向苹果申诉、修改appstore上相关信息等"><a href="#加急审核渠道链接-并非只是加急，包括向苹果申诉、修改appstore上相关信息等" class="headerlink" title="加急审核渠道链接(并非只是加急，包括向苹果申诉、修改appstore上相关信息等)"></a>加急审核渠道链接(并非只是加急，包括向苹果申诉、修改appstore上相关信息等)</h3><p><a href="https://developer.apple.com/appstore/contact/appreviewteam/index.html" target="_blank" rel="noopener">https://developer.apple.com/appstore/contact/appreviewteam/index.html</a><br>也可以直接从ITunes右下角contact us也可以  但是无法填写相关文字描述</p>
 <h3 id="Autolayout及SizeClass示意图"><a href="#Autolayout及SizeClass示意图" class="headerlink" title="Autolayout及SizeClass示意图"></a>Autolayout及SizeClass示意图</h3><p><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/iOS小技巧/4.png" alt=""> <img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/iOS小技巧/5.png" alt=""> <img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/iOS小技巧/6.png" alt=""></p>
 <h3 id="窗口中有多个responder-如何快速释放键盘"><a href="#窗口中有多个responder-如何快速释放键盘" class="headerlink" title="窗口中有多个responder,如何快速释放键盘"></a>窗口中有多个responder,如何快速释放键盘</h3><h4 id="一：-UIApplication-sharedApplication-sendAction-selector-resignFirstResponder-to-nil-from-nil-forEvent-nil"><a href="#一：-UIApplication-sharedApplication-sendAction-selector-resignFirstResponder-to-nil-from-nil-forEvent-nil" class="headerlink" title="一：[[UIApplication sharedApplication] sendAction:@selector(resignFirstResponder) to:nil from:nil forEvent:nil];"></a>一：[[UIApplication sharedApplication] sendAction:@selector(resignFirstResponder) to:nil from:nil forEvent:nil];</h4><h4 id="二：-self-view-endEditing-YES"><a href="#二：-self-view-endEditing-YES" class="headerlink" title="二：[self.view endEditing:YES];"></a>二：[self.view endEditing:YES];</h4><h3 id="如何去除UITableView中Group样式cell的边框"><a href="#如何去除UITableView中Group样式cell的边框" class="headerlink" title="如何去除UITableView中Group样式cell的边框"></a>如何去除UITableView中Group样式cell的边框</h3><h4 id="一：-UIView-tempView-UIView-alloc-init"><a href="#一：-UIView-tempView-UIView-alloc-init" class="headerlink" title="一： UIView *tempView = [[UIView alloc] init];"></a>一： UIView *tempView = [[UIView alloc] init];</h4><p>  <br> [cell setBackgroundView:tempView];<br>   <br>[cell setBackgroundColor:[UIColor clearColor]]; </p>
 <h4 id="二：tableView-separatorColor-UIColor-clearColor"><a href="#二：tableView-separatorColor-UIColor-clearColor" class="headerlink" title="二：tableView.separatorColor=[UIColor clearColor];"></a>二：tableView.separatorColor=[UIColor clearColor];</h4><h3 id="如何解决colorWithPatternImage设置view背景色太占内存问题"><a href="#如何解决colorWithPatternImage设置view背景色太占内存问题" class="headerlink" title="如何解决colorWithPatternImage设置view背景色太占内存问题"></a>如何解决colorWithPatternImage设置view背景色太占内存问题</h3><p>  self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@”main_landscape.jpg”]];<br>  <br>切换成self.view.layer.contents =[UIImage imageNamed:@”name.png”].CGImage;</p>
@@ -523,7 +523,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -532,7 +532,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">74</span>
+                <span class="site-state-item-count">73</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
