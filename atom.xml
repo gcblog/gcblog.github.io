@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://gcblog/github.io/"/>
-  <updated>2018-07-09T13:02:50.023Z</updated>
+  <updated>2018-12-15T09:02:15.816Z</updated>
   <id>http://gcblog/github.io/</id>
   
   <author>
@@ -14,6 +14,46 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>tendermint简介</title>
+    <link href="http://gcblog/github.io/2018/12/10/tendermint%E7%AE%80%E4%BB%8B/"/>
+    <id>http://gcblog/github.io/2018/12/10/tendermint简介/</id>
+    <published>2018-12-10T06:28:21.000Z</published>
+    <updated>2018-12-15T09:02:15.816Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="1-1-tendermint简介"><a href="#1-1-tendermint简介" class="headerlink" title="1.1 tendermint简介"></a>1.1 tendermint简介</h2><p>tendermint是一个开源的完整的区块链实现，可以用于公链或联盟链，其官方定位 是面向开发者的区块链共识引擎：</p>
+<p>与其他区块链平台例如以太坊或者EOS相比，tendermint最大的特点是其差异化的定位： 尽管包含了区块链的完整实现，但它却是以SDK的形式将这些核心功能提供出来，供开发者 方便地定制自己的专有区块链：</p>
+<p><img src="https://lh3.googleusercontent.com/-7tK7wrbhhT8/XAiIonVqubI/AAAAAAAAEFI/S_7isBa52LAk1s-_J-QCvvev28w581AdwCHMYCw/I/tendermint.png" alt="tendermint"></p>
+<p>tendermint的SDK中包含了构造一个区块链节点旳绝大部分组件，例如加密算法、共识算法、 区块链存储、RPC接口、P2P通信等等，开发人员只需要根据其应用开发接口 （Application Blockchain Communication Interface）的要求实现自己 的应用即可。</p>
+<p>ABCI是开发语言无关的，开发人员可以使用自己喜欢的任何语言来开发基于tendermint的 专用区块链。不过由于tendermint本身是采用go语言开发的，因此用go开发ABCI应用的一个额外好处 就是，你可以把tendermint完整的嵌入自己的应用，干净利落地交付一个单一的可执行文件。</p>
+<h2 id="1-2-tendermint的共识算法"><a href="#1-2-tendermint的共识算法" class="headerlink" title="1.2 tendermint的共识算法"></a>1.2 tendermint的共识算法</h2><p>在技术方面，tendermint引以为傲的是其共识算法 —— 世界上第一个可以应用于公链的拜占庭 容错算法。tendermint曾于2016年国际区块链周获得最具创新奖，并在Hyperledger的雨燕（Burrow） 等诸多产品中被采纳为共识引擎。你可以点击 <a href="https://forum.cosmos.network/t/list-of-projects-in-cosmos-tendermint-ecosystem/243" target="_blank" rel="noopener">这里</a> 查看其应用案例。</p>
+<p>tendermint采用的共识机制属于一种权益证明（ Proof Of Stake）算法，一组验证人 （Validator）代替了矿工（Miner）的角色，依据抵押的权益比例轮流出块：</p>
+<p><img src="https://lh3.googleusercontent.com/-IXSEtA-dXcY/XAiIohkad-I/AAAAAAAAEFQ/7pD-ir6VXEIThFTDRL0SHkwwD6_jriy9ACHMYCw/I/consensus-pos.png" alt="consensus-pos"></p>
+<p>由于避免了POW机制，tendermint可以实现很高的交易吞吐量。根据官方的说法，在 合理（理想）的应用数据结构支持下，可以达到42000交易/秒，引文参考 <a href="https://github.com/tendermint/tendermint/wiki/Benchmarks" target="_blank" rel="noopener">这里</a>。 不过在现实环境中，部署在全球的100个节点进行共识沟通，实际可以达到1000交易/秒。</p>
+<p>tendermint同时是拜占庭容错的（Byzantine Fault Tolerance），因此对于3f+1个 验证节点组成的区块链，即使有f个节点出现拜占庭错误，也可以保证全局正确共识的达成。同时 在极端环境下，tendermint在交易安全与停机风险之间选择了安全，因此当超过f个验证节点发生 故障时，系统将停止工作。</p>
+<p>什么是拜占庭错误？简单的说就是任何错误：既包括节点宕机、也包括恶意节点的欺骗和攻击。</p>
+<p>tendermint共识机制的另一个特点就是其共识的最终确定性：一旦共识达成就是真的达成， 而不是像比特币或以太坊的共识是一种概率性质的确定性，还有可能在将来某个时刻失效。 因此在tendermint中不会出现区块链分叉的情况。</p>
+<h2 id="1-3-tendermint-vs-以太坊"><a href="#1-3-tendermint-vs-以太坊" class="headerlink" title="1.3 tendermint vs. 以太坊"></a>1.3 tendermint vs. 以太坊</h2><p>tendermint的定位决定了在最终交付的节点软件分层中，应用程序占有相当部分的分量。 让我们通过与以太坊的对比来更好地理解这一点：</p>
+<p><img src="https://lh3.googleusercontent.com/-oPtxJ3NzSfo/XAiIokGDwnI/AAAAAAAAEFM/YMXMTtwH6qA3UoKGgVgBUVFfWJ0ApVmowCHMYCw/I/td-vs-ether.png" alt="td-vs-ethe"></p>
+<p>在上图中，tendermint结构中的abci应用和以太坊结构中的智能合约，都是由用户代码实现的。 显然，ABCI应用大致与EVM+合约的组合相匹配。</p>
+<p>在以太坊中，节点是一个整体，开发者提供的智能合约则运行在受限的虚拟机环境中；而在 tendermint中，并不存在虚拟机这一层，应用程序是一个标准的操作系统进程，不受任何 的限制与约束 —— 听起来这很危险，但当你考虑下使用tendermint的目的是构建专有的区块链 时，这种灵活性反而更有优势了。</p>
+<p>事实上，tendermint留下的应用层空间如此之大，以至于你完全可以在ABCI应用中实现一个 EVM，然后提供solidity合约开发能力，这就是超级账本的 <a href="https://cn.hyperledger.org/projects/hyperledger-burrow" target="_blank" rel="noopener">Burrow</a> 做的事情。</p>
+<h2 id="获得配套代码资料"><a href="#获得配套代码资料" class="headerlink" title="获得配套代码资料"></a>获得配套代码资料</h2><p>关注微信公众号<code>区块链001</code>, 回复<code>tendermint</code>获得</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;1-1-tendermint简介&quot;&gt;&lt;a href=&quot;#1-1-tendermint简介&quot; class=&quot;headerlink&quot; title=&quot;1.1 tendermint简介&quot;&gt;&lt;/a&gt;1.1 tendermint简介&lt;/h2&gt;&lt;p&gt;tendermint是一个开
+    
+    </summary>
+    
+      <category term="tendermint" scheme="http://gcblog/github.io/categories/tendermint/"/>
+    
+    
+      <category term="tendermint" scheme="http://gcblog/github.io/tags/tendermint/"/>
+    
+  </entry>
   
   <entry>
     <title>mongodb+golang+mac</title>
@@ -375,9 +415,9 @@
       <category term="共识算法" scheme="http://gcblog/github.io/categories/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
     
     
-      <category term="共识算法" scheme="http://gcblog/github.io/tags/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
-    
       <category term="DPOS" scheme="http://gcblog/github.io/tags/DPOS/"/>
+    
+      <category term="共识算法" scheme="http://gcblog/github.io/tags/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
     
   </entry>
   
@@ -405,9 +445,9 @@
       <category term="共识算法" scheme="http://gcblog/github.io/categories/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
     
     
-      <category term="POS" scheme="http://gcblog/github.io/tags/POS/"/>
-    
       <category term="共识算法" scheme="http://gcblog/github.io/tags/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="POS" scheme="http://gcblog/github.io/tags/POS/"/>
     
   </entry>
   
@@ -762,8 +802,6 @@
       <category term="加密算法" scheme="http://gcblog/github.io/categories/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"/>
     
     
-      <category term="go" scheme="http://gcblog/github.io/tags/go/"/>
-    
       <category term="加密算法" scheme="http://gcblog/github.io/tags/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"/>
     
       <category term="hash" scheme="http://gcblog/github.io/tags/hash/"/>
@@ -773,6 +811,8 @@
       <category term="sha256" scheme="http://gcblog/github.io/tags/sha256/"/>
     
       <category term="rpemd160" scheme="http://gcblog/github.io/tags/rpemd160/"/>
+    
+      <category term="go" scheme="http://gcblog/github.io/tags/go/"/>
     
   </entry>
   
@@ -1082,9 +1122,9 @@
       <category term="go" scheme="http://gcblog/github.io/categories/go/"/>
     
     
-      <category term="数组" scheme="http://gcblog/github.io/tags/%E6%95%B0%E7%BB%84/"/>
-    
       <category term="go" scheme="http://gcblog/github.io/tags/go/"/>
+    
+      <category term="数组" scheme="http://gcblog/github.io/tags/%E6%95%B0%E7%BB%84/"/>
     
   </entry>
   
@@ -1175,42 +1215,6 @@
       <category term="图片去重" scheme="http://gcblog/github.io/tags/%E5%9B%BE%E7%89%87%E5%8E%BB%E9%87%8D/"/>
     
       <category term="图片相似查询" scheme="http://gcblog/github.io/tags/%E5%9B%BE%E7%89%87%E7%9B%B8%E4%BC%BC%E6%9F%A5%E8%AF%A2/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>PhotoBatch-文件重命名(2)</title>
-    <link href="http://gcblog/github.io/2017/12/04/PhotoBatch-%E6%96%87%E4%BB%B6%E9%87%8D%E5%91%BD%E5%90%8D-2/"/>
-    <id>http://gcblog/github.io/2017/12/04/PhotoBatch-文件重命名-2/</id>
-    <published>2017-12-04T08:50:20.000Z</published>
-    <updated>2017-12-04T08:52:53.478Z</updated>
-    
-    <content type="html"><![CDATA[<p>上一篇文章已经写了如何获取文件夹路径，今天实现photoBatch的第一个简单功能，图片批量重命名，当然也可以对任何文件进行重命名</p>
-<h3 id="搭建界面"><a href="#搭建界面" class="headerlink" title="搭建界面"></a>搭建界面</h3><p>搭了个简单的界面，如下图：<br><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/PhotoBatch/2_1.png" alt="布局用了purelayout框架"><br>我们需要得到重命名后的文件名前缀，以及文件格式和是否保留原文件，给这3个变量一个默认值。</p>
-<h3 id="文件夹处理"><a href="#文件夹处理" class="headerlink" title="文件夹处理"></a>文件夹处理</h3><p>获取到文件路径后处理：需要对每个文件的路径进行处理，如果是以<br><code>file://</code>开头，需要把前面的<code>file://</code>去掉，这种地址无法处理。这里是对文件夹路径的处理，处理完的路径再加上文件名就是完整的路径。</p>
-<a id="more"></a>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">- (void)dealFiles:(NSArray *)filepaths</div><div class="line">&#123;</div><div class="line">    self.dealingLabel.stringValue = [filepaths.firstObject description];</div><div class="line">    </div><div class="line">    NSMutableArray *arr = [NSMutableArray new];</div><div class="line">    // 对文件夹路径进行处理</div><div class="line">    for (NSString *path in filepaths) &#123;</div><div class="line">        if ([[path description] hasPrefix:@&quot;file:///&quot;]) &#123;</div><div class="line">            NSString *newpath = [[path description] substringFromIndex:7];</div><div class="line">            if ([newpath hasSuffix:@&quot;/&quot;]) &#123;</div><div class="line">                newpath  = [newpath substringToIndex:newpath.length - 1];</div><div class="line">            &#125;</div><div class="line">            [arr addObject:newpath];</div><div class="line">            </div><div class="line">        &#125; else &#123;</div><div class="line">            if ([[path description] hasSuffix:@&quot;/&quot;]) &#123;</div><div class="line">                NSString *tempStr = [path description];</div><div class="line">                [arr addObject:[tempStr substringToIndex:tempStr.length - 1]];</div><div class="line">            &#125; else &#123;</div><div class="line">                [arr addObject:[path description]];</div><div class="line">            &#125;</div><div class="line">            </div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    self.folderPaths = filepaths;</div><div class="line">    </div><div class="line">    NSMutableArray *allFiles = [NSMutableArray new];</div><div class="line">    for (NSString *docuPath in self.folderPaths) &#123; // 遍历所有文件夹 获取所有文件个数</div><div class="line">        NSArray *files = [XCFileManager listFilesInDirectoryAtPath:docuPath deep:NO];//这里遍历得到的只是文件名</div><div class="line">        [allFiles addObjectsFromArray:files];</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    NSAlert *alert = [[NSAlert alloc] init];</div><div class="line">    [alert setMessageText:@&quot;文件获取成功&quot;];</div><div class="line">    [alert setInformativeText:[NSString stringWithFormat:@&quot;文件总数：%ld 个&quot;, allFiles.count]];</div><div class="line">    [alert beginSheetModalForWindow:self.view.window completionHandler:^(NSModalResponse returnCode) &#123;</div><div class="line">    &#125;];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="文件批量重命名"><a href="#文件批量重命名" class="headerlink" title="文件批量重命名"></a>文件批量重命名</h3><p>遍历所有文件夹下所有文件，<code>NSFileManager</code> 并没有重命名的方法，如果要保留原文件，则执行<code>copy</code>操作，如果不保留原文件，则执行<code>move</code>操作。下面是重命名代码的实现。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line">- (IBAction)StartAction:(NSButton *)sender &#123;</div><div class="line">    </div><div class="line">    </div><div class="line">    NSMutableArray *allFiles = [NSMutableArray new];</div><div class="line">    for (NSString *docuPath in self.folderPaths) &#123;</div><div class="line">        NSArray *files = [XCFileManager listFilesInDirectoryAtPath:docuPath deep:NO];//这里遍历得到的只是文件名</div><div class="line">        for (NSString *filename in files) &#123;</div><div class="line">            [allFiles addObject:[NSString stringWithFormat:@&quot;%@/%@&quot;, docuPath, filename]];</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    if (allFiles.count == 0) &#123;</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line">    NSString *resultFilePath = [NSString stringWithFormat:@&quot;%@/%@&quot;, self.folderPaths.firstObject, @&quot;result&quot;];</div><div class="line">    </div><div class="line">    NSError *err = nil;</div><div class="line">    [XCFileManager createDirectoryAtPath:resultFilePath error:&amp;err];</div><div class="line">    NSString *prefixName = _reNameView.prefixInput.stringValue;</div><div class="line">    if (!prefixName || prefixName.length == 0) &#123;</div><div class="line">        prefixName = @&quot;img_&quot;;</div><div class="line">    &#125;</div><div class="line">    NSString *suffixName = _reNameView.suffixInput.stringValue;</div><div class="line">    if(!suffixName || suffixName.length == 0) &#123;</div><div class="line">        suffixName = @&quot;&quot;;</div><div class="line">    &#125;</div><div class="line">    NSInteger index = 1;</div><div class="line">    NSString *suffix = @&quot;&quot;;</div><div class="line">    for (NSString *path in allFiles) &#123;</div><div class="line">//        // 如果遇到 没有文件名的文件，直接过滤</div><div class="line">        if ([path componentsSeparatedByString:@&quot;.&quot;].count &lt; 2) &#123;</div><div class="line">            continue;</div><div class="line">        &#125;</div><div class="line">        if (suffixName.length == 0) &#123;</div><div class="line">            suffix = [[path componentsSeparatedByString:@&quot;.&quot;].lastObject description];</div><div class="line">        &#125; else &#123;</div><div class="line">            suffix = suffixName;</div><div class="line">        &#125;</div><div class="line">        self.dealingLabel.stringValue = [path description];</div><div class="line">        </div><div class="line">        NSString *movePath = [NSString stringWithFormat:@&quot;%@/%@%ld.%@&quot;, resultFilePath, prefixName, index,suffix];</div><div class="line">        if (_reNameView.checkSaveBtn.state == 1) &#123;</div><div class="line">           [XCFileManager moveItemAtPath:path toPath:movePath overwrite:NO];</div><div class="line">        &#125; else &#123;</div><div class="line">            [XCFileManager moveItemAtPath:path toPath:movePath overwrite:YES];</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        index ++;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    self.dealingLabel.stringValue = @&quot;处理完成&quot;;</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><a href="https://github.com/macOSApp/photoBatch" target="_blank" rel="external">demo地址:https://github.com/macOSApp/photoBatch</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;上一篇文章已经写了如何获取文件夹路径，今天实现photoBatch的第一个简单功能，图片批量重命名，当然也可以对任何文件进行重命名&lt;/p&gt;
-&lt;h3 id=&quot;搭建界面&quot;&gt;&lt;a href=&quot;#搭建界面&quot; class=&quot;headerlink&quot; title=&quot;搭建界面&quot;&gt;&lt;/a&gt;搭建界面&lt;/h3&gt;&lt;p&gt;搭了个简单的界面，如下图：&lt;br&gt;&lt;img src=&quot;https://raw.githubusercontent.com/suifengqjn/demoimages/master/PhotoBatch/2_1.png&quot; alt=&quot;布局用了purelayout框架&quot;&gt;&lt;br&gt;我们需要得到重命名后的文件名前缀，以及文件格式和是否保留原文件，给这3个变量一个默认值。&lt;/p&gt;
-&lt;h3 id=&quot;文件夹处理&quot;&gt;&lt;a href=&quot;#文件夹处理&quot; class=&quot;headerlink&quot; title=&quot;文件夹处理&quot;&gt;&lt;/a&gt;文件夹处理&lt;/h3&gt;&lt;p&gt;获取到文件路径后处理：需要对每个文件的路径进行处理，如果是以&lt;br&gt;&lt;code&gt;file://&lt;/code&gt;开头，需要把前面的&lt;code&gt;file://&lt;/code&gt;去掉，这种地址无法处理。这里是对文件夹路径的处理，处理完的路径再加上文件名就是完整的路径。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="macOS" scheme="http://gcblog/github.io/categories/macOS/"/>
-    
-    
-      <category term="macOS" scheme="http://gcblog/github.io/tags/macOS/"/>
-    
-      <category term="macOSApp" scheme="http://gcblog/github.io/tags/macOSApp/"/>
-    
-      <category term="文件重命名" scheme="http://gcblog/github.io/tags/%E6%96%87%E4%BB%B6%E9%87%8D%E5%91%BD%E5%90%8D/"/>
     
   </entry>
   
