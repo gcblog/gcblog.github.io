@@ -1,0 +1,923 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="temdermint,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="code随手记" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1">
+
+
+
+
+
+
+<meta name="description" content="2.1 概述tendermint虽然定位于引擎，但它其实是一个完整的区块链实现。在这一部分 的课程中，我们将使用一个最小化的ABCI应用，来熟悉tendermint的主要组成 部分，以及使用tendermint进行去中心化应用开发的主要流程和工具。 下图列出了tendermint应用的主要构成部分：  tendermint提供了一个预构建的同名可执行程序，我们将学习如何使用这个程序 来初始化节点配">
+<meta name="keywords" content="temdermint">
+<meta property="og:type" content="article">
+<meta property="og:title" content="temdermint初识">
+<meta property="og:url" content="http://gcblog/github.io/2018/12/16/temdermint初识/index.html">
+<meta property="og:site_name" content="code随手记">
+<meta property="og:description" content="2.1 概述tendermint虽然定位于引擎，但它其实是一个完整的区块链实现。在这一部分 的课程中，我们将使用一个最小化的ABCI应用，来熟悉tendermint的主要组成 部分，以及使用tendermint进行去中心化应用开发的主要流程和工具。 下图列出了tendermint应用的主要构成部分：  tendermint提供了一个预构建的同名可执行程序，我们将学习如何使用这个程序 来初始化节点配">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://lh3.googleusercontent.com/-9h1wL3AOaT0/XAiI0CiYoSI/AAAAAAAAEFY/GhAg0H7tV28RgTVW-kATnVCc3CJ0zFiWwCHMYCw/I/td-arch.png">
+<meta property="og:image" content="https://lh3.googleusercontent.com/-86l_z4_4cOI/XAiI0AAqovI/AAAAAAAAEFc/CSAySg1umpQuUUlxharp6lXx3fqsjxm6wCHMYCw/I/try-abci.png">
+<meta property="og:image" content="https://lh3.googleusercontent.com/-K-O5r4n20WY/XAiI0EFf2KI/AAAAAAAAEFU/VLxjrV5m3bwWOdn6p_BJRqmAhC0Q9WbWACHMYCw/I/abci-server.png">
+<meta property="og:image" content="https://lh3.googleusercontent.com/-y7rXlpkNGqw/XAiI0na91uI/AAAAAAAAEFw/TdIknhDNvl4mqDdgwlmiOn4cuONHG9XaACHMYCw/I/node-started.png">
+<meta property="og:image" content="https://lh3.googleusercontent.com/-ecRo-qEvcKo/XAiI0c0ZmxI/AAAAAAAAEFg/toYaNUzLpYIaCYH4dA_Gyn4zPo2BZeBDwCHMYCw/I/light-user-case.png">
+<meta property="og:image" content="https://lh3.googleusercontent.com/-hUNne3_TT-s/XAiI0XLRMsI/AAAAAAAAEFs/RTT_P7hvznoEfKZeKFmzWe2CCnbdOhV0wCHMYCw/I/rpc-ret.png">
+<meta property="og:image" content="https://lh3.googleusercontent.com/-nIJ0D0tG1mQ/XAiI0pPnFbI/AAAAAAAAEFo/W0JagkLkNdwziOQYThLJ8lQAGsZBplgKQCHMYCw/I/rpc-block.png">
+<meta property="og:image" content="https://lh3.googleusercontent.com/-itMMg2kAhY0/XAiI0Qhia-I/AAAAAAAAEFk/Qp5Xk5adNDYPCgFL9_zjmzrtgWF4jFY4wCHMYCw/I/rpc-tx.png">
+<meta property="og:updated_time" content="2018-12-16T14:31:38.221Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="temdermint初识">
+<meta name="twitter:description" content="2.1 概述tendermint虽然定位于引擎，但它其实是一个完整的区块链实现。在这一部分 的课程中，我们将使用一个最小化的ABCI应用，来熟悉tendermint的主要组成 部分，以及使用tendermint进行去中心化应用开发的主要流程和工具。 下图列出了tendermint应用的主要构成部分：  tendermint提供了一个预构建的同名可执行程序，我们将学习如何使用这个程序 来初始化节点配">
+<meta name="twitter:image" content="https://lh3.googleusercontent.com/-9h1wL3AOaT0/XAiI0CiYoSI/AAAAAAAAEFY/GhAg0H7tV28RgTVW-kATnVCc3CJ0zFiWwCHMYCw/I/td-arch.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> temdermint初识 | code随手记 </title>
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">code随手记</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Practice from here</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                temdermint初识
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-12-16T22:29:43+08:00" content="2018-12-16">
+              2018-12-16
+            </time>
+          </span>
+
+          
+            <span class="post-category">
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope="" itemtype="https://schema.org/Thing">
+                  <a href="/categories/temdermint/" itemprop="url" rel="index">
+                    <span itemprop="name">temdermint</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/12/16/temdermint初识/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/12/16/temdermint初识/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i></i> 浏览
+              <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="2-1-概述"><a href="#2-1-概述" class="headerlink" title="2.1 概述"></a>2.1 概述</h2><p>tendermint虽然定位于引擎，但它其实是一个完整的区块链实现。在这一部分 的课程中，我们将使用一个最小化的ABCI应用，来熟悉tendermint的主要组成 部分，以及使用tendermint进行去中心化应用开发的主要流程和工具。</p>
+<p>下图列出了tendermint应用的主要构成部分：</p>
+<p><img src="https://lh3.googleusercontent.com/-9h1wL3AOaT0/XAiI0CiYoSI/AAAAAAAAEFY/GhAg0H7tV28RgTVW-kATnVCc3CJ0zFiWwCHMYCw/I/td-arch.png" alt="td-arch"></p>
+<p>tendermint提供了一个预构建的同名可执行程序，我们将学习如何使用这个程序 来初始化节点配置文件并启动节点。这个程序是完整的节点实现，除了通过P2P协议 与其他节点交换共识，同时还提供了RPC接口供客户端提交交易或者查询应用状态。</p>
+<p>我们将创建一个最小化的ABCI应用，tendermint可执行程序通过ABCI接口与 应用程序交互，例如要求应用执行交易、或者转发来自RPC接口的状态查询请求。<br><a id="more"></a></p>
+<h2 id="2-2-节点初始化"><a href="#2-2-节点初始化" class="headerlink" title="2.2 节点初始化"></a>2.2 节点初始化</h2><p>tendermint节点程序的行为非常依赖于配置文件，使用其init子命令 可以获得一组默认的初始化文件。 例如，在1#终端输入如下命令创建初始化文件：</p>
+<p><code>~$ tendermint init</code><br>init子命令将在~/.tendermint目录下创建两个子目录data和config，分别用于 保存区块链数据和配置文件。</p>
+<p>在data目录下将包含如下的数据文件，均为leveldb格式：</p>
+<p>blockstore.db：区块链数据库<br>evidence.db：节点行为数据<br>state.db：区块链状态数据<br>tx_index.db：交易索引数据，<br>在config子目录下将包含如下的配置文件：</p>
+<p>config.toml：节点软件配置文件<br>node_key.json：节点密钥文件，用于p2p通信加密<br>priv_validator.json：验证节点密钥文件，用于共识签名<br>genesis.json：创世文件<br>节点配置文件config.toml用来设置节点软件的运行参数，例如RPC监听端口等。 我们修改consensus.create_empty_blocks为false，即不出无交易的空块：</p>
+<p>[consensus]<br><code>create_empty_blocks = false</code><br>重新初始化</p>
+<p>在我们开发ABCI应用的过程中，往往需要对应用中的状态结构等信息进行调整，再次重新启动 后就可能导致原有的链数据和新的状态结构不兼容，因此需要时不时地重新初始化区块链数据。</p>
+<p>当然你可以完全删除~/.tendermint目录，然后重新执行tendermint init命令。不过官方 的建议是使用unsafe_reset_all子命令来做这个事情，这个命令可以保留现有的配置而仅删除 数据文件。例如：</p>
+<p><code>~$ tendermint unsafe_reset_all</code></p>
+<h2 id="2-3-节点启动与停止"><a href="#2-3-节点启动与停止" class="headerlink" title="2.3 节点启动与停止"></a>2.3 节点启动与停止</h2><p>初始化之后，我们就可以启动节点了。在1#终端执行node子命令启动tendermint节点：</p>
+<p><code>~$ tendermint node</code><br>可以看到tendermint在反复尝试abci应用的默认监听地址tcp://127.0.0.1:26658：</p>
+<p><img src="https://lh3.googleusercontent.com/-86l_z4_4cOI/XAiI0AAqovI/AAAAAAAAEFc/CSAySg1umpQuUUlxharp6lXx3fqsjxm6wCHMYCw/I/try-abci.png" alt="try-abci"></p>
+<p>显然，tendermint要求一个配套的abci应用才能正常工作，我们将在下一节解决这个 问题。</p>
+<p>在目前这种状态下，如果需要退出tendermint的执行，可以切换到2#终端，使用pkill 命令终止其运行：</p>
+<p><code>~$ pkill -9 tendermint</code></p>
+<h2 id="2-4-编写最小化应用"><a href="#2-4-编写最小化应用" class="headerlink" title="2.4 编写最小化应用"></a>2.4 编写最小化应用</h2><p>tendermint开发包中已经包含了一个基本的ABCI应用实现类BaseApplication， 可以完成与tendermint节点旳基本交互：</p>
+<p><img src="https://lh3.googleusercontent.com/-K-O5r4n20WY/XAiI0EFf2KI/AAAAAAAAEFU/VLxjrV5m3bwWOdn6p_BJRqmAhC0Q9WbWACHMYCw/I/abci-server.png" alt="abci-serve"></p>
+<p>tendermint节点程序可以通过socket通信访问ABCI应用，因此我们使用abci/server 包的NewServer()函数创建一个SocketServer实例来启动这个应用。</p>
+<p>例如，下面的代码在tendermint尝试连接的默认端口26658启动abci应用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">  &quot;fmt&quot;</span><br><span class="line">  &quot;github.com/tendermint/tendermint/abci/types&quot;</span><br><span class="line">  &quot;github.com/tendermint/tendermint/abci/server&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">func main()&#123;</span><br><span class="line">  app := types.NewBaseApplication()</span><br><span class="line">  svr,err := server.NewServer(&quot;:26658&quot;,&quot;socket&quot;,app)</span><br><span class="line">  if err != nil &#123; panic(err) &#125;</span><br><span class="line">  svr.Start()</span><br><span class="line">  defer svr.Stop()</span><br><span class="line">  fmt.Println(&quot;abci server started&quot;)</span><br><span class="line">  select &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>将上述代码保存为~/repo/go/src/diy/c2/mini-app.go，然后在2#终端 进入c2目录并启动该应用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">~$ cd ~/repo/go/src/diy/c2</span><br><span class="line">~/repo/go/src/diy/c2$ go run mini-app.go</span><br></pre></td></tr></table></figure></p>
+<p>现在回到1#终端重新启动tendermint节点：</p>
+<p><code>~$ tendermint node</code><br>你可以看到这次tendermint节点启动成功了：</p>
+<p><img src="https://lh3.googleusercontent.com/-y7rXlpkNGqw/XAiI0na91uI/AAAAAAAAEFw/TdIknhDNvl4mqDdgwlmiOn4cuONHG9XaACHMYCw/I/node-started.png" alt="node-started"></p>
+<p>由于我们只有一个节点，因此tendermint会抱怨连接不到其他的节点，it‘s ok。</p>
+<h2 id="2-5-RPC开发接口"><a href="#2-5-RPC开发接口" class="headerlink" title="2.5 RPC开发接口"></a>2.5 RPC开发接口</h2><p>在一个典型的（非理想化的）去中心化应用的开发中，除了需要开发链上应用 （例如ABCI应用或者以太坊中的智能合约），往往还需要开发传统的网页应用 /桌面应用/手机应用，以方便那些不可能自己部署节点旳用户：</p>
+<p><img src="https://lh3.googleusercontent.com/-ecRo-qEvcKo/XAiI0c0ZmxI/AAAAAAAAEFg/toYaNUzLpYIaCYH4dA_Gyn4zPo2BZeBDwCHMYCw/I/light-user-case.png" alt="light-user-case"></p>
+<p>和以太坊一样，tendermint的节点也提供了RPC接口供这些传统应用代码访问节点功能， 例如提交交易或者查询节点状态，其默认的RPC监听端口是26657。</p>
+<p>首先确保1#终端和2#终端分别运行着tendermint和abci应用，然后我们切换到3# 终端，输入如下命令提交交易0x68656c6c6f —— 对应于字符串hello的16进制表示：</p>
+<p><code>~$ curl http://localhost:26657/broadcast_tx_commit?tx=0x68656c6c6f</code><br>响应结果类似于下图，其中check_tx和deliver_tx来自于abci应用，而交易哈希 和区块高度则由tendermint节点内部处理得出：</p>
+<p><img src="https://lh3.googleusercontent.com/-hUNne3_TT-s/XAiI0XLRMsI/AAAAAAAAEFs/RTT_P7hvznoEfKZeKFmzWe2CCnbdOhV0wCHMYCw/I/rpc-ret.png" alt="rpc-ret"></p>
+<p>事实上，由于BaseApplication对于交易数据没有任何的限制，因此我们可以提交 任意有效的16进制表示，而这些交易都将成功地打包到区块里。</p>
+<p>让我们看一下这个区块的内容，在3#终端输入如下命令：</p>
+<p><code>~$ curl http://localhost:26657/block?height=2</code><br>注意结果中的Txs字段，它包含了该区块中所有交易的base64编码：</p>
+<p><img src="https://lh3.googleusercontent.com/-nIJ0D0tG1mQ/XAiI0pPnFbI/AAAAAAAAEFo/W0JagkLkNdwziOQYThLJ8lQAGsZBplgKQCHMYCw/I/rpc-block.png" alt="rpc-block"></p>
+<p>我们可以使用命令行工具base64简单地进行验证：</p>
+<p><code>~$ echo aGVsbG8= | based64 -d</code><br>可以访问这里 查看tendermint区块结构的详细说明。</p>
+<p>也可以通过哈希查看交易内容，在3#终端输入如下命令（注意，你的哈希可能与此不同）：</p>
+<p><code>~$ curl http://localhost:26657/tx?hash=0x2CF24DBA5FB0A30E26E83B2AC5B9E29E1B161E5C</code><br>得到如下的结果：</p>
+<p><img src="https://lh3.googleusercontent.com/-itMMg2kAhY0/XAiI0Qhia-I/AAAAAAAAEFk/Qp5Xk5adNDYPCgFL9_zjmzrtgWF4jFY4wCHMYCw/I/rpc-tx.png" alt="rpc-tx"></p>
+<h2 id="获得配套代码资料"><a href="#获得配套代码资料" class="headerlink" title="获得配套代码资料"></a>获得配套代码资料</h2><p>关注微信公众号<code>区块链001</code>, 回复<code>tendermint</code>获得</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/weixin.jpg" alt="夜千寻墨 WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/zhifubao.jpg" alt="夜千寻墨 Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/temdermint/" rel="tag">#temdermint</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/10/tendermint简介/" rel="next" title="tendermint简介">
+                <i class="fa fa-chevron-left"></i> tendermint简介
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/12/16/temdermint初识/" data-title="temdermint初识" data-url="http://gcblog/github.io/2018/12/16/temdermint初识/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="夜千寻墨">
+          <p class="site-author-name" itemprop="name">夜千寻墨</p>
+          <p class="site-description motion-element" itemprop="description">扫码关注微信公众号,及时获取文章更新</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">42</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">74</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/suifengqjn" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/dearqjn?source=blog&is_all=1" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/527ecf8c8753/latest_articles" target="_blank" title="简书">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  简书
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.instagram.com/yeqianxun/" target="_blank" title="instagram">
+                  
+                    <i class="fa fa-fw fa-instagram"></i>
+                  
+                  instagram
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-概述"><span class="nav-number">1.</span> <span class="nav-text">2.1 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-节点初始化"><span class="nav-number">2.</span> <span class="nav-text">2.2 节点初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-节点启动与停止"><span class="nav-number">3.</span> <span class="nav-text">2.3 节点启动与停止</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-编写最小化应用"><span class="nav-number">4.</span> <span class="nav-text">2.4 编写最小化应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-RPC开发接口"><span class="nav-number">5.</span> <span class="nav-text">2.5 RPC开发接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获得配套代码资料"><span class="nav-number">6.</span> <span class="nav-text">获得配套代码资料</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">夜千寻墨</span>
+</div>
+
+<div class="powered-by">
+  powered by <a class="theme-link">Hexo</a>
+</div>
+
+<div class="theme-info">
+  theme -
+  <a class="theme-link">
+    Next
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">本站访客数<span class="busuanzi-value" id="busuanzi_value_site_uv"></span>人次</span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i> 总访问量<span class="busuanzi-value" id="busuanzi_value_site_pv"></span>次</span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"yqxm"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';                
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+                            
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').mousedown(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+  
+
+  
+
+  
+
+</body>
+</html>

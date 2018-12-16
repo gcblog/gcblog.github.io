@@ -279,6 +279,135 @@
             
               
                 
+                <a class="post-title-link" href="/2018/07/05/etcd在golang中的使用/" itemprop="url">
+                  etcd在golang中的使用
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-05T19:35:05+08:00" content="2018-07-05">
+              2018-07-05
+            </time>
+          </span>
+
+          
+            <span class="post-category">
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope="" itemtype="https://schema.org/Thing">
+                  <a href="/categories/区块链/" itemprop="url" rel="index">
+                    <span itemprop="name">区块链</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/07/05/etcd在golang中的使用/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/07/05/etcd在golang中的使用/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="什么是etcd"><a href="#什么是etcd" class="headerlink" title="什么是etcd"></a>什么是etcd</h2><p>ETCD是用于共享配置和服务发现的分布式，一致性的KV存储系统<br>etcd作为一个受到ZooKeeper与doozer启发而催生的项目，除了拥有与之类似的功能外，更专注于以下四点。</p>
+<pre><code>1.    简单：基于HTTP+JSON的API让你用curl就可以轻松使用。
+2.    安全：可选SSL客户认证机制。
+3.    快速：每个实例每秒支持一千次写操作。
+4.    可信：使用Raft算法充分实现了分布式。
+</code></pre><p>!&lt;–more–&gt;</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>在如下路径创建文件夹<br><code>$ mkdir -p $GOPATH/src/github.com/coreos</code></p>
+<p>下载etcd包<br><code>$ git clone https://github.com/coreos/etcd.git</code></p>
+<p>下载完后，然后依次执行下面命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ cd etcd</span><br><span class="line">$ ./build</span><br><span class="line">$ ./bin/etcd</span><br></pre></td></tr></table></figure></p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">	&quot;time&quot;</span><br><span class="line">	&quot;github.com/coreos/etcd/clientv3&quot;</span><br><span class="line">	&quot;fmt&quot;</span><br><span class="line">	&quot;context&quot;</span><br><span class="line">	&quot;github.com/coreos/etcd/mvcc/mvccpb&quot;</span><br><span class="line">	&quot;ketang/netWork/0604_Socket/Tool&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">var (</span><br><span class="line">	dialTimeout = 5 * time.Second</span><br><span class="line">	requestTimeout = 2 * time.Second</span><br><span class="line">	endPoints = []string&#123;&quot;127.0.0.1:2379&quot;&#125; //etcd 默认接受数据的端口2379</span><br><span class="line">)</span><br><span class="line">//添加 删除 查找 前缀 延时</span><br><span class="line"></span><br><span class="line">var etcd *clientv3.Client</span><br><span class="line">func main()  &#123;</span><br><span class="line">	fmt.Println(Tool.GetLocalIp())</span><br><span class="line">	var err error</span><br><span class="line">	etcd, err =clientv3.New(clientv3.Config&#123;</span><br><span class="line">		Endpoints:endPoints,</span><br><span class="line">		DialTimeout:dialTimeout,</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	&#125;)</span><br><span class="line">	if err != nil &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	//添加</span><br><span class="line">	err = putValue(&quot;a&quot;, &quot;abc&quot;)</span><br><span class="line">	fmt.Println(err)</span><br><span class="line"></span><br><span class="line">	//查找</span><br><span class="line">	result := getValue(&quot;a&quot;)</span><br><span class="line">	fmt.Println(result)</span><br><span class="line"></span><br><span class="line">	//删除</span><br><span class="line">	cnt := delValue(&quot;a&quot;)</span><br><span class="line">	fmt.Println(&quot;delete:&quot;, cnt)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	err = putValue(&quot;b1&quot;, &quot;abc1&quot;)</span><br><span class="line">	err = putValue(&quot;b2&quot;, &quot;abc2&quot;)</span><br><span class="line">	err = putValue(&quot;b3&quot;, &quot;abc3&quot;)</span><br><span class="line"></span><br><span class="line">	//按前缀查找</span><br><span class="line">	result = getValueWIthPrefix(&quot;b&quot;)</span><br><span class="line">	fmt.Println(result)</span><br><span class="line">	for _,item := range result &#123;</span><br><span class="line">		fmt.Println(string(item.Key),string(item.Value))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	//按前缀删除</span><br><span class="line">	cnt2 := delValueWithPrefix(&quot;b&quot;)</span><br><span class="line">	fmt.Println(&quot;批量删除：&quot;, cnt2)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	//事务处理</span><br><span class="line">	putValue(&quot;user1&quot;, &quot;zhangsan&quot;)</span><br><span class="line">	_,err = etcd.Txn(context.TODO()).</span><br><span class="line">		If(clientv3.Compare(clientv3.Value(&quot;user1&quot;),&quot;=&quot;, &quot;zhangsan&quot;)).</span><br><span class="line">		Then(clientv3.OpPut(&quot;user1&quot;, &quot;zhangsan&quot;)).</span><br><span class="line">		Else(clientv3.OpPut(&quot;user1&quot;, &quot;lisi&quot;)).Commit()</span><br><span class="line"></span><br><span class="line">	fmt.Println(err)</span><br><span class="line">	result = getValue(&quot;user1&quot;)</span><br><span class="line">	fmt.Println(&quot;user1:&quot;, string(result[0].Value))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	//lease 设置有效时间</span><br><span class="line">	resp, err:= etcd.Grant(context.TODO(), 1)</span><br><span class="line">	_,err = etcd.Put(context.TODO(), &quot;username&quot;,&quot;wangwu&quot;,clientv3.WithLease(resp.ID))</span><br><span class="line"></span><br><span class="line">	time.Sleep(3 * time.Second)</span><br><span class="line"></span><br><span class="line">	v := getValue(&quot;username&quot;)</span><br><span class="line">	fmt.Println(&quot;lease:&quot;,v)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	//watch监听的使用</span><br><span class="line">	putValue(&quot;w&quot;, &quot;hello&quot;)</span><br><span class="line">	go func() &#123;</span><br><span class="line">		rch := etcd.Watch(context.Background(),&quot;w&quot;)</span><br><span class="line">		for wresp := range  rch &#123;</span><br><span class="line">			for _,ev := range wresp.Events &#123;</span><br><span class="line">				fmt.Printf(&quot;watch&gt;&gt;w  %s %q %q\n&quot;, ev.Type,ev.Kv, ev.Kv)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	putValue(&quot;w&quot;, &quot;hello world!&quot;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	//监听某个key在一定范围内 value的变化</span><br><span class="line">	//putValue(&quot;fo0&quot;, &quot;a&quot;)</span><br><span class="line">	go func() &#123;</span><br><span class="line">		//监听范围 [fo0-fo3)</span><br><span class="line">		rch := etcd.Watch(context.Background(), &quot;fo0&quot;, clientv3.WithRange(&quot;fo3&quot;))</span><br><span class="line"></span><br><span class="line">		for wresp := range  rch &#123;</span><br><span class="line">			for _,ev := range wresp.Events &#123;</span><br><span class="line">				fmt.Printf(&quot;watch range  --   %s %q %q\n&quot;, ev.Type,ev.Kv, ev.Kv)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	putValue(&quot;fo0&quot;, &quot;b&quot;)</span><br><span class="line">	putValue(&quot;fo1&quot;, &quot;b&quot;)</span><br><span class="line">	putValue(&quot;fo2&quot;, &quot;c&quot;)</span><br><span class="line">	putValue(&quot;fo2.5&quot;, &quot;c&quot;)</span><br><span class="line">	putValue(&quot;fo3&quot;, &quot;c&quot;)</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">	time.Sleep(10 * time.Second)</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//添加键值对</span><br><span class="line">func putValue(key, value string)  error  &#123;</span><br><span class="line">	_, err := etcd.Put(context.TODO(),key, value)</span><br><span class="line">	return err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//查询</span><br><span class="line">func getValue(key string) []*mvccpb.KeyValue  &#123;</span><br><span class="line">	resp, err := etcd.Get(context.TODO(), key)</span><br><span class="line">	if err != nil &#123;</span><br><span class="line">		return  nil</span><br><span class="line">	&#125; else &#123;</span><br><span class="line">		return resp.Kvs</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 返回删除了几条数据</span><br><span class="line">func delValue(key string) int64  &#123;</span><br><span class="line">	res,err := etcd.Delete(context.TODO(),key)</span><br><span class="line">	if err != nil &#123;</span><br><span class="line">		return 0</span><br><span class="line">	&#125; else &#123;</span><br><span class="line">		return res.Deleted</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//按照前缀删除</span><br><span class="line">func delValueWithPrefix(prefix string) int64  &#123;</span><br><span class="line">	res,err := etcd.Delete(context.TODO(),prefix,clientv3.WithPrefix())</span><br><span class="line">	if err != nil &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">		return 0</span><br><span class="line">	&#125; else &#123;</span><br><span class="line">		return res.Deleted</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func getValueWIthPrefix(prefix string) []*mvccpb.KeyValue &#123;</span><br><span class="line">	resp, err := etcd.Get(context.TODO(), prefix, clientv3.WithPrefix())</span><br><span class="line">	if err != nil &#123;</span><br><span class="line">		return  nil</span><br><span class="line">	&#125; else &#123;</span><br><span class="line">		return resp.Kvs</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2018/07/04/分布式Raft算法原理及实现/" itemprop="url">
                   分布式Raft算法原理及实现
                 </a>
@@ -638,129 +767,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/29/共识算法POS原理及实现/" itemprop="url">
-                  共识算法POS原理及实现
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-06-29T19:31:41+08:00" content="2018-06-29">
-              2018-06-29
-            </time>
-          </span>
-
-          
-            <span class="post-category">
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope="" itemtype="https://schema.org/Thing">
-                  <a href="/categories/共识算法/" itemprop="url" rel="index">
-                    <span itemprop="name">共识算法</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2018/06/29/共识算法POS原理及实现/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/06/29/共识算法POS原理及实现/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="POS简介"><a href="#POS简介" class="headerlink" title="POS简介"></a>POS简介</h2><p>POS：Proof of Stake，股权证明<br>类似于财产储存在银行，这种模式会根据你持有数字货币的量和时间，分配给你相应的利息。<br>简单来说，就是一个根据你持有货币的量和时间，给你发利息的一个制度，在股权证明POS模式下，有一个名词叫币龄，每个币每天产生1币龄，比如你持有100个币，总共持有了30天，那么，此时你的币龄就为3000，这个时候，如果你发现了一个POS区块，你的币龄就会被清空为0。你每被清空365币龄，你将会从区块中获得0.05个币的利息(假定利息可理解为年利率5%)，那么在这个案例中，利息 = 3000 * 5% / 365 = 0.41个币，这下就很有意思了，持币有利息。以太坊就是采用POS共识算法。</p>
-<h2 id="算法具体实现原理"><a href="#算法具体实现原理" class="headerlink" title="算法具体实现原理"></a>算法具体实现原理</h2><p>每个旷工都有出块(即挖矿)的权力，只要出块成功，就有系统给出的奖励，这里不需要通过复杂的计算来挖矿，问题只在于谁来出块，股权越大，出块的概率就越大，反之，则相反。POS有很多变种，股权可以是持有币的数量，或者支付的数量等等。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2018/06/29/共识算法POS原理及实现/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -804,7 +810,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">41</span>
+              <span class="site-state-item-count">42</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -812,7 +818,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -821,7 +827,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">73</span>
+                <span class="site-state-item-count">74</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

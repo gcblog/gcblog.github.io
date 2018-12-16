@@ -97,7 +97,7 @@
 <meta property="og:image" content="https://lh3.googleusercontent.com/-7tK7wrbhhT8/XAiIonVqubI/AAAAAAAAEFI/S_7isBa52LAk1s-_J-QCvvev28w581AdwCHMYCw/I/tendermint.png">
 <meta property="og:image" content="https://lh3.googleusercontent.com/-IXSEtA-dXcY/XAiIohkad-I/AAAAAAAAEFQ/7pD-ir6VXEIThFTDRL0SHkwwD6_jriy9ACHMYCw/I/consensus-pos.png">
 <meta property="og:image" content="https://lh3.googleusercontent.com/-oPtxJ3NzSfo/XAiIokGDwnI/AAAAAAAAEFM/YMXMTtwH6qA3UoKGgVgBUVFfWJ0ApVmowCHMYCw/I/td-vs-ether.png">
-<meta property="og:updated_time" content="2018-12-15T09:02:15.816Z">
+<meta property="og:updated_time" content="2018-12-16T14:31:22.866Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="tendermint简介">
 <meta name="twitter:description" content="1.1 tendermint简介tendermint是一个开源的完整的区块链实现，可以用于公链或联盟链，其官方定位 是面向开发者的区块链共识引擎： 与其他区块链平台例如以太坊或者EOS相比，tendermint最大的特点是其差异化的定位： 尽管包含了区块链的完整实现，但它却是以SDK的形式将这些核心功能提供出来，供开发者 方便地定制自己的专有区块链：  tendermint的SDK中包含了构造一个">
@@ -357,7 +357,7 @@
 <p>与其他区块链平台例如以太坊或者EOS相比，tendermint最大的特点是其差异化的定位： 尽管包含了区块链的完整实现，但它却是以SDK的形式将这些核心功能提供出来，供开发者 方便地定制自己的专有区块链：</p>
 <p><img src="https://lh3.googleusercontent.com/-7tK7wrbhhT8/XAiIonVqubI/AAAAAAAAEFI/S_7isBa52LAk1s-_J-QCvvev28w581AdwCHMYCw/I/tendermint.png" alt="tendermint"></p>
 <p>tendermint的SDK中包含了构造一个区块链节点旳绝大部分组件，例如加密算法、共识算法、 区块链存储、RPC接口、P2P通信等等，开发人员只需要根据其应用开发接口 （Application Blockchain Communication Interface）的要求实现自己 的应用即可。</p>
-<p>ABCI是开发语言无关的，开发人员可以使用自己喜欢的任何语言来开发基于tendermint的 专用区块链。不过由于tendermint本身是采用go语言开发的，因此用go开发ABCI应用的一个额外好处 就是，你可以把tendermint完整的嵌入自己的应用，干净利落地交付一个单一的可执行文件。</p>
+<p>ABCI是开发语言无关的，开发人员可以使用自己喜欢的任何语言来开发基于tendermint的 专用区块链。不过由于tendermint本身是采用go语言开发的，因此用go开发ABCI应用的一个额外好处 就是，你可以把tendermint完整的嵌入自己的应用，干净利落地交付一个单一的可执行文件。<br><a id="more"></a></p>
 <h2 id="1-2-tendermint的共识算法"><a href="#1-2-tendermint的共识算法" class="headerlink" title="1.2 tendermint的共识算法"></a>1.2 tendermint的共识算法</h2><p>在技术方面，tendermint引以为傲的是其共识算法 —— 世界上第一个可以应用于公链的拜占庭 容错算法。tendermint曾于2016年国际区块链周获得最具创新奖，并在Hyperledger的雨燕（Burrow） 等诸多产品中被采纳为共识引擎。你可以点击 <a href="https://forum.cosmos.network/t/list-of-projects-in-cosmos-tendermint-ecosystem/243" target="_blank" rel="noopener">这里</a> 查看其应用案例。</p>
 <p>tendermint采用的共识机制属于一种权益证明（ Proof Of Stake）算法，一组验证人 （Validator）代替了矿工（Miner）的角色，依据抵押的权益比例轮流出块：</p>
 <p><img src="https://lh3.googleusercontent.com/-IXSEtA-dXcY/XAiIohkad-I/AAAAAAAAEFQ/7pD-ir6VXEIThFTDRL0SHkwwD6_jriy9ACHMYCw/I/consensus-pos.png" alt="consensus-pos"></p>
@@ -430,6 +430,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2018/12/16/temdermint初识/" rel="prev" title="temdermint初识">
+                temdermint初识 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -497,7 +501,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">41</span>
+              <span class="site-state-item-count">42</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -505,7 +509,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -514,7 +518,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">73</span>
+                <span class="site-state-item-count">74</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
