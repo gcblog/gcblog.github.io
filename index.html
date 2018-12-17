@@ -279,6 +279,136 @@
             
               
                 
+                <a class="post-title-link" href="/2018/12/17/状态机与ABCI/" itemprop="url">
+                  状态机与ABCI
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-12-17T19:13:21+08:00" content="2018-12-17">
+              2018-12-17
+            </time>
+          </span>
+
+          
+            <span class="post-category">
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope="" itemtype="https://schema.org/Thing">
+                  <a href="/categories/tendermint/" itemprop="url" rel="index">
+                    <span itemprop="name">tendermint</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/12/17/状态机与ABCI/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/12/17/状态机与ABCI/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="状态机与ABCI"><a href="#状态机与ABCI" class="headerlink" title="状态机与ABCI"></a>状态机与ABCI</h1><h2 id="3-1状态机"><a href="#3-1状态机" class="headerlink" title="3.1状态机"></a>3.1状态机</h2><p>tendermint采用的分布式计算模型为状态机复制（State Machine Replication），其基本 思路就是通过在多个节点间通过同步输入序列来保证各节点状态机的同步。</p>
+<p>状态机是一种在通信软件、游戏、工业控制等领域应用非常广泛的计算模型，用来抽象地表示一个 系统的演化过程。状态机由一组（有限或无限的）状态以及激发状态迁移的外部输入组成， 对于确定性状态机而言，在某一个时刻一定处于一个确定的状态，而在一个状态下 针对特定输入的状态迁移也是确定的。</p>
+<p>现在让我们看一个计数器的状态以及其变化情况，在某一个特定时刻其状态为特定的数值：</p>
+<p>counter state machine<br><img src="https://lh3.googleusercontent.com/-4X19ZKNBNgA/XAiKDw17mvI/AAAAAAAAEGg/xhsVl_BXkwwJLl3Qq_RkCiJvZTCXqr7KQCHMYCw/I/sm-counter.png" alt="sm-counte"></p>
+<p>显然，计数器有无限个状态（1,2,3…），但只有三个触发动作：</p>
+<ul>
+<li>inc - 递增</li>
+<li>dec - 递减 </li>
+<li>reset - 复位
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2018/12/17/状态机与ABCI/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </li></ul></div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2018/12/16/temdermint初识/" itemprop="url">
                   temdermint初识
                 </a>
@@ -633,128 +763,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/05/etcd多台服务器集群环境搭建使用/" itemprop="url">
-                  etcd多台服务器集群环境搭建使用
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-05T19:41:22+08:00" content="2018-07-05">
-              2018-07-05
-            </time>
-          </span>
-
-          
-            <span class="post-category">
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope="" itemtype="https://schema.org/Thing">
-                  <a href="/categories/区块链/" itemprop="url" rel="index">
-                    <span itemprop="name">区块链</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2018/07/05/etcd多台服务器集群环境搭建使用/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/07/05/etcd多台服务器集群环境搭建使用/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="下载安装-etcd"><a href="#下载安装-etcd" class="headerlink" title="下载安装 etcd"></a>下载安装 etcd</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir -p $GOPATH/src/github.com/coreos</span><br><span class="line">$ git clone https://github.com/coreos/etcd.git</span><br><span class="line">$ cd etcd</span><br><span class="line">$ ./build</span><br></pre></td></tr></table></figure>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2018/07/05/etcd多台服务器集群环境搭建使用/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -798,7 +806,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">42</span>
+              <span class="site-state-item-count">43</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -815,7 +823,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">74</span>
+                <span class="site-state-item-count">76</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
