@@ -280,7 +280,7 @@
               
                 
                 <a class="post-title-link" href="/2018/12/17/状态机与ABCI/" itemprop="url">
-                  状态机与ABCI
+                  三状态机与ABCI
                 </a>
               
             
@@ -348,7 +348,7 @@
 
       
         
-          <h1 id="状态机与ABCI"><a href="#状态机与ABCI" class="headerlink" title="状态机与ABCI"></a>状态机与ABCI</h1><h2 id="3-1状态机"><a href="#3-1状态机" class="headerlink" title="3.1状态机"></a>3.1状态机</h2><p>tendermint采用的分布式计算模型为状态机复制（State Machine Replication），其基本 思路就是通过在多个节点间通过同步输入序列来保证各节点状态机的同步。</p>
+          <h1 id="状态机与ABCI"><a href="#状态机与ABCI" class="headerlink" title="状态机与ABCI"></a>状态机与ABCI</h1><h2 id="状态机"><a href="#状态机" class="headerlink" title="状态机"></a>状态机</h2><p>tendermint采用的分布式计算模型为状态机复制（State Machine Replication），其基本 思路就是通过在多个节点间通过同步输入序列来保证各节点状态机的同步。</p>
 <p>状态机是一种在通信软件、游戏、工业控制等领域应用非常广泛的计算模型，用来抽象地表示一个 系统的演化过程。状态机由一组（有限或无限的）状态以及激发状态迁移的外部输入组成， 对于确定性状态机而言，在某一个时刻一定处于一个确定的状态，而在一个状态下 针对特定输入的状态迁移也是确定的。</p>
 <p>现在让我们看一个计数器的状态以及其变化情况，在某一个特定时刻其状态为特定的数值：</p>
 <p>counter state machine<br><img src="https://lh3.googleusercontent.com/-4X19ZKNBNgA/XAiKDw17mvI/AAAAAAAAEGg/xhsVl_BXkwwJLl3Qq_RkCiJvZTCXqr7KQCHMYCw/I/sm-counter.png" alt="sm-counte"></p>
