@@ -279,6 +279,136 @@
             
               
                 
+                <a class="post-title-link" href="/2018/07/03/拜占庭PBFT简单实现/" itemprop="url">
+                  拜占庭PBFT简单实现
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-03T18:57:53+08:00" content="2018-07-03">
+              2018-07-03
+            </time>
+          </span>
+
+          
+            <span class="post-category">
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope="" itemtype="https://schema.org/Thing">
+                  <a href="/categories/共识算法/" itemprop="url" rel="index">
+                    <span itemprop="name">共识算法</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/07/03/拜占庭PBFT简单实现/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/07/03/拜占庭PBFT简单实现/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="PBFT（拜占庭容错）"><a href="#PBFT（拜占庭容错）" class="headerlink" title="PBFT（拜占庭容错）"></a>PBFT（拜占庭容错）</h2><p>基于拜占庭将军问题，一致性的确保主要分为这三个阶段：预准备（pre-prepare）、准备(prepare)和确认(commit)。流程如下图所示：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/971366-43e9a641f22f4faf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700" alt="image"></p>
+<p>其中C为发送请求端，0123为服务端，3为宕机的服务端，具体步骤如下：</p>
+<ol>
+<li>Request：请求端C发送请求到任意一节点，这里是0</li>
+<li>Pre-Prepare：服务端0收到C的请求后进行广播，扩散至123</li>
+<li>Prepare：123,收到后记录并再次广播，1-&gt;023，2-&gt;013，3因为宕机无法广播</li>
+<li>Commit：0123节点在Prepare阶段，若收到超过一定数量的相同请求，则进入Commit阶段，广播Commit请求<br>5.Reply：0123节点在Commit阶段，若收到超过一定数量的相同请求，则对C进行反馈</li>
+</ol>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2018/07/03/拜占庭PBFT简单实现/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2018/06/29/共识算法DPOS原理及实现/" itemprop="url">
                   共识算法DPOS原理及实现
                 </a>
@@ -627,128 +757,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/28/DSA和ECC签名验签/" itemprop="url">
-                  DSA和ECC签名验签
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-06-28T18:52:24+08:00" content="2018-06-28">
-              2018-06-28
-            </time>
-          </span>
-
-          
-            <span class="post-category">
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope="" itemtype="https://schema.org/Thing">
-                  <a href="/categories/加密算法/" itemprop="url" rel="index">
-                    <span itemprop="name">加密算法</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2018/06/28/DSA和ECC签名验签/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/06/28/DSA和ECC签名验签/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="DSA"><a href="#DSA" class="headerlink" title="DSA"></a>DSA</h2><p>DSA 是专业用于数字签名和验签，并且只有这个作用, 不能用于加密和解密。<br>在安全性上，DSA和RSA差不多，但是速度比RSA快很多。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2018/06/28/DSA和ECC签名验签/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -792,7 +800,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">43</span>
+              <span class="site-state-item-count">44</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -809,7 +817,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">76</span>
+                <span class="site-state-item-count">78</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://gcblog/github.io/"/>
-  <updated>2018-12-17T11:21:47.890Z</updated>
+  <updated>2018-12-18T09:00:56.584Z</updated>
   <id>http://gcblog/github.io/</id>
   
   <author>
@@ -14,6 +14,71 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>tendermint加密算法</title>
+    <link href="http://gcblog/github.io/2018/12/18/tendermint%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"/>
+    <id>http://gcblog/github.io/2018/12/18/tendermint加密算法/</id>
+    <published>2018-12-18T08:59:32.000Z</published>
+    <updated>2018-12-18T09:00:56.584Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="身份识别机制概述"><a href="#身份识别机制概述" class="headerlink" title="身份识别机制概述"></a>身份识别机制概述</h2><p>无论是中心化系统，还是去中心化系统，都有一个基本的问题：如何表征与验证用户的身份。</p>
+<p>在中心化系统中，这一问题是基于统一存储的用户表来实现的：每个用户在表中都有 一条对应的记录，而系统则通过验证用户输入的用户名和口令是否与用户表中的记录一致来识别 用户的身份：</p>
+<p><img src="https://lh3.googleusercontent.com/-rw73ACdT8sI/XAiJ0GfZ27I/AAAAAAAAEGQ/QFDJDZxLhCgFLYmTBzLjBAf825oBFzAAACHMYCw/I/id-plan-compare-1.png" alt="id-plan-compare"></p>
+<p>区块链则采用了另外一种不需要集中存储的方案来解决这一问题：每个用户由一对公/私钥来 标识，可以将公钥视为用户名，而私钥视为用户的口令。当用户提交数据时，必须使用自己 的私钥进行签名，这样其他人就可以利用其公钥验证签名数据是否真的来自于该用户。</p>
+<p>不过由于公钥比较长，通常会对公钥进行一定的哈希计算，并进行必要的截短，作为区块链上 用户的标识，即我们通常所说的地址。</p>
+<p>tendermint提供了两种非对称加密算法的实现：比特币/以太坊采用的secp256k1椭圆曲线算法， 以及tendermint推荐的相对较新的ed25519加密算法，在我们的应用中都可以用来实现身份识别。</p>
+<h2 id="经典算法secp256k1"><a href="#经典算法secp256k1" class="headerlink" title="经典算法secp256k1"></a>经典算法secp256k1</h2><p>Secp256k1是指比特币中使用的ECDSA(椭圆曲线数字签名算法)曲线的参数，公/私钥就对应于 该曲线上的点。</p>
+<p>在比特币流行之前secp256k1几乎无人使用，但现在已经是无人不知了。secp256k1的参数由于 是精心选择的，因此它的计算会比随机参数的曲线快30%，具有较短的密钥，同时也能显著降低 算法中存在后门的风险。</p>
+<p>tendermint内置了secp256k1的实现包crypto/secp256k1，其中的PrivKeySecp256k1和 PubKeySecp256k1分别实现了私钥和公钥接口：</p>
+<p><img src="https://lh3.googleusercontent.com/-1VROJMF7QdQ/XAiJ0KcyefI/AAAAAAAAEGc/NPEtkVID1QEGILwfbcXPuGzUSPZ_KUN5gCHMYCw/I/key-address.png" alt="key-address"></p>
+<p>私钥对应于曲线上点的X坐标。使用secp256k1包的GenPrivKey()方法可以生成一个32 字节长的随机私钥，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">priv := secp256k1.GenPrivKey()</span><br><span class="line">fmt.Printf(&quot;private key =&gt; %v\n&quot;,priv)</span><br></pre></td></tr></table></figure></p>
+<p>或者将一个特定的密文转换为私钥，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">priv := secp256k1.GenPrivKeySecp256k1([]byte(&quot;your secret byte slice&quot;))</span><br><span class="line">fmt.Printf(&quot;private key =&gt; %v\n&quot;,priv)</span><br></pre></td></tr></table></figure></p>
+<p>公钥对应与曲线上点的Y坐标，因此从私钥可以推导出公钥，调用私钥的GetPubKey() 方法获得其对应的公钥实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pub := priv.GetPubKey()</span><br><span class="line">fmt.Printf(&quot;public key =&gt; %v\n&quot;,pub)</span><br></pre></td></tr></table></figure></p>
+<p>tendermint的实现是返回压缩公钥，因此公钥长度是32+1=33字节 —— 额外的1个字节标识Y 在上部还是下部。 地址的计算方法和比特币一样，都是对公钥进行两重哈希运算（sha256-&gt;ripemd160）， 最后得到20字节长的地址，但tendermint的地址没有像比特币那样添加网络前缀。</p>
+<p>调用公钥实例的Address()方法获取公钥对应的地址，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">addr := pub.Address()</span><br><span class="line">fmt.Printf(&quot;address =&gt; %v\n&quot;,addr)</span><br></pre></td></tr></table></figure></p>
+<p>尽管secp256k1在区块链领域已经非常流行，但是它也有一些问题。</p>
+<p>首先是计算效率的问题。Montgomery ladder是一种可以快速简捷地进行椭圆曲线计算的 方法，但是secp256k1不支持，这使得它的计算效率无法通过采用该算法得到提升。</p>
+<p>其次是secp256k1不具备数理完备性。在某些边界情况下，secp256k1有可能产生错误的结果， 因此这要求在算法实现时非常小心。</p>
+<p>最后是secp256k1对扭曲攻击的抵抗力不够强。扭曲攻击是指攻击者从类似的曲线上抽点 来欺骗算法。secp256k1必须在签名和验证过程中检查攻击者提供的点是否真的在曲线上， 这使得安全性和效率打了折扣。</p>
+<h2 id="下一代算法ed25519"><a href="#下一代算法ed25519" class="headerlink" title="下一代算法ed25519"></a>下一代算法ed25519</h2><p>tendermint推荐的ed25519算法属于下一代的EdDSA签名算法，与secp256k1相比，ed25519 的计算能快30%，安全性更高，密钥和签名也更短一些。下表列出了两者的对比：</p>
+<p>类型    Secp256k1    Ed25519<br>私钥长度    32 字节    64 字节<br>公钥长度    33 字节    32 字节<br>签名长度    ~71 字节    64 字节<br>安全目标    2128    2128<br>安全测试通过率    7/11    11/11</p>
+<p>tendermint的ed25519实现包是crypto/ed25519，其中的PrivKeyEd25519和 PubKeyEd25519分别实现了私钥和公钥接口：</p>
+<p><img src="https://lh3.googleusercontent.com/-HPN4U1hdDS8/XAiJ0A61uPI/AAAAAAAAEGU/pgqGTicZKvIv2N6Dqz4gKJPWxMtsRm9VwCHMYCw/I/ed25519.png" alt="ed25519"></p>
+<p>使用ed25519包的GenPrivKey()方法可以生成一个64字节长的随机私钥，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">priv := ed25519.GenPrivKey()</span><br><span class="line">fmt.Printf(&quot;private key =&gt; %v\n&quot;,priv)</span><br></pre></td></tr></table></figure></p>
+<p>或者将一个特定的密文转换为私钥，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">priv := ed25519.GenPrivKeyFromSecret([]byte(&quot;your secret byte slice&quot;))</span><br><span class="line">fmt.Printf(&quot;private key =&gt; %v\n&quot;,priv)</span><br></pre></td></tr></table></figure></p>
+<p>调用私钥的GetPubKey()方法获得其对应的公钥实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pub := priv.GetPubKey()</span><br><span class="line">fmt.Printf(&quot;public key =&gt; %v\n&quot;,pub)</span><br></pre></td></tr></table></figure></p>
+<p>地址的计算方法，就是对公钥进行sha256哈希计算，然后截取前20个字节。 调用公钥实例的Address()方法获取公钥对应的地址，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">addr := pub.Address()</span><br><span class="line">fmt.Printf(&quot;address =&gt; %v\n&quot;,addr)</span><br></pre></td></tr></table></figure></p>
+<h2 id="数据签名与认证"><a href="#数据签名与认证" class="headerlink" title="数据签名与认证"></a>数据签名与认证</h2><p>非对称密钥有一个很有用的特性，就是私钥签名，可以用公钥进行认证：</p>
+<p><img src="https://lh3.googleusercontent.com/-s0CFT2YZEEc/XAiJ0BCdgaI/AAAAAAAAEGY/-z0-4GYH2JITtRD6GmB279nTYqnStLblACHMYCw/I/key-verify.png" alt="key-verify"></p>
+<p>发送方首先使用私钥签名要发送的数据，例如msg的内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">privTommy := secp256k1.GenPrivKey()</span><br><span class="line">msg := []byte(&quot;some text to send&quot;)</span><br><span class="line">sig := privTommy.Sign(msg)</span><br></pre></td></tr></table></figure></p>
+<p>由于secp256k1和ed25519都实现了PrivKey接口，因此你可以任选其一生成 你的私钥。</p>
+<p>Sign()方法返回的是一个字节切片，通常和被签名的数据一起发送出去， 当然，接收方不一定持有发送方的公钥，因此通常也会把公钥一并发过去。</p>
+<p>例如，我们可以使用如下的结构来声明要发送的签名数据：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">type Letter struct &#123;</span><br><span class="line">  Msg []byte</span><br><span class="line">  Signature []byte</span><br><span class="line">  PubKey secp256k1.PubKeySecp256k1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>将签名数据序列化为字节码流，然后通过网络发送出去，或者拷贝给接收方：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">letter := Letter&#123;msg,sig,pubSender.(kf.PubKeySecp256k1)&#125;</span><br><span class="line">bz,err := json.Marshal(letter)</span><br><span class="line">if err !=nil &#123; panic(err) &#125;</span><br><span class="line">fmt.Printf(&quot;encoded letter =&gt; %x\n&quot;,bz)</span><br></pre></td></tr></table></figure></p>
+<p>在上面的代码中，我们使用了json编码器，当然你可以使用任何其他可用的编解码器， 例如gob。</p>
+<p>接收方首先解码接收到的字节码流：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var received Letter</span><br><span class="line">err = json.Unmarshal(bz,&amp;received)</span><br><span class="line">if err !=nil &#123; panic( err)&#125;</span><br><span class="line">fmt.Printf(&quot;decoded letter =&gt; %+v\n&quot;,received)</span><br></pre></td></tr></table></figure></p>
+<p>然后就可以使用信件中发送方的公钥验证签名了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">valid := received.PubKey.VerifyBytes(received.Msg,received.Signature)</span><br><span class="line">fmt.Printf(&quot;validated =&gt; %t\n&quot;,valid)</span><br></pre></td></tr></table></figure></p>
+<h2 id="获得配套代码资料"><a href="#获得配套代码资料" class="headerlink" title="获得配套代码资料"></a>获得配套代码资料</h2><p>关注微信公众号<code>区块链001</code>, 回复<code>tendermint</code>获得</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;身份识别机制概述&quot;&gt;&lt;a href=&quot;#身份识别机制概述&quot; class=&quot;headerlink&quot; title=&quot;身份识别机制概述&quot;&gt;&lt;/a&gt;身份识别机制概述&lt;/h2&gt;&lt;p&gt;无论是中心化系统，还是去中心化系统，都有一个基本的问题：如何表征与验证用户的身份。&lt;/p&gt;
+
+    
+    </summary>
+    
+      <category term="tendermint" scheme="http://gcblog/github.io/categories/tendermint/"/>
+    
+    
+      <category term="tendermint" scheme="http://gcblog/github.io/tags/tendermint/"/>
+    
+      <category term="secp256k1" scheme="http://gcblog/github.io/tags/secp256k1/"/>
+    
+      <category term="ed25519" scheme="http://gcblog/github.io/tags/ed25519/"/>
+    
+  </entry>
   
   <entry>
     <title>三状态机与ABCI</title>
@@ -616,9 +681,9 @@
       <category term="共识算法" scheme="http://gcblog/github.io/categories/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
     
     
-      <category term="共识算法" scheme="http://gcblog/github.io/tags/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
-    
       <category term="DPOS" scheme="http://gcblog/github.io/tags/DPOS/"/>
+    
+      <category term="共识算法" scheme="http://gcblog/github.io/tags/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
     
   </entry>
   
@@ -646,9 +711,9 @@
       <category term="共识算法" scheme="http://gcblog/github.io/categories/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
     
     
-      <category term="POS" scheme="http://gcblog/github.io/tags/POS/"/>
-    
       <category term="共识算法" scheme="http://gcblog/github.io/tags/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="POS" scheme="http://gcblog/github.io/tags/POS/"/>
     
   </entry>
   
@@ -1270,62 +1335,6 @@
       <category term="strings" scheme="http://gcblog/github.io/tags/strings/"/>
     
       <category term="字符串操作" scheme="http://gcblog/github.io/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%93%8D%E4%BD%9C/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>go数组</title>
-    <link href="http://gcblog/github.io/2018/04/18/go%E6%95%B0%E7%BB%84/"/>
-    <id>http://gcblog/github.io/2018/04/18/go数组/</id>
-    <published>2018-04-18T06:59:13.000Z</published>
-    <updated>2018-04-18T07:01:46.366Z</updated>
-    
-    <content type="html"><![CDATA[<h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><ul>
-<li>在Go语言中数组是一个值类型（value type）。是真真实实的数组，而不是一个指向数组内存起始位置的指针，也不能和同类型的指针进行转化，这一点严重不同于C语言。所有的值类型变量在赋值和作为参数传递时都将产生一次复制动作。如果将数组作为函数的参数类型，则在函数调用时该参数将发生数据复制。因此，在函数体中无法修改传入的数组的内容，因为函数内操作的只是所传入数组的一个副本。</li>
-<li>定义数组的格式：var <varname> [n]<type>，n&gt;=0</type></varname></li>
-<li>数组长度也是类型的一部分，因此具有不同长度的数组为不同类型</li>
-<li>注意区分指向数组的指针和指针数组</li>
-<li>数组在Go中为值类型</li>
-<li>数组之间可以使用==或!=进行比较，但不可以使用&lt;或&gt;(比较的前提是数组个数相同，并且元素类型相同)</li>
-<li>可以使用new来创建数组，此方法返回一个指向数组的指针</li>
-<li>Go支持多维数组</li>
-</ul>
-<a id="more"></a>
-<h4 id="创建数组"><a href="#创建数组" class="headerlink" title="创建数组"></a>创建数组</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">func createArr() &#123;</span><br><span class="line"></span><br><span class="line">	// 指定数组长度</span><br><span class="line">	// 创建数组如果给定数组长度，数组个数就不能超过这个长度</span><br><span class="line">	var arr1 = [5]int&#123;1, 3, 5, 2, 9&#125;</span><br><span class="line">	fmt.Println(arr1)</span><br><span class="line"></span><br><span class="line">	//不指定数组长度</span><br><span class="line">	//Go 语言会根据元素的个数来设置数组的大小</span><br><span class="line">	var arr2 = []int&#123;1, 2&#125;</span><br><span class="line">	var arr3 = [...]int&#123;2, 3, 4&#125;</span><br><span class="line">	fmt.Println(arr2)</span><br><span class="line">	fmt.Println(arr3)</span><br><span class="line"></span><br><span class="line">	//创建变量或者常量 可以简写</span><br><span class="line">	arr4 := []int&#123;5&#125;</span><br><span class="line">	fmt.Println(arr4)</span><br><span class="line">	//初始化对指定元素赋值</span><br><span class="line">	//第三个元素 初始化为1</span><br><span class="line">	var arr5 = [5]int&#123;3: 1&#125;</span><br><span class="line">	fmt.Println(arr5)</span><br><span class="line"></span><br><span class="line">	// 获取数组的长度和容量</span><br><span class="line">	fmt.Println(len(arr1))</span><br><span class="line">	fmt.Println(cap(arr1))</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[1 3 5 2 9]</span><br><span class="line">[1 2]</span><br><span class="line">[2 3 4]</span><br><span class="line">[5]</span><br><span class="line">[0 0 0 1 0]</span><br><span class="line">5</span><br><span class="line">5</span><br></pre></td></tr></table></figure></p>
-<h4 id="编辑数组"><a href="#编辑数组" class="headerlink" title="编辑数组"></a>编辑数组</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">func editArr() &#123;</span><br><span class="line"></span><br><span class="line">	var arr1 = []int&#123;1, 2&#125;</span><br><span class="line">	fmt.Print(len(arr1), cap(arr1))</span><br><span class="line">	fmt.Println(arr1)</span><br><span class="line"></span><br><span class="line">	// 给arr1 添加元素 3，4</span><br><span class="line">	var arr2 = append(arr1, 3, 4)</span><br><span class="line">	fmt.Println(&quot;arr1 = &quot;, arr1)</span><br><span class="line">	fmt.Println(&quot;arr2 = &quot;, arr2)</span><br><span class="line">	fmt.Print(len(arr1), cap(arr1))</span><br><span class="line"></span><br><span class="line">	//改变数组中元素的值</span><br><span class="line">	arr1[0] = 9</span><br><span class="line">	fmt.Println(arr1)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">2 2[1 2]</span><br><span class="line">[1 2 3 4]</span><br><span class="line">4 4[9 2 3 4]</span><br></pre></td></tr></table></figure></p>
-<h4 id="指针-amp-数组"><a href="#指针-amp-数组" class="headerlink" title="指针&amp;数组"></a>指针&amp;数组</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">func pointArr() &#123;</span><br><span class="line">	//数组指针   它是一个指针，指向数组的地址</span><br><span class="line">	a := []int&#123;5: 1&#125;</span><br><span class="line">	var p *[]int = &amp;a</span><br><span class="line">	fmt.Println(a)</span><br><span class="line">	fmt.Println(p) //比a 多了一个取地址符</span><br><span class="line"></span><br><span class="line">	// 指针数组 数组里存放的是指针地址，不是实际的值</span><br><span class="line">	var x, y = 4, 5</span><br><span class="line">	arr := []*int&#123;&amp;x, &amp;y&#125;</span><br><span class="line">	fmt.Println(arr)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[0 0 0 0 0 1]</span><br><span class="line">&amp;[0 0 0 0 0 1]</span><br><span class="line">[0xc4200142b0 0xc4200142b8]</span><br></pre></td></tr></table></figure></p>
-<h4 id="range遍历数组"><a href="#range遍历数组" class="headerlink" title="range遍历数组"></a>range遍历数组</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">func rangeArr() &#123;</span><br><span class="line"></span><br><span class="line">	var arr = []int&#123;1, 2, 3, 4, 5&#125;</span><br><span class="line">	for i, v := range arr &#123;</span><br><span class="line">		fmt.Println(i, v)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0 1</span><br><span class="line">1 2</span><br><span class="line">2 3</span><br><span class="line">3 4</span><br><span class="line">4 5</span><br></pre></td></tr></table></figure></p>
-<h4 id="new-关键字创建数组"><a href="#new-关键字创建数组" class="headerlink" title="new 关键字创建数组"></a>new 关键字创建数组</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">func newarr() &#123;</span><br><span class="line"></span><br><span class="line">	var a = [5]int&#123;&#125;</span><br><span class="line">	a[1] = 2</span><br><span class="line">	fmt.Println(a)</span><br><span class="line"></span><br><span class="line">	p := new([5]int) //可以通过下标赋值</span><br><span class="line">	p[1] = 2</span><br><span class="line">	fmt.Println(p)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[0 2 0 0 0]</span><br><span class="line">&amp;[0 2 0 0 0]</span><br></pre></td></tr></table></figure></p>
-<h4 id="数组传递"><a href="#数组传递" class="headerlink" title="数组传递"></a>数组传递</h4><p>在函数内改变数组不会影响原本数组的值，因为是指类选，会进行一次拷贝<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">func main() &#123;</span><br><span class="line"></span><br><span class="line">	var testArr = [5]int&#123;1, 2, 3, 4, 5&#125;</span><br><span class="line"></span><br><span class="line">	fmt.Println(testArr)</span><br><span class="line"></span><br><span class="line">	modifyarr(testArr)</span><br><span class="line"></span><br><span class="line">	fmt.Println(&quot;In main&quot;, testArr)</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func modifyarr(arr [5]int) &#123;</span><br><span class="line">	arr[0] = 10</span><br><span class="line">	fmt.Println(&quot;In modify&quot;, arr)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[1 2 3 4 5]</span><br><span class="line">In modify [10 2 3 4 5]</span><br><span class="line">In main [1 2 3 4 5]</span><br></pre></td></tr></table></figure></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h3 id=&quot;数组&quot;&gt;&lt;a href=&quot;#数组&quot; class=&quot;headerlink&quot; title=&quot;数组&quot;&gt;&lt;/a&gt;数组&lt;/h3&gt;&lt;ul&gt;
-&lt;li&gt;在Go语言中数组是一个值类型（value type）。是真真实实的数组，而不是一个指向数组内存起始位置的指针，也不能和同类型的指针进行转化，这一点严重不同于C语言。所有的值类型变量在赋值和作为参数传递时都将产生一次复制动作。如果将数组作为函数的参数类型，则在函数调用时该参数将发生数据复制。因此，在函数体中无法修改传入的数组的内容，因为函数内操作的只是所传入数组的一个副本。&lt;/li&gt;
-&lt;li&gt;定义数组的格式：var &lt;varname&gt; [n]&lt;type&gt;，n&amp;gt;=0&lt;/type&gt;&lt;/varname&gt;&lt;/li&gt;
-&lt;li&gt;数组长度也是类型的一部分，因此具有不同长度的数组为不同类型&lt;/li&gt;
-&lt;li&gt;注意区分指向数组的指针和指针数组&lt;/li&gt;
-&lt;li&gt;数组在Go中为值类型&lt;/li&gt;
-&lt;li&gt;数组之间可以使用==或!=进行比较，但不可以使用&amp;lt;或&amp;gt;(比较的前提是数组个数相同，并且元素类型相同)&lt;/li&gt;
-&lt;li&gt;可以使用new来创建数组，此方法返回一个指向数组的指针&lt;/li&gt;
-&lt;li&gt;Go支持多维数组&lt;/li&gt;
-&lt;/ul&gt;
-    
-    </summary>
-    
-      <category term="go" scheme="http://gcblog/github.io/categories/go/"/>
-    
-    
-      <category term="数组" scheme="http://gcblog/github.io/tags/%E6%95%B0%E7%BB%84/"/>
-    
-      <category term="go" scheme="http://gcblog/github.io/tags/go/"/>
     
   </entry>
   

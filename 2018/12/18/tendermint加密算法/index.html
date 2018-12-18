@@ -1,0 +1,916 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="tendermint,secp256k1,ed25519,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="code随手记" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1">
+
+
+
+
+
+
+<meta name="description" content="身份识别机制概述无论是中心化系统，还是去中心化系统，都有一个基本的问题：如何表征与验证用户的身份。 在中心化系统中，这一问题是基于统一存储的用户表来实现的：每个用户在表中都有 一条对应的记录，而系统则通过验证用户输入的用户名和口令是否与用户表中的记录一致来识别 用户的身份：  区块链则采用了另外一种不需要集中存储的方案来解决这一问题：每个用户由一对公/私钥来 标识，可以将公钥视为用户名，而私钥视为">
+<meta name="keywords" content="tendermint,secp256k1,ed25519">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tendermint加密算法">
+<meta property="og:url" content="http://gcblog/github.io/2018/12/18/tendermint加密算法/index.html">
+<meta property="og:site_name" content="code随手记">
+<meta property="og:description" content="身份识别机制概述无论是中心化系统，还是去中心化系统，都有一个基本的问题：如何表征与验证用户的身份。 在中心化系统中，这一问题是基于统一存储的用户表来实现的：每个用户在表中都有 一条对应的记录，而系统则通过验证用户输入的用户名和口令是否与用户表中的记录一致来识别 用户的身份：  区块链则采用了另外一种不需要集中存储的方案来解决这一问题：每个用户由一对公/私钥来 标识，可以将公钥视为用户名，而私钥视为">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://lh3.googleusercontent.com/-rw73ACdT8sI/XAiJ0GfZ27I/AAAAAAAAEGQ/QFDJDZxLhCgFLYmTBzLjBAf825oBFzAAACHMYCw/I/id-plan-compare-1.png">
+<meta property="og:image" content="https://lh3.googleusercontent.com/-1VROJMF7QdQ/XAiJ0KcyefI/AAAAAAAAEGc/NPEtkVID1QEGILwfbcXPuGzUSPZ_KUN5gCHMYCw/I/key-address.png">
+<meta property="og:image" content="https://lh3.googleusercontent.com/-HPN4U1hdDS8/XAiJ0A61uPI/AAAAAAAAEGU/pgqGTicZKvIv2N6Dqz4gKJPWxMtsRm9VwCHMYCw/I/ed25519.png">
+<meta property="og:image" content="https://lh3.googleusercontent.com/-s0CFT2YZEEc/XAiJ0BCdgaI/AAAAAAAAEGY/-z0-4GYH2JITtRD6GmB279nTYqnStLblACHMYCw/I/key-verify.png">
+<meta property="og:updated_time" content="2018-12-18T09:00:56.584Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="tendermint加密算法">
+<meta name="twitter:description" content="身份识别机制概述无论是中心化系统，还是去中心化系统，都有一个基本的问题：如何表征与验证用户的身份。 在中心化系统中，这一问题是基于统一存储的用户表来实现的：每个用户在表中都有 一条对应的记录，而系统则通过验证用户输入的用户名和口令是否与用户表中的记录一致来识别 用户的身份：  区块链则采用了另外一种不需要集中存储的方案来解决这一问题：每个用户由一对公/私钥来 标识，可以将公钥视为用户名，而私钥视为">
+<meta name="twitter:image" content="https://lh3.googleusercontent.com/-rw73ACdT8sI/XAiJ0GfZ27I/AAAAAAAAEGQ/QFDJDZxLhCgFLYmTBzLjBAf825oBFzAAACHMYCw/I/id-plan-compare-1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> tendermint加密算法 | code随手记 </title>
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">code随手记</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Practice from here</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                tendermint加密算法
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-12-18T16:59:32+08:00" content="2018-12-18">
+              2018-12-18
+            </time>
+          </span>
+
+          
+            <span class="post-category">
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope="" itemtype="https://schema.org/Thing">
+                  <a href="/categories/tendermint/" itemprop="url" rel="index">
+                    <span itemprop="name">tendermint</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/12/18/tendermint加密算法/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/12/18/tendermint加密算法/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i></i> 浏览
+              <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="身份识别机制概述"><a href="#身份识别机制概述" class="headerlink" title="身份识别机制概述"></a>身份识别机制概述</h2><p>无论是中心化系统，还是去中心化系统，都有一个基本的问题：如何表征与验证用户的身份。</p>
+<p>在中心化系统中，这一问题是基于统一存储的用户表来实现的：每个用户在表中都有 一条对应的记录，而系统则通过验证用户输入的用户名和口令是否与用户表中的记录一致来识别 用户的身份：</p>
+<p><img src="https://lh3.googleusercontent.com/-rw73ACdT8sI/XAiJ0GfZ27I/AAAAAAAAEGQ/QFDJDZxLhCgFLYmTBzLjBAf825oBFzAAACHMYCw/I/id-plan-compare-1.png" alt="id-plan-compare"></p>
+<p>区块链则采用了另外一种不需要集中存储的方案来解决这一问题：每个用户由一对公/私钥来 标识，可以将公钥视为用户名，而私钥视为用户的口令。当用户提交数据时，必须使用自己 的私钥进行签名，这样其他人就可以利用其公钥验证签名数据是否真的来自于该用户。</p>
+<p>不过由于公钥比较长，通常会对公钥进行一定的哈希计算，并进行必要的截短，作为区块链上 用户的标识，即我们通常所说的地址。</p>
+<p>tendermint提供了两种非对称加密算法的实现：比特币/以太坊采用的secp256k1椭圆曲线算法， 以及tendermint推荐的相对较新的ed25519加密算法，在我们的应用中都可以用来实现身份识别。</p>
+<h2 id="经典算法secp256k1"><a href="#经典算法secp256k1" class="headerlink" title="经典算法secp256k1"></a>经典算法secp256k1</h2><p>Secp256k1是指比特币中使用的ECDSA(椭圆曲线数字签名算法)曲线的参数，公/私钥就对应于 该曲线上的点。</p>
+<p>在比特币流行之前secp256k1几乎无人使用，但现在已经是无人不知了。secp256k1的参数由于 是精心选择的，因此它的计算会比随机参数的曲线快30%，具有较短的密钥，同时也能显著降低 算法中存在后门的风险。</p>
+<p>tendermint内置了secp256k1的实现包crypto/secp256k1，其中的PrivKeySecp256k1和 PubKeySecp256k1分别实现了私钥和公钥接口：</p>
+<p><img src="https://lh3.googleusercontent.com/-1VROJMF7QdQ/XAiJ0KcyefI/AAAAAAAAEGc/NPEtkVID1QEGILwfbcXPuGzUSPZ_KUN5gCHMYCw/I/key-address.png" alt="key-address"></p>
+<p>私钥对应于曲线上点的X坐标。使用secp256k1包的GenPrivKey()方法可以生成一个32 字节长的随机私钥，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">priv := secp256k1.GenPrivKey()</span><br><span class="line">fmt.Printf(&quot;private key =&gt; %v\n&quot;,priv)</span><br></pre></td></tr></table></figure></p>
+<p>或者将一个特定的密文转换为私钥，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">priv := secp256k1.GenPrivKeySecp256k1([]byte(&quot;your secret byte slice&quot;))</span><br><span class="line">fmt.Printf(&quot;private key =&gt; %v\n&quot;,priv)</span><br></pre></td></tr></table></figure></p>
+<p>公钥对应与曲线上点的Y坐标，因此从私钥可以推导出公钥，调用私钥的GetPubKey() 方法获得其对应的公钥实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pub := priv.GetPubKey()</span><br><span class="line">fmt.Printf(&quot;public key =&gt; %v\n&quot;,pub)</span><br></pre></td></tr></table></figure></p>
+<p>tendermint的实现是返回压缩公钥，因此公钥长度是32+1=33字节 —— 额外的1个字节标识Y 在上部还是下部。 地址的计算方法和比特币一样，都是对公钥进行两重哈希运算（sha256-&gt;ripemd160）， 最后得到20字节长的地址，但tendermint的地址没有像比特币那样添加网络前缀。</p>
+<p>调用公钥实例的Address()方法获取公钥对应的地址，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">addr := pub.Address()</span><br><span class="line">fmt.Printf(&quot;address =&gt; %v\n&quot;,addr)</span><br></pre></td></tr></table></figure></p>
+<p>尽管secp256k1在区块链领域已经非常流行，但是它也有一些问题。</p>
+<p>首先是计算效率的问题。Montgomery ladder是一种可以快速简捷地进行椭圆曲线计算的 方法，但是secp256k1不支持，这使得它的计算效率无法通过采用该算法得到提升。</p>
+<p>其次是secp256k1不具备数理完备性。在某些边界情况下，secp256k1有可能产生错误的结果， 因此这要求在算法实现时非常小心。</p>
+<p>最后是secp256k1对扭曲攻击的抵抗力不够强。扭曲攻击是指攻击者从类似的曲线上抽点 来欺骗算法。secp256k1必须在签名和验证过程中检查攻击者提供的点是否真的在曲线上， 这使得安全性和效率打了折扣。</p>
+<h2 id="下一代算法ed25519"><a href="#下一代算法ed25519" class="headerlink" title="下一代算法ed25519"></a>下一代算法ed25519</h2><p>tendermint推荐的ed25519算法属于下一代的EdDSA签名算法，与secp256k1相比，ed25519 的计算能快30%，安全性更高，密钥和签名也更短一些。下表列出了两者的对比：</p>
+<p>类型    Secp256k1    Ed25519<br>私钥长度    32 字节    64 字节<br>公钥长度    33 字节    32 字节<br>签名长度    ~71 字节    64 字节<br>安全目标    2128    2128<br>安全测试通过率    7/11    11/11</p>
+<p>tendermint的ed25519实现包是crypto/ed25519，其中的PrivKeyEd25519和 PubKeyEd25519分别实现了私钥和公钥接口：</p>
+<p><img src="https://lh3.googleusercontent.com/-HPN4U1hdDS8/XAiJ0A61uPI/AAAAAAAAEGU/pgqGTicZKvIv2N6Dqz4gKJPWxMtsRm9VwCHMYCw/I/ed25519.png" alt="ed25519"></p>
+<p>使用ed25519包的GenPrivKey()方法可以生成一个64字节长的随机私钥，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">priv := ed25519.GenPrivKey()</span><br><span class="line">fmt.Printf(&quot;private key =&gt; %v\n&quot;,priv)</span><br></pre></td></tr></table></figure></p>
+<p>或者将一个特定的密文转换为私钥，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">priv := ed25519.GenPrivKeyFromSecret([]byte(&quot;your secret byte slice&quot;))</span><br><span class="line">fmt.Printf(&quot;private key =&gt; %v\n&quot;,priv)</span><br></pre></td></tr></table></figure></p>
+<p>调用私钥的GetPubKey()方法获得其对应的公钥实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pub := priv.GetPubKey()</span><br><span class="line">fmt.Printf(&quot;public key =&gt; %v\n&quot;,pub)</span><br></pre></td></tr></table></figure></p>
+<p>地址的计算方法，就是对公钥进行sha256哈希计算，然后截取前20个字节。 调用公钥实例的Address()方法获取公钥对应的地址，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">addr := pub.Address()</span><br><span class="line">fmt.Printf(&quot;address =&gt; %v\n&quot;,addr)</span><br></pre></td></tr></table></figure></p>
+<h2 id="数据签名与认证"><a href="#数据签名与认证" class="headerlink" title="数据签名与认证"></a>数据签名与认证</h2><p>非对称密钥有一个很有用的特性，就是私钥签名，可以用公钥进行认证：</p>
+<p><img src="https://lh3.googleusercontent.com/-s0CFT2YZEEc/XAiJ0BCdgaI/AAAAAAAAEGY/-z0-4GYH2JITtRD6GmB279nTYqnStLblACHMYCw/I/key-verify.png" alt="key-verify"></p>
+<p>发送方首先使用私钥签名要发送的数据，例如msg的内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">privTommy := secp256k1.GenPrivKey()</span><br><span class="line">msg := []byte(&quot;some text to send&quot;)</span><br><span class="line">sig := privTommy.Sign(msg)</span><br></pre></td></tr></table></figure></p>
+<p>由于secp256k1和ed25519都实现了PrivKey接口，因此你可以任选其一生成 你的私钥。</p>
+<p>Sign()方法返回的是一个字节切片，通常和被签名的数据一起发送出去， 当然，接收方不一定持有发送方的公钥，因此通常也会把公钥一并发过去。</p>
+<p>例如，我们可以使用如下的结构来声明要发送的签名数据：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">type Letter struct &#123;</span><br><span class="line">  Msg []byte</span><br><span class="line">  Signature []byte</span><br><span class="line">  PubKey secp256k1.PubKeySecp256k1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>将签名数据序列化为字节码流，然后通过网络发送出去，或者拷贝给接收方：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">letter := Letter&#123;msg,sig,pubSender.(kf.PubKeySecp256k1)&#125;</span><br><span class="line">bz,err := json.Marshal(letter)</span><br><span class="line">if err !=nil &#123; panic(err) &#125;</span><br><span class="line">fmt.Printf(&quot;encoded letter =&gt; %x\n&quot;,bz)</span><br></pre></td></tr></table></figure></p>
+<p>在上面的代码中，我们使用了json编码器，当然你可以使用任何其他可用的编解码器， 例如gob。</p>
+<p>接收方首先解码接收到的字节码流：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var received Letter</span><br><span class="line">err = json.Unmarshal(bz,&amp;received)</span><br><span class="line">if err !=nil &#123; panic( err)&#125;</span><br><span class="line">fmt.Printf(&quot;decoded letter =&gt; %+v\n&quot;,received)</span><br></pre></td></tr></table></figure></p>
+<p>然后就可以使用信件中发送方的公钥验证签名了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">valid := received.PubKey.VerifyBytes(received.Msg,received.Signature)</span><br><span class="line">fmt.Printf(&quot;validated =&gt; %t\n&quot;,valid)</span><br></pre></td></tr></table></figure></p>
+<h2 id="获得配套代码资料"><a href="#获得配套代码资料" class="headerlink" title="获得配套代码资料"></a>获得配套代码资料</h2><p>关注微信公众号<code>区块链001</code>, 回复<code>tendermint</code>获得</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/weixin.jpg" alt="夜千寻墨 WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/zhifubao.jpg" alt="夜千寻墨 Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/tendermint/" rel="tag">#tendermint</a>
+          
+            <a href="/tags/secp256k1/" rel="tag">#secp256k1</a>
+          
+            <a href="/tags/ed25519/" rel="tag">#ed25519</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/17/状态机与ABCI/" rel="next" title="三状态机与ABCI">
+                <i class="fa fa-chevron-left"></i> 三状态机与ABCI
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/12/18/tendermint加密算法/" data-title="tendermint加密算法" data-url="http://gcblog/github.io/2018/12/18/tendermint加密算法/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="夜千寻墨">
+          <p class="site-author-name" itemprop="name">夜千寻墨</p>
+          <p class="site-description motion-element" itemprop="description">扫码关注微信公众号,及时获取文章更新</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">44</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">78</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/suifengqjn" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/dearqjn?source=blog&is_all=1" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/527ecf8c8753/latest_articles" target="_blank" title="简书">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  简书
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.instagram.com/yeqianxun/" target="_blank" title="instagram">
+                  
+                    <i class="fa fa-fw fa-instagram"></i>
+                  
+                  instagram
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#身份识别机制概述"><span class="nav-number">1.</span> <span class="nav-text">身份识别机制概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#经典算法secp256k1"><span class="nav-number">2.</span> <span class="nav-text">经典算法secp256k1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下一代算法ed25519"><span class="nav-number">3.</span> <span class="nav-text">下一代算法ed25519</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据签名与认证"><span class="nav-number">4.</span> <span class="nav-text">数据签名与认证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获得配套代码资料"><span class="nav-number">5.</span> <span class="nav-text">获得配套代码资料</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">夜千寻墨</span>
+</div>
+
+<div class="powered-by">
+  powered by <a class="theme-link">Hexo</a>
+</div>
+
+<div class="theme-info">
+  theme -
+  <a class="theme-link">
+    Next
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">本站访客数<span class="busuanzi-value" id="busuanzi_value_site_uv"></span>人次</span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i> 总访问量<span class="busuanzi-value" id="busuanzi_value_site_pv"></span>次</span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"yqxm"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';                
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+                            
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').mousedown(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+  
+
+  
+
+  
+
+</body>
+</html>
