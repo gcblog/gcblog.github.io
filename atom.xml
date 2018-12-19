@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://gcblog/github.io/"/>
-  <updated>2018-12-18T09:00:56.584Z</updated>
+  <updated>2018-12-18T09:39:57.222Z</updated>
   <id>http://gcblog/github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://gcblog/github.io/2018/12/18/tendermint%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"/>
     <id>http://gcblog/github.io/2018/12/18/tendermint加密算法/</id>
     <published>2018-12-18T08:59:32.000Z</published>
-    <updated>2018-12-18T09:00:56.584Z</updated>
+    <updated>2018-12-18T09:39:57.222Z</updated>
     
     <content type="html"><![CDATA[<h2 id="身份识别机制概述"><a href="#身份识别机制概述" class="headerlink" title="身份识别机制概述"></a>身份识别机制概述</h2><p>无论是中心化系统，还是去中心化系统，都有一个基本的问题：如何表征与验证用户的身份。</p>
 <p>在中心化系统中，这一问题是基于统一存储的用户表来实现的：每个用户在表中都有 一条对应的记录，而系统则通过验证用户输入的用户名和口令是否与用户表中的记录一致来识别 用户的身份：</p>
