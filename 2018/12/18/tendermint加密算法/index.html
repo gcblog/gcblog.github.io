@@ -98,7 +98,7 @@
 <meta property="og:image" content="https://lh3.googleusercontent.com/-1VROJMF7QdQ/XAiJ0KcyefI/AAAAAAAAEGc/NPEtkVID1QEGILwfbcXPuGzUSPZ_KUN5gCHMYCw/I/key-address.png">
 <meta property="og:image" content="https://lh3.googleusercontent.com/-HPN4U1hdDS8/XAiJ0A61uPI/AAAAAAAAEGU/pgqGTicZKvIv2N6Dqz4gKJPWxMtsRm9VwCHMYCw/I/ed25519.png">
 <meta property="og:image" content="https://lh3.googleusercontent.com/-s0CFT2YZEEc/XAiJ0BCdgaI/AAAAAAAAEGY/-z0-4GYH2JITtRD6GmB279nTYqnStLblACHMYCw/I/key-verify.png">
-<meta property="og:updated_time" content="2018-12-18T09:39:57.222Z">
+<meta property="og:updated_time" content="2018-12-20T05:42:59.337Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="tendermint加密算法">
 <meta name="twitter:description" content="身份识别机制概述无论是中心化系统，还是去中心化系统，都有一个基本的问题：如何表征与验证用户的身份。 在中心化系统中，这一问题是基于统一存储的用户表来实现的：每个用户在表中都有 一条对应的记录，而系统则通过验证用户输入的用户名和口令是否与用户表中的记录一致来识别 用户的身份：  区块链则采用了另外一种不需要集中存储的方案来解决这一问题：每个用户由一对公/私钥来 标识，可以将公钥视为用户名，而私钥视为">
@@ -368,7 +368,7 @@
 <p><img src="https://lh3.googleusercontent.com/-rw73ACdT8sI/XAiJ0GfZ27I/AAAAAAAAEGQ/QFDJDZxLhCgFLYmTBzLjBAf825oBFzAAACHMYCw/I/id-plan-compare-1.png" alt="id-plan-compare"></p>
 <p>区块链则采用了另外一种不需要集中存储的方案来解决这一问题：每个用户由一对公/私钥来 标识，可以将公钥视为用户名，而私钥视为用户的口令。当用户提交数据时，必须使用自己 的私钥进行签名，这样其他人就可以利用其公钥验证签名数据是否真的来自于该用户。</p>
 <p>不过由于公钥比较长，通常会对公钥进行一定的哈希计算，并进行必要的截短，作为区块链上 用户的标识，即我们通常所说的地址。</p>
-<p>tendermint提供了两种非对称加密算法的实现：比特币/以太坊采用的secp256k1椭圆曲线算法， 以及tendermint推荐的相对较新的ed25519加密算法，在我们的应用中都可以用来实现身份识别。</p>
+<p>tendermint提供了两种非对称加密算法的实现：比特币/以太坊采用的secp256k1椭圆曲线算法， 以及tendermint推荐的相对较新的ed25519加密算法，在我们的应用中都可以用来实现身份识别。<br><a id="more"></a></p>
 <h2 id="经典算法secp256k1"><a href="#经典算法secp256k1" class="headerlink" title="经典算法secp256k1"></a>经典算法secp256k1</h2><p>Secp256k1是指比特币中使用的ECDSA(椭圆曲线数字签名算法)曲线的参数，公/私钥就对应于 该曲线上的点。</p>
 <p>在比特币流行之前secp256k1几乎无人使用，但现在已经是无人不知了。secp256k1的参数由于 是精心选择的，因此它的计算会比随机参数的曲线快30%，具有较短的密钥，同时也能显著降低 算法中存在后门的风险。</p>
 <p>tendermint内置了secp256k1的实现包crypto/secp256k1，其中的PrivKeySecp256k1和 PubKeySecp256k1分别实现了私钥和公钥接口：</p>
