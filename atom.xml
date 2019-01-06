@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://gcblog/github.io/"/>
-  <updated>2018-12-20T05:42:59.337Z</updated>
+  <updated>2019-01-06T14:32:33.906Z</updated>
   <id>http://gcblog/github.io/</id>
   
   <author>
@@ -14,6 +14,82 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>tendermint发行代币</title>
+    <link href="http://gcblog/github.io/2019/01/06/tendermint%E5%8F%91%E8%A1%8C%E4%BB%A3%E5%B8%81/"/>
+    <id>http://gcblog/github.io/2019/01/06/tendermint发行代币/</id>
+    <published>2019-01-06T14:31:38.000Z</published>
+    <updated>2019-01-06T14:32:33.906Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="发行自己的代币"><a href="#发行自己的代币" class="headerlink" title="发行自己的代币"></a>发行自己的代币</h1><h2 id="代币发行概述"><a href="#代币发行概述" class="headerlink" title="代币发行概述"></a>代币发行概述</h2><p>状态机模型是一种图灵完备的计算模型，理论上你可以用它来实现任何应用， 代币也不例外。例如，我们可以借鉴以太坊的账户模型，设计出自己的账户 状态机：</p>
+<p><img src="https://lh3.googleusercontent.com/-1FgpvG7AFCY/XAiKngG59mI/AAAAAAAAEIY/q_xfvLxbQVQyTOj1dK1xYQ2uBul6tTFkACHMYCw/I/sm-account.png" alt="sm-account"></p>
+<p>出于简化问题考虑，我们假设系统只发行一种代币，因此在账户模型中只需要 记录每个账户的余额即可。所有账户及其余额是整个系统的状态，只有当交易 发生时，这一状态才会发生变化。</p>
+<p>例如，假设账户tommy有1000个代币，那么当发生一笔从mary到tommy 的500个币的转账交易后，tommy的余额将增加500个代币，同时mary的余额将 减少500个代币，这意味着整个系统在这笔交易后进入了一个新的状态。</p>
+<p>基于我们之前的学习，很容易将账户采用哈希地址来表示，同时通过非对称 加密技术进行身份验证，从而实现一个去中心化的代币账户状态机。<br><a id="more"></a></p>
+<h2 id="状态机实现"><a href="#状态机实现" class="headerlink" title="状态机实现"></a>状态机实现</h2><p>账户状态机的主要成员，包括记录系统状态的成员变量Accounts，以及表征交易的 成员函数issue()和transfer()：</p>
+<p><img src="https://lh3.googleusercontent.com/-wPRofw9uocU/XAiKm1b7zYI/AAAAAAAAEIM/_7p0xWRoWwAwWZquVHXZ9nckYkaOYfscQCHMYCw/I/token-sm.png" alt="token-s"></p>
+<p>TokenApp的结构声明如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">type  TokenApp struct &#123;</span><br><span class="line">  types.BaseApplication</span><br><span class="line">  Accounts map[string]int</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们使用一个映射来表示系统的整个状态，其中键为哈希地址，值为账户余额。 由于crypto.Address类型其实是一个字节切片，因此我们采用其16进制表示 作为账户映射表的键。</p>
+<p>发行交易将向指定的地址发行一定数量的代币，显然，只允许系统设定的发行人 SYSTEM_ISSUER执行该交易：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">func (app *TokenApp) issue(issuer,to crypto.Address,value int) error &#123;</span><br><span class="line">  if !bytes.Equal(issuer,SYSTEM_ISSUER) return &#123; errors.New(&quot;invalid issuer&quot;) &#125;</span><br><span class="line">  app.accounts[to] += value</span><br><span class="line">  return nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>转账交易从转出账户减去一定数量的代币，再向转入账户增加一定数量的代币， 因此我们需要先保证转出账户有足量的余额：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func (app *TokenApp) transfer(from,to crypto.Address,value int) error &#123;</span><br><span class="line">  if app.accounts[from] &lt; value &#123;return errors.New(&quot;no enough balance&quot;)&#125;</span><br><span class="line">  app.accounts[from] -= value</span><br><span class="line">  app.accounts[to] += value</span><br><span class="line">  return nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="简单钱包实现"><a href="#简单钱包实现" class="headerlink" title="简单钱包实现"></a>简单钱包实现</h2><p>为了避免琐碎的密钥/地址管理，我们使用一个简单的钱包结构来管理一组私钥：</p>
+<p><img src="https://lh3.googleusercontent.com/-mvk6yRKXjTk/XAiKm9yf4ZI/AAAAAAAAEII/yGNwzSguf5wGUrd_2G319GxTA3AMXnPUQCHMYCw/I/wallet.png" alt="wallet"></p>
+<p>为了避免输入冗长难记的地址，我们使用字符串标识钱包中的不同私钥，因此得到 如下的结构定义：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">type Wallet struct &#123;</span><br><span class="line">  Keys map[string]crypto.PrivKey</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>钱包应该可以随时创建新的私钥，因此我们实现GenPrivKey()方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">func (wallet *Wallet) GenPrivKey(label string) crypto.PrivKey &#123;</span><br><span class="line">  priv := kf.GenPrivKey()</span><br><span class="line">  wallet.Keys[label] = priv</span><br><span class="line">  return priv</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>GenPrivKey()方法需要传入一个字符串作为私钥的标识，以便我们可以在 以后使用该标识获取该私钥，或者该私钥对应的公钥或地址：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">func (wallet *Wallet) GetPrivKey(label string) crypto.PrivKey &#123;</span><br><span class="line">  return wallet.Keys[label]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>当然，还需要提供一个方法将钱包保存到硬盘上：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">func (wallet *Wallet) Save(wfn string)&#123;</span><br><span class="line">  bz,err := codec.MarshalJSON(wallet)</span><br><span class="line">  if err != nil &#123; panic(err) &#125;</span><br><span class="line">  ioutil.WriteFile(wfn,bz,0644)  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>或者载入硬盘的钱包文件获得一个钱包实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func LoadWallet(wfn string) *Wallet&#123;</span><br><span class="line">  var wallet Wallet</span><br><span class="line">  bz,err := ioutil.ReadFile(wfn)</span><br><span class="line">  if err != nil &#123; panic(err) &#125;</span><br><span class="line">  err = codec.UnmarshalJSON(bz,&amp;wallet)</span><br><span class="line">  if err != nil &#123; panic(err) &#125;</span><br><span class="line">  return &amp;wallet  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="交易结构设计与实现"><a href="#交易结构设计与实现" class="headerlink" title="交易结构设计与实现"></a>交易结构设计与实现</h2><p>由于我们使用非对称密钥进行身份标识，因此在交易中需要包含身份校验所需要的 信息，例如签名、公钥和消息序列号：</p>
+<p><img src="https://lh3.googleusercontent.com/-ot6g87ztbro/XAiKnp-91oI/AAAAAAAAEIU/Xp6ldO3EiV07P12L56nF1pusSHh_d_SHQCHMYCw/I/tx-struct.png" alt="tx-struct"></p>
+<p>我们使用一个统一的Tx结构来表示所有的交易，其中交易载荷指向一个Payload接口的 实现，该接口的三个方法可用于接收方的签名验证与交易路由：</p>
+<p>GetSigner()：获取交易发起方地址<br>GetSignBytes()：获取交易载荷中用于签名的数据<br>GetType()：获取交易类别，状态机根据该调用返回值执行相应的动作<br>在账户状态机应用中，我们需要两种类型的交易：发行交易、转账交易，分别用于 向指定账户发行代币，以及在指定账户之间转移代币。不同的交易对应不同的Payload 接口实现，例如对于转账交易，其对应的TransferPayload结构的接口实现如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">func (p *TransferPayload) GetSigner() crypto.Address&#123;   return p.From  &#125;</span><br><span class="line">func (p *TranferPayload) GetSignBytes() []byte &#123;   return json.Marshal(p) &#125;</span><br><span class="line">func (p *TransferPayload)  GetType() string&#123;   return &quot;transfer&quot; &#125;</span><br></pre></td></tr></table></figure></p>
+<p>交易核验</p>
+<p>在接收端，首先应当检查交易结构中公钥的有效性，这通过校验公钥与交易发起方地址 是否一致来实现，然后则通过重算交易签名来确认签名的有效性，只有有效的交易，我们 才进行后续处理。例如，下面的代码展示了交易的验证逻辑：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">func (app *AccountApp) validateTx(tx *Tx) error &#123;</span><br><span class="line">  addr := tx.PubKey.Address()</span><br><span class="line">  if !bytes.Equals(addr,tx.Payload.GetSigner()) &#123; return errors.New(&quot;pubkey / signer mismatch&quot;) &#125;</span><br><span class="line">  valid := tx.PubKey.VerifyBytes(tx.Payload.GetSignBytes(),tx.Signature)</span><br><span class="line">  if !valid  &#123; errors.New(&quot;bad signature&quot;) &#125;</span><br><span class="line">  return nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>交易路由</p>
+<p>一旦交易验证有效，状态就可以根据交易类别进行分别处理了。例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">switch tx.Payload.GetType()&#123;</span><br><span class="line">  case &quot;transfer&quot;:  </span><br><span class="line">    pld := tx.Payload.(TransferPayload)</span><br><span class="line">    app.transfer(pld.From,pld.To,pld.Value)</span><br><span class="line">  case &quot;issue&quot;:  </span><br><span class="line">    pld := tx.Payload.(IssuePayload)</span><br><span class="line">    app.issue(pld.Issuer,pld.To,pld.Value)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="交易的编解码处理"><a href="#交易的编解码处理" class="headerlink" title="交易的编解码处理"></a>交易的编解码处理</h2><p>根据我们定义的交易结构，显然在RPC客户端提交交易之前，需要首先串行化为 16进制码流，在ABCI应用中同时也需要相应的解码：</p>
+<p><img src="https://lh3.googleusercontent.com/-afcL-yNBO0c/XAiKnuKkykI/AAAAAAAAEIc/Ruug_ukvbuIF-lOzAhkZICvku0En8g98wCHMYCw/I/tx-codec.png" alt="tx-code"></p>
+<p>tendermint官方推荐的编解码器是其自产的go-amino，它类似于protobuf，最大的特点是支持 解码到接口类型 —— 这就是我们可以在Tx结构中使用接口类型的原因。</p>
+<p>amino通过在编码码流中加入标识序列来区分不同的接口实现结构，因此解码接口之前，首先 需要注册接口以及对应的实现结构及标识名，例如，在下面的代码中，我们注册Payload接口， 然后注册其两个实现结构TransferPayload和IssuePayload，并分别使用tx/transfer 和tx/issue来标识这两个Payload接口的实现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">codec := amino.NewCodec()</span><br><span class="line">codec.RegisterInterface((*Payload)(nil),nil)</span><br><span class="line">codec.RegisterConcrete(*TransferPayload&#123;&#125;,&quot;tx/transfer&quot;,nil)</span><br><span class="line">codec.RegisterConcrete(*IssuePayload&#123;&#125;,&quot;tx/issue&quot;,nil)</span><br></pre></td></tr></table></figure></p>
+<p>需要指出的是，当你使用amino时，并不是所有的自定义类型都需要在codec中注册，只有那些 需要解码到接口类型的结构，才需要进行注册。</p>
+<p>现在，接收端可以对接收到的二进制码流bz进行解码了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">func (app *AccountApp) decodeTx(bz []byte) (*Tx,error)&#123;</span><br><span class="line">  var tx Tx</span><br><span class="line">  err := codec.UnmarshalBinary(bz,&amp;tx)</span><br><span class="line">  return &amp;tx,err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="ABCI协议实现"><a href="#ABCI协议实现" class="headerlink" title="ABCI协议实现"></a>ABCI协议实现</h2><p>有了基本的状态机、钱包、交易结构以及序列化手段，现在我们可以实现状态机的ABCI接口了：</p>
+<p><img src="https://lh3.googleusercontent.com/-Q2P78SG_soU/XAiKm3FLwdI/AAAAAAAAEIQ/IecHrp48bQECoWV5XuhmjqaySYMQWUFQACHMYCw/I/token-abci.png" alt="token-abci"></p>
+<p>交易检查：CheckTx</p>
+<p>在CheckTx()方法实现中检查交易的有效性，只有解码正确并且检查有效的交易才允许 进入交易内存池：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func (app *TokenApp) CheckTx(bz []byte) types.ResponseCheckTx &#123;</span><br><span class="line">  var tx Tx</span><br><span class="line">  err := codec.UnmarshalBinary(bz,&amp;tx)</span><br><span class="line">  if err !=nil &#123; return types.ResponseCheckTx&#123;Code:1,Info: err.Error()&#125;&#125;</span><br><span class="line">  err = app.validateTx(tx)</span><br><span class="line">  if err !=nil &#123; return types.ResponseCheckTx&#123;Code:2,Info:err.Error()&#125;&#125;</span><br><span class="line">  return types.ResponseCheckTx&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>交易执行：DeliverTx</p>
+<p>在DeliverTx()方法中判断交易类型，然后执行相应的状态迁移：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">func (app *TokenApp) DeliverTx(bz []byte) (rsp types.ResponseDeliverTx)&#123;</span><br><span class="line">  var tx Tx</span><br><span class="line">  codec.UnmarshalBinary(bz,&amp;tx)</span><br><span class="line">  switch tx.Payload.GetType() &#123;</span><br><span class="line">    case &quot;transfer&quot;: </span><br><span class="line">      pld := tx.Payload.(TransferPayload)</span><br><span class="line">      app.transfer(pld.From,pld.To,pld.Value)     </span><br><span class="line">    case &quot;issue&quot;: </span><br><span class="line">      pld := tx.Payload.(IssuePayload)</span><br><span class="line">      app.issue(pld.Issuer,pld.To,pld.Value) </span><br><span class="line">    default: rsp.Code = 1</span><br><span class="line">  &#125;</span><br><span class="line">  return</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>状态查询</p>
+<p>在Query()方法中返回指定账户的余额：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func (app *TokenApp) Query(req types.RequestQuery) types.ResponseQuery&#123;</span><br><span class="line">  addr := crypto.Address(req.Data)</span><br><span class="line">  bal, _ := codec.MarshalBinary(app.Accounts[addr.String()])</span><br><span class="line">  desc: = fmt.Sprintf(&quot;balance : %v =&gt; %v&quot;,addr,app.Accounts[addr.String])</span><br><span class="line">  return types.ResponseQuery&#123;Key:req.Data,Value:bal,Log:desc&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="RPC客户端开发"><a href="#RPC客户端开发" class="headerlink" title="RPC客户端开发"></a>RPC客户端开发</h2><p>tendermint内置了RPC开发接口的API封装包rpc/client，极大地简化了客户端的 开发难度：</p>
+<p><img src="https://lh3.googleusercontent.com/-8AunBudQiis/XAiKnq_aegI/AAAAAAAAEIg/0CBgl7HKYEwgX40PXWW17L8udbqEnnRQwCHMYCw/I/rpc-client.png" alt="rpc-client"></p>
+<p>使用rpc/client包的NewHTTP()方法，我们可以得到一个HTTP实例：</p>
+<p><code>cli := client.NewHTTP(&quot;http://localhost:26657&quot;,&quot;&quot;)</code><br>HTTP结构实现了tendermint中所有的RPC客户端接口，例如ABCI客户端接口 （ABCIClient）、历史数据访问接口（HistoryClient）等，因此我们可以直接 利用其方法向abci应用提交交易。</p>
+<p>首先构造一个发行交易，并利用发行人私钥签名交易：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">paylod := NewIssuePayload(issuerAddr,receiverAddr,value)</span><br><span class="line">tx := NewTx(payload)</span><br><span class="line">tx.Sign(issuerPrivKey)</span><br></pre></td></tr></table></figure></p>
+<p>然后将交易实例序列化：</p>
+<p><code>rawtx,_ := codec.MarshalBinary(tx)</code><br>最后使用HTTP实例的BroadcastTxCommit()方法提交给节点，并 打印输出响应结果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ret,_ := cli.BroadcastTxCommit(rawtx)</span><br><span class="line">fmt.Printf(&quot;ret =&gt; %+v\n&quot;,ret)</span><br></pre></td></tr></table></figure></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;发行自己的代币&quot;&gt;&lt;a href=&quot;#发行自己的代币&quot; class=&quot;headerlink&quot; title=&quot;发行自己的代币&quot;&gt;&lt;/a&gt;发行自己的代币&lt;/h1&gt;&lt;h2 id=&quot;代币发行概述&quot;&gt;&lt;a href=&quot;#代币发行概述&quot; class=&quot;headerlink&quot; title=&quot;代币发行概述&quot;&gt;&lt;/a&gt;代币发行概述&lt;/h2&gt;&lt;p&gt;状态机模型是一种图灵完备的计算模型，理论上你可以用它来实现任何应用， 代币也不例外。例如，我们可以借鉴以太坊的账户模型，设计出自己的账户 状态机：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://lh3.googleusercontent.com/-1FgpvG7AFCY/XAiKngG59mI/AAAAAAAAEIY/q_xfvLxbQVQyTOj1dK1xYQ2uBul6tTFkACHMYCw/I/sm-account.png&quot; alt=&quot;sm-account&quot;&gt;&lt;/p&gt;
+&lt;p&gt;出于简化问题考虑，我们假设系统只发行一种代币，因此在账户模型中只需要 记录每个账户的余额即可。所有账户及其余额是整个系统的状态，只有当交易 发生时，这一状态才会发生变化。&lt;/p&gt;
+&lt;p&gt;例如，假设账户tommy有1000个代币，那么当发生一笔从mary到tommy 的500个币的转账交易后，tommy的余额将增加500个代币，同时mary的余额将 减少500个代币，这意味着整个系统在这笔交易后进入了一个新的状态。&lt;/p&gt;
+&lt;p&gt;基于我们之前的学习，很容易将账户采用哈希地址来表示，同时通过非对称 加密技术进行身份验证，从而实现一个去中心化的代币账户状态机。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="tendermint" scheme="http://gcblog/github.io/categories/tendermint/"/>
+    
+    
+      <category term="tendermint" scheme="http://gcblog/github.io/tags/tendermint/"/>
+    
+  </entry>
   
   <entry>
     <title>tendermint加密算法</title>
@@ -941,9 +1017,9 @@
       <category term="加密算法" scheme="http://gcblog/github.io/categories/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"/>
     
     
-      <category term="对称加密" scheme="http://gcblog/github.io/tags/%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86/"/>
-    
       <category term="AES" scheme="http://gcblog/github.io/tags/AES/"/>
+    
+      <category term="对称加密" scheme="http://gcblog/github.io/tags/%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86/"/>
     
   </entry>
   
@@ -1148,197 +1224,6 @@
       <category term="slice" scheme="http://gcblog/github.io/tags/slice/"/>
     
       <category term="排序" scheme="http://gcblog/github.io/tags/%E6%8E%92%E5%BA%8F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>字符串操作</title>
-    <link href="http://gcblog/github.io/2018/04/26/%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%93%8D%E4%BD%9C/"/>
-    <id>http://gcblog/github.io/2018/04/26/字符串操作/</id>
-    <published>2018-04-26T03:30:20.000Z</published>
-    <updated>2018-04-27T08:06:16.171Z</updated>
-    
-    <content type="html"><![CDATA[<h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p>本文列举关于字符串最常用的几个操作，都会举例说明</p>
-<ul>
-<li><a href="#0">字符串长度</a></li>
-<li><a href="#1">查找</a></li>
-<li><a href="#2">替换</a></li>
-<li><a href="#3">分割</a></li>
-<li><a href="#4">合并</a></li>
-<li><a href="#5">前缀或后缀</a></li>
-<li><a href="#6">截取</a></li>
-<li><a href="#7">删除</a></li>
-<li><a href="#8">插入</a></li>
-<li><a href="#9">编码转换</a></li>
-<li><a href="#10">转换数值类型</a></li>
-<li><a href="#11">大小写转换</a></li>
-<li><a href="#12">Trim操作</a></li>
-<li><a href="#13">ASCII 转换</a></li>
-<li><a href="#14">字符串重复几次</a></li>
-<li><a href="#15">字符或子串在字符串中首次出现的位置或最后一次出现的位置</a></li>
-</ul>
-<p>字符串相关操作需要导入包<code>strings</code></p>
-<a id="more"></a>
-<h3 id="0">字符串长度</h3>    
-
-<ul>
-<li><code>len()</code></li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">func strLength() &#123;</span><br><span class="line">	var str = &quot;abc&quot;</span><br><span class="line">	var length = len(str)</span><br><span class="line">	fmt.Println(length)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="1">查找</h3>    
-
-<ul>
-<li><code>func Contains(s, substr string) bool</code> 子串substr在s中，返回true</li>
-<li><code>func ContainsAny(s, chars string) bool</code>  chars中任何一个字符在s中，返回true</li>
-<li><code>func ContainsRune(s string, r rune) bool</code>  Unicode代码点r在s中，返回true</li>
-<li><code>func Count(s, sep string) int</code> sep 在s中重复出现的次数(不计算重叠)</li>
-<li><code>func Index(s, sep string)</code> int 在字符串s中查找sep所在的位置, 找不到返回-1</li>
-</ul>
-<blockquote>
-<p>在Go中，查找子串出现次数即字符串模式匹配，实现的是Rabin-Karp算法。<br>另外，Count 是计算子串在字符串中出现的无重叠的次数</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">func existSubStringOrChar() &#123;</span><br><span class="line"></span><br><span class="line">	var super = &quot;abcdef!&quot;</span><br><span class="line">	var suba = &quot;abc&quot;</span><br><span class="line">	var subb = &quot;ef!&quot;</span><br><span class="line"></span><br><span class="line">	var hasa = existSubString(super, suba)</span><br><span class="line">	var hasb = existSubChar(super, subb)</span><br><span class="line"></span><br><span class="line">	fmt.Println(hasa, hasb)</span><br><span class="line"></span><br><span class="line">	var s = &quot;fivevev&quot;</span><br><span class="line">	var sep1 = &quot;vev&quot;</span><br><span class="line">	var sep2 = &quot;adfd&quot;</span><br><span class="line"></span><br><span class="line">	var c1 = repeatCount(s, sep1)</span><br><span class="line">	var c2 = repeatCount(s, sep2)</span><br><span class="line">	fmt.Println(c1, c2)</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 是否存在某个字符或子串</span><br><span class="line">func existSubString(superString string, substring string) bool &#123;</span><br><span class="line">	return strings.Contains(superString, substring)</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//substring 是否含有superString 的任意一个字符</span><br><span class="line">func existSubChar(superString string, substring string) bool &#123;</span><br><span class="line">	return strings.ContainsAny(superString, substring)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//substring 的重复出现次数</span><br><span class="line">func repeatCount(superString string, substring string) int &#123;</span><br><span class="line">	return strings.Count(superString, substring)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>结果</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">true true</span><br><span class="line">1 0</span><br></pre></td></tr></table></figure>
-<h3 id="2">替换</h3>    
-
-<ul>
-<li><code>strings.Replace(s, old, new, n)</code></li>
-</ul>
-<p><code>s</code>需要替换的字符串   <code>old</code>需要被替换掉的某个子串    <code>new</code>替换的值<br><code>n</code>  <code>n&lt;0</code>全部替换  <code>n==0</code>不替换 <code>n&gt;0</code>全部替换 如果<code>n</code>的下标匹配上old值，则只替换当前下标的字符，如果不是，则全部替换</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">func strReplace() &#123;</span><br><span class="line"></span><br><span class="line">	var str = &quot;cabcdefgabc&quot;</span><br><span class="line">	var value = strings.Replace(str, &quot;a&quot;, &quot;v&quot;, -1)</span><br><span class="line">	var value1 = strings.Replace(str, &quot;a&quot;, &quot;v&quot;, 0)</span><br><span class="line">	var value2 = strings.Replace(str, &quot;a&quot;, &quot;v&quot;, 1)</span><br><span class="line">	var value3 = strings.Replace(str, &quot;a&quot;, &quot;v&quot;, 3)</span><br><span class="line"></span><br><span class="line">	fmt.Println(value, value1, value2, value3)</span><br><span class="line">	strings.Replace(s, old, new, n)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cvbcdefgvbc cabcdefgabc cvbcdefgabc cvbcdefgvbc</span><br></pre></td></tr></table></figure></p>
-<h3 id="3">分割</h3>
-
-<h4 id="Fields-和-FieldsFunc"><a href="#Fields-和-FieldsFunc" class="headerlink" title="Fields 和 FieldsFunc"></a>Fields 和 FieldsFunc</h4><ul>
-<li>Fields 按空格切割</li>
-<li>FieldsFunc 按照自己指定的方式切割</li>
-</ul>
-<p>实际上，Fields 函数就是调用 FieldsFunc 实现的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">func Fields(s string) []string &#123;</span><br><span class="line">    return FieldsFunc(s, unicode.IsSpace)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">func strCut() &#123;</span><br><span class="line"></span><br><span class="line">	var str = &quot;abc bde efg&quot;</span><br><span class="line"></span><br><span class="line">	var cut1 = strings.Fields(str)</span><br><span class="line"></span><br><span class="line">	var cut2 = strings.FieldsFunc(str, unicode.IsSpace)</span><br><span class="line"></span><br><span class="line">	fmt.Println(cut1, cut2)</span><br><span class="line"></span><br><span class="line">	s := &quot;ab*cd*ef&quot;</span><br><span class="line">	result := strings.FieldsFunc(s, func(c rune) bool &#123;</span><br><span class="line">		if c == &apos;h&apos; &#123;</span><br><span class="line">			return true</span><br><span class="line">		&#125;</span><br><span class="line">		return false</span><br><span class="line">	&#125;)</span><br><span class="line">	fmt.Println(result)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[abc bde efg] [abc bde efg]</span><br><span class="line">[ab*cd*ef]</span><br></pre></td></tr></table></figure></p>
-<h4 id="Split-和-SplitAfter、-SplitN-和-SplitAfterN"><a href="#Split-和-SplitAfter、-SplitN-和-SplitAfterN" class="headerlink" title="Split 和 SplitAfter、 SplitN 和 SplitAfterN"></a>Split 和 SplitAfter、 SplitN 和 SplitAfterN</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">func Split(s, sep string) []string &#123; return genSplit(s, sep, 0, -1) &#125;</span><br><span class="line">func SplitAfter(s, sep string) []string &#123; return genSplit(s, sep, len(sep), -1) &#125;</span><br><span class="line">func SplitN(s, sep string, n int) []string &#123; return genSplit(s, sep, 0, n) &#125;</span><br><span class="line">func SplitAfterN(s, sep string, n int) []string &#123; return genSplit(s, sep,len(sep), n)&#125;</span><br></pre></td></tr></table></figure>
-<p>它们都调用了 genSplit 函数。<br>这四个函数都是通过 sep 进行分割，返回[]string。如果 sep 为空，相当于分成一个个的 UTF-8 字符，如 Split(“abc”,””)，得到的是[a b c]。</p>
-<h5 id="功能区分：after-会保留分隔符"><a href="#功能区分：after-会保留分隔符" class="headerlink" title="功能区分：after 会保留分隔符"></a>功能区分：after 会保留分隔符</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fmt.Printf(&quot;%q\n&quot;, strings.Split(&quot;foo,bar,baz&quot;, &quot;,&quot;))</span><br><span class="line">fmt.Printf(&quot;%q\n&quot;, strings.SplitAfter(&quot;foo,bar,baz&quot;, &quot;,&quot;))</span><br></pre></td></tr></table></figure>
-<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[&quot;foo&quot; &quot;bar&quot; &quot;baz&quot;]</span><br><span class="line">[&quot;foo,&quot; &quot;bar,&quot; &quot;baz&quot;]</span><br></pre></td></tr></table></figure></p>
-<h5 id="N的区别"><a href="#N的区别" class="headerlink" title="N的区别"></a>N的区别</h5><p><code>N</code> 用来控制分割的个数<br>当 n &lt; 0 时，返回所有的子字符串；当 n == 0 时，返回的结果是 nil；当 n &gt; 0 时，表示返回的 slice 中最多只有 n 个元素，其中，最后一个元素不会分割</p>
-<p><code>fmt.Printf(&quot;%q\n&quot;, strings.SplitN(&quot;foo,bar,baz&quot;, &quot;,&quot;, 2))</code><br>输出：<br><code>[&quot;foo&quot; &quot;bar,baz&quot;]</code></p>
-<p>另外看一下官方文档提供的例子，注意一下输出结果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fmt.Printf(&quot;%q\n&quot;, strings.Split(&quot;a,b,c&quot;, &quot;,&quot;))</span><br><span class="line">fmt.Printf(&quot;%q\n&quot;, strings.Split(&quot;a man a plan a canal panama&quot;, &quot;a &quot;))</span><br><span class="line">fmt.Printf(&quot;%q\n&quot;, strings.Split(&quot; xyz &quot;, &quot;&quot;))</span><br><span class="line">fmt.Printf(&quot;%q\n&quot;, strings.Split(&quot;&quot;, &quot;Bernardo O&apos;Higgins&quot;))</span><br></pre></td></tr></table></figure></p>
-<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[&quot;a&quot; &quot;b&quot; &quot;c&quot;]</span><br><span class="line">[&quot;&quot; &quot;man &quot; &quot;plan &quot; &quot;canal panama&quot;]</span><br><span class="line">[&quot; &quot; &quot;x&quot; &quot;y&quot; &quot;z&quot; &quot; &quot;]</span><br><span class="line">[&quot;&quot;]</span><br></pre></td></tr></table></figure></p>
-<h5 id="split总结"><a href="#split总结" class="headerlink" title="split总结"></a>split总结</h5><p>关于字符串的分割，最常用的就是<code>Split</code>，其他几乎用不到</p>
-<h3 id="4">合并</h3>
-
-<p>将字符串数组（或slice）连接起来可以通过 Join 实现</p>
-<ul>
-<li><code>func Join(a []string, sep string) string</code></li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func strJoin() &#123;</span><br><span class="line">	var arr = []string&#123;&quot;a&quot;, &quot;b&quot;, &quot;c&quot;&#125;</span><br><span class="line">	fmt.Println(arr)</span><br><span class="line">	// 用 ‘-’ 拼接</span><br><span class="line">	fmt.Println(strings.Join(arr, &quot;-&quot;))</span><br><span class="line">	// 直接拼接</span><br><span class="line">	fmt.Println(strings.Join(arr, &quot;&quot;))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[a b c]</span><br><span class="line">a-b-c</span><br><span class="line">abc</span><br></pre></td></tr></table></figure></p>
-<h3 id="5">前缀或后缀</h3>    
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">func presuf() &#123;</span><br><span class="line"></span><br><span class="line">	var str = &quot;abcdefg&quot;</span><br><span class="line">	//判断开始</span><br><span class="line">	var preA = strings.HasPrefix(str, &quot;a&quot;)</span><br><span class="line"></span><br><span class="line">	//判断结尾</span><br><span class="line">	var preG = strings.HasSuffix(str, &quot;g&quot;)</span><br><span class="line"></span><br><span class="line">	fmt.Println(preA, preG)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出：<br><code>true true</code></p>
-<h3 id="6">截取</h3>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func subString() &#123;</span><br><span class="line">	//strings 没有 截取字符串的方法</span><br><span class="line">	var str = &quot;abc中国defgh&quot;</span><br><span class="line">	// 将str转为切片处理 这里最好不用byte，byte不支持中文，unicode等</span><br><span class="line">	var strArr = string([]rune(str)[:4])</span><br><span class="line"></span><br><span class="line">	fmt.Println(strArr)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">abc中</span><br></pre></td></tr></table></figure></p>
-<h3 id="7">删除</h3>
-
-<p>strings 包中没有提供删除的方法，只能自己实现</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func deleteStrWithRange(s string, start int, end int) string &#123;</span><br><span class="line">if len(s) == 0 || end &gt; len(s) &#123;</span><br><span class="line">	return &quot;&quot;</span><br><span class="line">&#125;</span><br><span class="line">var str1 = string([]rune(s)[:start])</span><br><span class="line">var str2 = string([]rune(s)[end:])</span><br><span class="line">return str1 + str2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var sss = deleteStrWithRange(&quot;012345678&quot;, 1, 3)</span><br><span class="line">fmt.Println(sss)</span><br></pre></td></tr></table></figure>
-<p>输出：<br><code>0345678</code></p>
-<h3 id="8">插入</h3>
-
-<p>go strings 包没有插入方法，只能将字符串转化为切片，然后插入元素，再转为string</p>
-<h3 id="9">编码转换</h3>
-
-<p>字符串转换需要用到 <code>strconv</code></p>
-<ul>
-<li>Append 函数表示将给定的类型(如bool, int等)转换为字符串后, 添加在现有的字节数组中[]byte</li>
-<li>Format 函数将给定的类型变量转换为string返回</li>
-<li>Parse 函数将字符串转换为其他类型</li>
-</ul>
-<h4 id="unicode-与-中文-互转"><a href="#unicode-与-中文-互转" class="headerlink" title="unicode  与 中文 互转"></a>unicode  与 中文 互转</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">func chinaeseToUnicode() &#123;</span><br><span class="line">	sText := &quot;中文&quot;</span><br><span class="line">	textQuoted := strconv.QuoteToASCII(sText)</span><br><span class="line">	fmt.Println(textQuoted)</span><br><span class="line"></span><br><span class="line">	textUnquoted := textQuoted[1 : len(textQuoted)-1]</span><br><span class="line">	fmt.Println(textUnquoted)</span><br><span class="line"></span><br><span class="line">	sUnicodev := strings.Split(textUnquoted, &quot;\\u&quot;)</span><br><span class="line">	var context string</span><br><span class="line">	for _, v := range sUnicodev &#123;</span><br><span class="line">		if len(v) &lt; 1 &#123;</span><br><span class="line">			continue</span><br><span class="line">		&#125;</span><br><span class="line">		temp, err := strconv.ParseInt(v, 16, 32)</span><br><span class="line">		if err != nil &#123;</span><br><span class="line">			panic(err)</span><br><span class="line">		&#125;</span><br><span class="line">		context += fmt.Sprintf(&quot;%c&quot;, temp)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(context)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&quot;\u4e2d\u6587&quot;</span><br><span class="line">\u4e2d\u6587</span><br><span class="line">中文</span><br></pre></td></tr></table></figure></p>
-<h4 id="转码与解码"><a href="#转码与解码" class="headerlink" title="转码与解码"></a>转码与解码</h4><p>需要导入包 <code>net/url</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">func encodeAndDecode() &#123;</span><br><span class="line">	var str = &quot;https://www.baidu.com/生活&quot;</span><br><span class="line"></span><br><span class="line">	//转码</span><br><span class="line">	var encode = url.QueryEscape(str)</span><br><span class="line"></span><br><span class="line">	fmt.Println(encode)</span><br><span class="line"></span><br><span class="line">	//解码</span><br><span class="line">	decodeurl, err := url.QueryUnescape(encode)</span><br><span class="line">	if err != nil &#123;</span><br><span class="line">		panic(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(decodeurl)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https%3A%2F%2Fwww.baidu.com%2F%E7%94%9F%E6%B4%BB</span><br><span class="line">https://www.baidu.com/生活</span><br></pre></td></tr></table></figure></p>
-<h3 id="10">转换数值类型</h3>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">func strToValue() &#123;</span><br><span class="line"></span><br><span class="line">	// int 转 string</span><br><span class="line">	var intA int = 123</span><br><span class="line">	var stringA string = strconv.Itoa(intA)</span><br><span class="line">	fmt.Println(stringA, reflect.TypeOf(stringA))</span><br><span class="line"></span><br><span class="line">	// string 转 int</span><br><span class="line"></span><br><span class="line">	var stringB = &quot;45678&quot;</span><br><span class="line">	intB, err := strconv.Atoi(stringB)</span><br><span class="line">	if err != nil &#123;</span><br><span class="line">		panic(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(intB, reflect.TypeOf(intB))</span><br><span class="line"></span><br><span class="line">	// string to float</span><br><span class="line">	var stringc = &quot;123.45678&quot;</span><br><span class="line">	floatC, err := strconv.ParseFloat(stringc, 32) //bitSize：指定浮点类型（32:float32、64:float64,</span><br><span class="line">	if err != nil &#123;</span><br><span class="line">		panic(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(floatC, reflect.TypeOf(floatC))</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">123 string</span><br><span class="line">45678 int</span><br><span class="line">123.45678 float64</span><br></pre></td></tr></table></figure></p>
-<h3 id="11">大小写转换</h3>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 给定字符串转换为英文标题的首字母大写的格式(不能正确处理unicode标点)</span><br><span class="line">func Title(s string) string</span><br><span class="line"></span><br><span class="line">// 所有字母转换为小写</span><br><span class="line">func ToLower(s string) string</span><br><span class="line"></span><br><span class="line">// 所有字母转换为大写</span><br><span class="line">func ToUpper(s string) string</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fmt.Println(strings.Title(&quot;her royal highness&quot;))  // Her Royal Highness</span><br><span class="line"></span><br><span class="line">fmt.Println(strings.ToLower(&quot;Gopher123&quot;))  // gopher123</span><br><span class="line"></span><br><span class="line">fmt.Println(strings.ToUpper(&quot;Gopher&quot;))  // GOPHER</span><br></pre></td></tr></table></figure>
-<h3 id="12">Trim操作</h3>
-
-<p>bytes提供了有Compare、Count、Equal、Index、Join、Split、Replace等直接针对[]byte类型的函数。还有一个重要的Buffer类，将[]byte类型当作一个缓冲区，提供了对这个缓冲区便捷的操作：读、写、和string/rune之间的转换、迭代等函数。</p>
-<p>在bytes库中，有Trim系列的函数，它的功能是对[]byte类型做裁剪，去除不需要的部分。</p>
-<ul>
-<li><code>func Trim(s string, cutset string) string</code> 去除两边自定义字符</li>
-<li><code>func TrimFunc(s string, f func(rune) bool) string</code> 自定义清除</li>
-<li><code>func TrimLeft(s string, cutset string) string</code> 清除左边</li>
-<li><code>func TrimPrefix(s, prefix string) string</code> 删除前缀</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">func strtrim() &#123;</span><br><span class="line">	var str = &quot;  ads!/  ;&apos;  jha   asdfhj   &quot;</span><br><span class="line"></span><br><span class="line">	// 去除首尾空格，一般这个最常用</span><br><span class="line">	var value1 = strings.Trim(str, &quot; &quot;)</span><br><span class="line">	fmt.Println(value1)</span><br><span class="line"></span><br><span class="line">	//自定义trim</span><br><span class="line">	fmt.Println(strings.TrimFunc(&quot;&amp;&amp;&amp;&amp;nihao&amp;&amp;&amp;&amp;&quot;, func(r rune) bool &#123;</span><br><span class="line">		if r == &apos;&amp;&apos; &#123;</span><br><span class="line">			return true</span><br><span class="line">		&#125;</span><br><span class="line">		return false</span><br><span class="line">	&#125;))</span><br><span class="line"></span><br><span class="line">	//trim 左侧 &amp; 右侧</span><br><span class="line">	fmt.Println(strings.TrimLeft(&quot;&amp;&amp;&amp;&amp;nihao&amp;&amp;&amp;&amp;&quot;, &quot;&amp;&quot;))</span><br><span class="line">	fmt.Println(strings.TrimRight(&quot;&amp;&amp;&amp;&amp;nihao&amp;&amp;&amp;&amp;&quot;, &quot;&amp;&quot;))</span><br><span class="line"></span><br><span class="line">	//去除前缀，后缀也一样</span><br><span class="line">	var str2 = &quot;xxx_abcd&quot;</span><br><span class="line">	if strings.HasPrefix(str2, &quot;xxx_&quot;) &#123;</span><br><span class="line">		fmt.Println(strings.TrimPrefix(str2, &quot;xxx_&quot;))</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ads!/  ;&apos;  jha   asdfhj</span><br><span class="line">nihao</span><br><span class="line">nihao&amp;&amp;&amp;&amp;</span><br><span class="line">&amp;&amp;&amp;&amp;nihao</span><br><span class="line">abcd</span><br></pre></td></tr></table></figure>
-<h3 id="13">ASCII 转换</h3>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">func strASCII() &#123;</span><br><span class="line"></span><br><span class="line">	//字符转ASCII</span><br><span class="line">	var c rune = &apos;a&apos;</span><br><span class="line">	var i1 = int(c)</span><br><span class="line">	fmt.Println(&quot;&apos;a&apos; convert to ASCII&quot;, i1)</span><br><span class="line"></span><br><span class="line">	//ASCII 转字符</span><br><span class="line">	var i int = 98</span><br><span class="line">	var c1 = rune(i)</span><br><span class="line">	fmt.Println(&quot;98 convert to string&quot;, string(c1))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&apos;a&apos; convert to ASCII 97</span><br><span class="line">98 convert to string b</span><br></pre></td></tr></table></figure>
-<h3 id="14">字符串重复几次</h3>
-
-<ul>
-<li><code>func Repeat(s string, count int) string</code></li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">func strRepeatCount() &#123;</span><br><span class="line">	fmt.Println(strings.Repeat(&quot;a&quot;, 2))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出</p>
-<p><code>aa</code></p>
-<h3 id="15">字符或子串在字符串中首次出现的位置或最后一次出现的位置</h3>
-
-<h4 id="4个查找第一次出现的位置"><a href="#4个查找第一次出现的位置" class="headerlink" title="4个查找第一次出现的位置"></a>4个查找第一次出现的位置</h4><p>// 在 s 中查找 sep 的第一次出现，返回第一次出现的索引<br><code>func Index(s, sep string) int</code><br>// chars中任何一个Unicode代码点在s中首次出现的位置<br><code>func IndexAny(s, chars string) int</code><br>// 查找字符 c 在 s 中第一次出现的位置，其中 c 满足 f(c) 返回 true<br><code>func IndexFunc(s string, f func(rune) bool) int</code><br>// Unicode 代码点 r 在 s 中第一次出现的位置<br><code>func IndexRune(s string, r rune) int</code></p>
-<p>一般用<code>indexAny</code></p>
-<h4 id="3个查找最后一次出现的位置"><a href="#3个查找最后一次出现的位置" class="headerlink" title="3个查找最后一次出现的位置"></a>3个查找最后一次出现的位置</h4><p><code>func LastIndex(s, sep string) int</code><br><code>func LastIndexAny(s, chars string) int</code><br><code>func LastIndexFunc(s string, f func(rune) bool) int</code></p>
-<p>一般用<code>LastIndexAny</code>就行</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h3 id=&quot;目录&quot;&gt;&lt;a href=&quot;#目录&quot; class=&quot;headerlink&quot; title=&quot;目录&quot;&gt;&lt;/a&gt;目录&lt;/h3&gt;&lt;p&gt;本文列举关于字符串最常用的几个操作，都会举例说明&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;#0&quot;&gt;字符串长度&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;#1&quot;&gt;查找&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;#2&quot;&gt;替换&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;#3&quot;&gt;分割&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;#4&quot;&gt;合并&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;#5&quot;&gt;前缀或后缀&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;#6&quot;&gt;截取&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;#7&quot;&gt;删除&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;#8&quot;&gt;插入&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;#9&quot;&gt;编码转换&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;#10&quot;&gt;转换数值类型&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;#11&quot;&gt;大小写转换&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;#12&quot;&gt;Trim操作&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;#13&quot;&gt;ASCII 转换&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;#14&quot;&gt;字符串重复几次&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;#15&quot;&gt;字符或子串在字符串中首次出现的位置或最后一次出现的位置&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;字符串相关操作需要导入包&lt;code&gt;strings&lt;/code&gt;&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="go" scheme="http://gcblog/github.io/categories/go/"/>
-    
-    
-      <category term="go" scheme="http://gcblog/github.io/tags/go/"/>
-    
-      <category term="strings" scheme="http://gcblog/github.io/tags/strings/"/>
-    
-      <category term="字符串操作" scheme="http://gcblog/github.io/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%93%8D%E4%BD%9C/"/>
     
   </entry>
   

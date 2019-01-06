@@ -439,6 +439,145 @@
             
               
                 
+                <a class="post-title-link" href="/2016/11/16/IOS10语音识别详解/" itemprop="url">
+                  iOS语音识别
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-16T23:05:20+08:00" content="2016-11-16">
+              2016-11-16
+            </time>
+          </span>
+
+          
+            <span class="post-category">
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope="" itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS技术/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS技术</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/16/IOS10语音识别详解/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/16/IOS10语音识别详解/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/11/16/IOS10语音识别详解/" class="leancloud_visitors" data-flag-title="iOS语音识别">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>公司项目需要实现语音搜索，正好记录一下这个iOS10新出的API。</p>
+<pre><code>iOS10是一个变化比价大的版本，开放了很多接口，这样也更方便开发者自定义各种功能。本文主要讲解一下新增的Speech框架，有了这个框架，我们想要为自己的app增加语音识别功能，不要依赖第三方的服务，几十行代码就可以轻松搞定。demo地址在文章末尾。
+</code></pre><h3 id="一：基本配置"><a href="#一：基本配置" class="headerlink" title="一：基本配置"></a>一：基本配置</h3><ul>
+<li>Xcode8，iOS10系统真机</li>
+<li>导入头文件：OC <code>#import&lt;Speech/Speech.h&gt;</code>   swift <code>import Speech</code></li>
+<li>配置info.plist文件:配置两个权限，语音识别和麦克风</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;key&gt;NSMicrophoneUsageDescription&lt;/key&gt;</span><br><span class="line">    &lt;string&gt;Your microphone will be used to record your speech when you press the &quot;Start Recording&quot; button.&lt;/string&gt;</span><br><span class="line">    </span><br><span class="line">    &lt;key&gt;NSSpeechRecognitionUsageDescription&lt;/key&gt;</span><br><span class="line">    &lt;string&gt;Speech recognition will be used to determine which words you speak into this device&apos;s microphone.&lt;/string&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="二：用到的几个类"><a href="#二：用到的几个类" class="headerlink" title="二：用到的几个类"></a>二：用到的几个类</h3><p><code>AVAudioEngine</code>                           语音引擎，负责提供语音输入<br><code>SFSpeechAudioBufferRecognitionRequest</code>   处理语音识别请求<br><code>SFSpeechRecognizer</code>                       语音识别器<br><code>SFSpeechRecognitionTask</code>                 输出语音识别对象的结果<br><code>NSLocale</code>                                语言类型<br>语音识别一共就用到了这几个类，整体的流程也容易理解，语音识别器通过语音引擎，处理语音识别请求，把结果交给<code>SFSpeechRecognitionTask</code>处理，最后输出文字。<br><code>SFSpeechRecognizer</code> 自身有几个代理方法，实际上，如果只是将语音转化成文字，是不需要这几个代理方法的。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/11/16/IOS10语音识别详解/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </p></div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/04/16/runtime详解/" itemprop="url">
                   runtime详解
                 </a>
@@ -692,145 +831,11 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/04/06/iOS公共库/" itemprop="url">
-                  iOS公共库
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-04-06T16:59:52+08:00" content="2016-04-06">
-              2016-04-06
-            </time>
-          </span>
-
-          
-            <span class="post-category">
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope="" itemtype="https://schema.org/Thing">
-                  <a href="/categories/iOS技术/" itemprop="url" rel="index">
-                    <span itemprop="name">iOS技术</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/04/06/iOS公共库/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/06/iOS公共库/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/04/06/iOS公共库/" class="leancloud_visitors" data-flag-title="iOS公共库">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="第一步"><a href="#第一步" class="headerlink" title="第一步"></a>第一步</h3><blockquote>
-<p>打开Xcode，file-&gt;new-&gt;WorkSpace,我们使用WorkSpace来管理工程和依赖库</p>
-</blockquote>
-<p><img src="https://raw.githubusercontent.com/suifengqjn/demoimages/master/%E5%85%AC%E5%85%B1%E4%BE%9D%E8%B5%96%E5%BA%93/1.png" alt="image"></p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/04/06/iOS公共库/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -869,7 +874,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">44</span>
+              <span class="site-state-item-count">45</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -968,7 +973,7 @@
         <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2018</span>
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
