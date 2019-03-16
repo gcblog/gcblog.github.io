@@ -424,11 +424,11 @@
   </entry>
   
   <entry>
-    <title>temdermint初识</title>
+    <title>tendermint初识</title>
     <link href="http://gcblog/github.io/2018/12/16/temdermint%E5%88%9D%E8%AF%86/"/>
     <id>http://gcblog/github.io/2018/12/16/temdermint初识/</id>
     <published>2018-12-16T14:29:43.000Z</published>
-    <updated>2018-12-16T14:31:38.221Z</updated>
+    <updated>2019-03-16T08:03:02.358Z</updated>
     
     <content type="html"><![CDATA[<h2 id="2-1-概述"><a href="#2-1-概述" class="headerlink" title="2.1 概述"></a>2.1 概述</h2><p>tendermint虽然定位于引擎，但它其实是一个完整的区块链实现。在这一部分 的课程中，我们将使用一个最小化的ABCI应用，来熟悉tendermint的主要组成 部分，以及使用tendermint进行去中心化应用开发的主要流程和工具。</p>
 <p>下图列出了tendermint应用的主要构成部分：</p>
@@ -487,10 +487,10 @@
     
     </summary>
     
-      <category term="temdermint" scheme="http://gcblog/github.io/categories/temdermint/"/>
+      <category term="tendermint" scheme="http://gcblog/github.io/categories/tendermint/"/>
     
     
-      <category term="temdermint" scheme="http://gcblog/github.io/tags/temdermint/"/>
+      <category term="tendermint" scheme="http://gcblog/github.io/tags/tendermint/"/>
     
   </entry>
   
