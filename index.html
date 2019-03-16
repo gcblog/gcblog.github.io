@@ -279,6 +279,143 @@
             
               
                 
+                <a class="post-title-link" href="/2019/03/16/tendermint默克尔树/" itemprop="url">
+                  tendermint默克尔树
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2019-03-16T13:47:08+08:00" content="2019-03-16">
+              2019-03-16
+            </time>
+          </span>
+
+          
+            <span class="post-category">
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope="" itemtype="https://schema.org/Thing">
+                  <a href="/categories/tendermint/" itemprop="url" rel="index">
+                    <span itemprop="name">tendermint</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2019/03/16/tendermint默克尔树/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2019/03/16/tendermint默克尔树/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2019/03/16/tendermint默克尔树/" class="leancloud_visitors" data-flag-title="tendermint默克尔树">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="默克尔树概述"><a href="#默克尔树概述" class="headerlink" title="默克尔树概述"></a>默克尔树概述</h2><p>在ABCI应用响应Commit请求消息时，需要计算并返回当前状态的哈希，以便Tendermint 将其打包到下一个区块头里（app_hash字段）。</p>
+<p>但是，如果我们还按原来的方法计算一个总体哈希，例如：hash: = tmhash.Sum(state)， 就存在一个问题 —— 当查询某个特定账户的状态数据时，如何验证该状态是未被篡改的？</p>
+<p>显然，单独返回整个状态的哈希是不够的，但是我们也不可能将整个账户表提供给 客户端以便其重算哈希进行验证，因为其中包含了其他用户的账户信息。</p>
+<p>这就是默克尔树（Merkle Tree）的用武之地：不需要提供完整的数据（例如整个账户表）， 就可以验证某个数据（例如账户A的状态）是否属于该数据集。</p>
+<p>在默克尔树中，叶节点对应于各状态的哈希值，根节点则对应于整个状态的哈希， 中间各层的节点则分别由前一层节点两两结对后计算哈希得到。</p>
+<p>例如，下图给出了4个账户状态时的默克尔树的构成：</p>
+<p><img src="https://i.imgur.com/9WsMy8l.png" alt="merkle-tree"></p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2019/03/16/tendermint默克尔树/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2019/01/06/tendermint发行代币/" itemprop="url">
                   tendermint发行代币
                 </a>
@@ -668,141 +805,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/12/16/temdermint初识/" itemprop="url">
-                  temdermint初识
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-12-16T22:29:43+08:00" content="2018-12-16">
-              2018-12-16
-            </time>
-          </span>
-
-          
-            <span class="post-category">
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope="" itemtype="https://schema.org/Thing">
-                  <a href="/categories/temdermint/" itemprop="url" rel="index">
-                    <span itemprop="name">temdermint</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2018/12/16/temdermint初识/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/12/16/temdermint初识/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2018/12/16/temdermint初识/" class="leancloud_visitors" data-flag-title="temdermint初识">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="2-1-概述"><a href="#2-1-概述" class="headerlink" title="2.1 概述"></a>2.1 概述</h2><p>tendermint虽然定位于引擎，但它其实是一个完整的区块链实现。在这一部分 的课程中，我们将使用一个最小化的ABCI应用，来熟悉tendermint的主要组成 部分，以及使用tendermint进行去中心化应用开发的主要流程和工具。</p>
-<p>下图列出了tendermint应用的主要构成部分：</p>
-<p><img src="https://lh3.googleusercontent.com/-9h1wL3AOaT0/XAiI0CiYoSI/AAAAAAAAEFY/GhAg0H7tV28RgTVW-kATnVCc3CJ0zFiWwCHMYCw/I/td-arch.png" alt="td-arch"></p>
-<p>tendermint提供了一个预构建的同名可执行程序，我们将学习如何使用这个程序 来初始化节点配置文件并启动节点。这个程序是完整的节点实现，除了通过P2P协议 与其他节点交换共识，同时还提供了RPC接口供客户端提交交易或者查询应用状态。</p>
-<p>我们将创建一个最小化的ABCI应用，tendermint可执行程序通过ABCI接口与 应用程序交互，例如要求应用执行交易、或者转发来自RPC接口的状态查询请求。<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2018/12/16/temdermint初识/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </p></div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -846,7 +848,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-count">46</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

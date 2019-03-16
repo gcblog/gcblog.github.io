@@ -1,0 +1,1022 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="tendermint,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="code随手记" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1">
+
+
+
+
+
+
+<meta name="description" content="默克尔树概述在ABCI应用响应Commit请求消息时，需要计算并返回当前状态的哈希，以便Tendermint 将其打包到下一个区块头里（app_hash字段）。 但是，如果我们还按原来的方法计算一个总体哈希，例如：hash: = tmhash.Sum(state)， 就存在一个问题 —— 当查询某个特定账户的状态数据时，如何验证该状态是未被篡改的？ 显然，单独返回整个状态的哈希是不够的，但是我们也">
+<meta name="keywords" content="tendermint">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tendermint默克尔树">
+<meta property="og:url" content="http://gcblog/github.io/2019/03/16/tendermint默克尔树/index.html">
+<meta property="og:site_name" content="code随手记">
+<meta property="og:description" content="默克尔树概述在ABCI应用响应Commit请求消息时，需要计算并返回当前状态的哈希，以便Tendermint 将其打包到下一个区块头里（app_hash字段）。 但是，如果我们还按原来的方法计算一个总体哈希，例如：hash: = tmhash.Sum(state)， 就存在一个问题 —— 当查询某个特定账户的状态数据时，如何验证该状态是未被篡改的？ 显然，单独返回整个状态的哈希是不够的，但是我们也">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/9WsMy8l.png">
+<meta property="og:image" content="https://i.imgur.com/ShIjNqv.png">
+<meta property="og:image" content="https://i.imgur.com/ShIjNqv.png">
+<meta property="og:image" content="https://i.imgur.com/RbOVPmV.png">
+<meta property="og:updated_time" content="2019-03-16T05:49:28.118Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="tendermint默克尔树">
+<meta name="twitter:description" content="默克尔树概述在ABCI应用响应Commit请求消息时，需要计算并返回当前状态的哈希，以便Tendermint 将其打包到下一个区块头里（app_hash字段）。 但是，如果我们还按原来的方法计算一个总体哈希，例如：hash: = tmhash.Sum(state)， 就存在一个问题 —— 当查询某个特定账户的状态数据时，如何验证该状态是未被篡改的？ 显然，单独返回整个状态的哈希是不够的，但是我们也">
+<meta name="twitter:image" content="https://i.imgur.com/9WsMy8l.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> tendermint默克尔树 | code随手记 </title>
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">code随手记</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Practice from here</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                tendermint默克尔树
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2019-03-16T13:47:08+08:00" content="2019-03-16">
+              2019-03-16
+            </time>
+          </span>
+
+          
+            <span class="post-category">
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope="" itemtype="https://schema.org/Thing">
+                  <a href="/categories/tendermint/" itemprop="url" rel="index">
+                    <span itemprop="name">tendermint</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2019/03/16/tendermint默克尔树/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2019/03/16/tendermint默克尔树/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2019/03/16/tendermint默克尔树/" class="leancloud_visitors" data-flag-title="tendermint默克尔树">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i></i> 浏览
+              <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="默克尔树概述"><a href="#默克尔树概述" class="headerlink" title="默克尔树概述"></a>默克尔树概述</h2><p>在ABCI应用响应Commit请求消息时，需要计算并返回当前状态的哈希，以便Tendermint 将其打包到下一个区块头里（app_hash字段）。</p>
+<p>但是，如果我们还按原来的方法计算一个总体哈希，例如：hash: = tmhash.Sum(state)， 就存在一个问题 —— 当查询某个特定账户的状态数据时，如何验证该状态是未被篡改的？</p>
+<p>显然，单独返回整个状态的哈希是不够的，但是我们也不可能将整个账户表提供给 客户端以便其重算哈希进行验证，因为其中包含了其他用户的账户信息。</p>
+<p>这就是默克尔树（Merkle Tree）的用武之地：不需要提供完整的数据（例如整个账户表）， 就可以验证某个数据（例如账户A的状态）是否属于该数据集。</p>
+<p>在默克尔树中，叶节点对应于各状态的哈希值，根节点则对应于整个状态的哈希， 中间各层的节点则分别由前一层节点两两结对后计算哈希得到。</p>
+<p>例如，下图给出了4个账户状态时的默克尔树的构成：</p>
+<p><img src="https://i.imgur.com/9WsMy8l.png" alt="merkle-tree"></p>
+<a id="more"></a>
+<p>基于默克尔树的生成过程，我们只需要这个树的一部分节点，就可以验证某个状态（例如账户A 的状态）与整体哈希（Hash(ABCD)）的对应关系，这部分节点就被称为默克尔证据/Merkle Proot。 例如上图中，对于账户A的状态而言，Hash(B)和Hash(CD)就是其证据 —— 因为利用账户A本身的数据， 以及证据节点，就可以重算出根节点，从而确认指定账户状态与给定状态哈希的对应关系。</p>
+<h2 id="计算默克尔哈希"><a href="#计算默克尔哈希" class="headerlink" title="计算默克尔哈希"></a>计算默克尔哈希</h2><p>在tendermint中内置了默克尔树的一个简单实现，可以计算有序集合（切片）和无序集合（映射表） 的默克尔树根哈希：</p>
+<p><img src="https://i.imgur.com/ShIjNqv.png" alt="merkle-tree"></p>
+<p>Hasher接口</p>
+<p>使用<code>crypto/merkle</code>包计算数据集合的默克尔哈希，要求集合中的成员实现Hasher接口。例如， 我们使用下面的结构来满足这一需求：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">type sh struct&#123;</span><br><span class="line">  value string</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (h sh) Hash() []byte &#123;</span><br><span class="line">  return tmhash.Sum([]byte(h.value))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>现在，我们可以根据集合是有序还是无序，来分别计算其默克尔哈希了。</p>
+<p>有序集合的哈希计算</p>
+<p>有序集合（例如：切片）中各成员有确定性的先后顺序，因此可以直接使用<code>SimpleHashFromHashers()</code> 方法进行计算。例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">data := []merkle.Hasher&#123; &amp;sh&#123;&quot;one&quot;&#125;,&amp;sh&#123;&quot;two&quot;&#125;,&amp;sh&#123;&quot;three&quot;&#125;,&amp;sh&#123;&quot;four&quot;&#125; &#125;</span><br><span class="line">hash := merkle.SimpleHashFromHashers(data)</span><br><span class="line">fmt.Printf(&quot;root hash =&gt; %x\n&quot;,hash)</span><br></pre></td></tr></table></figure></p>
+<p>无序集合的哈希计算</p>
+<p>无序集合（例如：映射表）的各成员没有确定性的先后顺序，因此需要首先进行确定排序，重组为有序 集合后才能使用SimpleHashFromHashers()方法计算该集合的默克尔哈希。对于键类型为string、值类型 为Hasher的映射表而言，可以直接使用SimpleHashFromMap()方法。例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">data := map[string]merkle.Hasher&#123;</span><br><span class="line">  &quot;tom&quot;:&amp;sh&#123;&quot;actor&quot;&#125;,</span><br><span class="line">  &quot;mary&quot;:&amp;sh&#123;&quot;teacher&quot;&#125;,</span><br><span class="line">  &quot;linda&quot;:&amp;sh&#123;&quot;scientist&quot;&#125;,</span><br><span class="line">  &quot;luke&quot;:&amp;sh&#123;&quot;fisher&quot;&#125;&#125;</span><br><span class="line">hash := merkle.SimpleHashFromMap(data)</span><br><span class="line">fmt.Printf(&quot;root hash =&gt; %x\n&quot;,hash)</span><br></pre></td></tr></table></figure></p>
+<h2 id="状态的默克尔证据"><a href="#状态的默克尔证据" class="headerlink" title="状态的默克尔证据"></a>状态的默克尔证据</h2><p>在使用默克尔树时，如果需要验证某个数据是否属于一个特定的集合，除了待验证的数据自身， 还需要以下数据：</p>
+<p>数据集合的根哈希：表征特定的数据集合<br>数据的默克尔证据：配合待验证数据重算根哈希，以便于给定的根哈希比较<br>tendermint的<code>crypto/merkle</code>包提供了简单的方法返回集合中每个成员对应的默克尔 证据以及集合的根哈希：</p>
+<p><img src="https://i.imgur.com/ShIjNqv.png" alt="merkle-tree"><br>数据聚合中每个成员对应的默克尔证据就是一个SimpleProof实例，因此可以直接调用 其Verify()方法进行验证。</p>
+<p>同样，获取数据成员的默克尔证据也分为有序集合与无序集合两种情况。</p>
+<p>有序集合成员的默克尔证据</p>
+<p>使用SimpleProofsFromHashers()方法获取有序集合（例如：切片）中各成员的默克尔证据， 成员必须实现Hasher接口，该方法返回两个值：根哈希以及默克尔证据数组。</p>
+<p>还是利用前一节的sh类型，下面的代码展示了如何获取切片中各成员的默克尔证据：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">data := []sh&#123;sh(&quot;one&quot;),sh(&quot;two&quot;),sh(&quot;three&quot;),sh(&quot;four&quot;)&#125;</span><br><span class="line">root,proofs := merkle.SimpleProofsFromHashers(data)</span><br><span class="line">fmt.Printf(&quot;proof for one =&gt; %+v\n&quot;,proofs[0])</span><br></pre></td></tr></table></figure></p>
+<p>在返回结果中的默克尔证据数组，其成员顺序与输入数据一致。</p>
+<p>一旦获取了某个数据的默克尔证据、结合数据集合的根哈希，就可以验证这个数据是否属于 给定的根哈希对应的数据集合了。例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">valid := proofs[0].Verify(</span><br><span class="line">    0,              // 要验证的数据在集合中的序号</span><br><span class="line">    4,              // 集合成员总数</span><br><span class="line">    data[0].Hash(), // 要验证的数据的哈希</span><br><span class="line">    root           // 集合的根哈希)</span><br><span class="line">fmt.Printf(&quot;data[0] is valid? =&gt; %t\n&quot;,valid)</span><br></pre></td></tr></table></figure></p>
+<p>无序集合成员的默克尔证据</p>
+<p>同样，没有确定性成员顺序的映射表，需要使用SimpleProofsFromMap()方法计算每个 成员的默克尔证据，其返回结果是三个值：根哈希、成员默克尔证据映射表和排序后的 成员键。例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">data := map[string]sh&#123;</span><br><span class="line">  &quot;tom&quot;:sh(&quot;actor&quot;),</span><br><span class="line">  &quot;mary&quot;:sh(&quot;teacher&quot;),</span><br><span class="line">  &quot;linda&quot;:sh(&quot;scientist&quot;),</span><br><span class="line">  &quot;luke&quot;:sh(&quot;fisher&quot;)&#125;</span><br><span class="line">root,proofs,keys := merkle.SimpleProofsFromMap(data)</span><br><span class="line">fmt.Printf(&quot;proof for tom =&gt; %+v\n&quot;,proofs[&quot;tom&quot;])</span><br></pre></td></tr></table></figure></p>
+<p>由于在计算映射表的默克尔证据时首先将无序的键值对转化为了KVPair结构并 进行排序，因此其成员时，也需要首先将其转换为KVPair类型，而不能仅使用键值对 中的值部分：</p>
+<p><code>kvpair := merkle.KVPair{Key:[]byte(&quot;tom&quot;),Value: data[&quot;tom&quot;].Hash()}</code><br>然后根据该成员在排序后的顺序号（keys中的位置），进行验证，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">valid := proofs[key].Verify(</span><br><span class="line">    3,            // 要验证的数据键在keys中的序号</span><br><span class="line">    4,              // 集合成员总数</span><br><span class="line">    kvpair.Hash(), // 要验证的数据的哈希</span><br><span class="line">    root           // 集合的根哈希)</span><br><span class="line">fmt.Printf(&quot;data[&quot;tom&quot;] is valid? =&gt; %t\n&quot;,valid)</span><br></pre></td></tr></table></figure></p>
+<h2 id="升级代币状态机"><a href="#升级代币状态机" class="headerlink" title="升级代币状态机"></a>升级代币状态机</h2><p>基于默克尔树，我们可以升级代币状态机，在hash.go代码中实现与默克尔计算相关 的三个方法：</p>
+<p><img src="https://i.imgur.com/RbOVPmV.png" alt="merkle-hash-support"></p>
+<p>首先扩展int类型，实现Hasher接口：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">type Balance int</span><br><span class="line"></span><br><span class="line">func (b Balance) Hasher() []byte &#123;</span><br><span class="line">  v,_ := codec.MarshalBinary(b)</span><br><span class="line">  return tmhash.Sum(v)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>stateToHasherMap()方法将应用的状态集合转换为Hasher映射表，以便进行默克尔计算：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func (app *TokenApp) stateToHasherMap() map[string]merkle.Hasher &#123;</span><br><span class="line">  hashers := map[string]merkle.Hasher&#123;&#125;</span><br><span class="line">  for addr,val := range app.Accounts &#123; </span><br><span class="line">    balance := Balance(val)</span><br><span class="line">    hashers[addr] = &amp;balance</span><br><span class="line">  &#125;</span><br><span class="line">  return hashers</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>getRootHash()方法计算应用状态的默克尔哈希：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">func (app *TokenApp) getRootHash() []byte &#123;</span><br><span class="line">  hashers := app.stateToHasherMap()</span><br><span class="line">  return merkle.SimpleHashFromMap(hashers)  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>getProofBytes()</code>方法获取指定地址状态的默克尔证据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">func (app *TokenApp) getProofBytes(addr string) []byte &#123;</span><br><span class="line">  hashers := app.stateToHasherMap()</span><br><span class="line">  _,proofs,_ := merkle.SimpleProofsFromMap(hashers)</span><br><span class="line">  bz,err := codec.MarshalBinary(proofs[addr])</span><br><span class="line">  if err != nil  &#123; return  []byte&#123;&#125; &#125;</span><br><span class="line">  return bz</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当提交状态修改时，我们可以利用这些方法向tendermint返回根哈希：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">func (app *TokenApp) Commit() (rsp types.ResponseCommit)&#123;</span><br><span class="line">  rsp.Data = app.getRootHash()</span><br><span class="line">  return</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>当查询状态时，也可以利用这些方法返回状态的证据：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">func (app *TokenApp) Query(req types.RequestQuery) (rsp types.ResponseQuery) &#123;</span><br><span class="line">  addr := crypto.Address(req.Data)</span><br><span class="line">  rsp.Key = req.Data</span><br><span class="line">  rsp.Value,_ = codec.MarshalBinary(app.Accounts[addr.String()])</span><br><span class="line">  rsp.Proof = app.getProofBytes(addr.String())</span><br><span class="line">  return</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/weixin.jpg" alt="夜千寻墨 WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/zhifubao.jpg" alt="夜千寻墨 Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/tendermint/" rel="tag">#tendermint</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/06/tendermint发行代币/" rel="next" title="tendermint发行代币">
+                <i class="fa fa-chevron-left"></i> tendermint发行代币
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2019/03/16/tendermint默克尔树/" data-title="tendermint默克尔树" data-url="http://gcblog/github.io/2019/03/16/tendermint默克尔树/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="夜千寻墨">
+          <p class="site-author-name" itemprop="name">夜千寻墨</p>
+          <p class="site-description motion-element" itemprop="description">扫码关注微信公众号,及时获取文章更新</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">46</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">78</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/suifengqjn" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/dearqjn?source=blog&is_all=1" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/527ecf8c8753/latest_articles" target="_blank" title="简书">
+                  
+                    <i class="fa fa-fw fa-jianshu"></i>
+                  
+                  简书
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.instagram.com/yeqianxun/" target="_blank" title="instagram">
+                  
+                    <i class="fa fa-fw fa-instagram"></i>
+                  
+                  instagram
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#默克尔树概述"><span class="nav-number">1.</span> <span class="nav-text">默克尔树概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#计算默克尔哈希"><span class="nav-number">2.</span> <span class="nav-text">计算默克尔哈希</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#状态的默克尔证据"><span class="nav-number">3.</span> <span class="nav-text">状态的默克尔证据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#升级代币状态机"><span class="nav-number">4.</span> <span class="nav-text">升级代币状态机</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">夜千寻墨</span>
+</div>
+
+<div class="powered-by">
+  powered by <a class="theme-link">Hexo</a>
+</div>
+
+<div class="theme-info">
+  theme -
+  <a class="theme-link">
+    Next
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">本站访客数<span class="busuanzi-value" id="busuanzi_value_site_uv"></span>人次</span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i> 总访问量<span class="busuanzi-value" id="busuanzi_value_site_pv"></span>次</span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"yqxm"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';                
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+                            
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').mousedown(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("", "");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>
