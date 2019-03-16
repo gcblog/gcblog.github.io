@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://gcblog/github.io/"/>
-  <updated>2019-03-16T07:54:01.466Z</updated>
+  <updated>2019-03-16T08:11:02.832Z</updated>
   <id>http://gcblog/github.io/</id>
   
   <author>
@@ -14,6 +14,124 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>tendermint多节点组网</title>
+    <link href="http://gcblog/github.io/2019/03/16/tendermint%E5%A4%9A%E8%8A%82%E7%82%B9%E7%BB%84%E7%BD%91/"/>
+    <id>http://gcblog/github.io/2019/03/16/tendermint多节点组网/</id>
+    <published>2019-03-16T08:09:45.000Z</published>
+    <updated>2019-03-16T08:11:02.832Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="多节点组网概述"><a href="#多节点组网概述" class="headerlink" title="多节点组网概述"></a>多节点组网概述</h2><p>在之前的课程内容中，我们的关注点集中在单一节点上的状态机逻辑实现上，这是因为 状态机复制的问题，是由tendermint负责完成的：我们在任何一个节点提交的交易请求， tendermint可以透明地帮我们在多个节点间实现同步。</p>
+<p>在这一章，我们将通过前面已经学习过的简单的ABCI计数应用来学习如何部署多个tendermint节点， 并进一步理解tendermint共识的建立过程。为了简化操作，我们将首先了解如何将ABCI 应用与tendermint库集成为单一可执行文件，然后利用这个单一完整的程序来部署4个 节点旳区块链：</p>
+<p><img src="https://lh3.googleusercontent.com/-IQliQxXjyMM/XAiKyzlDVUI/AAAAAAAAEJE/_L0D3hPCKA4or_0B2M6bZAObHHabnLt_gCHMYCw/I/networking.png" alt="networking"></p>
+<a id="more"></a>
+<p>在tendermint节点组成的区块链中有两种节点：验证节点和观察节点，只有验证节点 参与共识的建立。在这一章，我们将同时学习如何部署验证节点和观察节点。</p>
+<p>tendermint是拜占庭容错的共识机制，因此在3f+1个验证节点中，允许不超过f个节点 出现拜占庭错误。在活性与可靠性中tendermint选择了可靠性，因此当3f+1个节点中 超过f个节点出现拜占庭错误后，整个系统将停机，我们也将通过实验观察到这一点。</p>
+<h2 id="实现abci接口"><a href="#实现abci接口" class="headerlink" title="实现abci接口"></a>实现abci接口</h2><p>使用go语言开发tendermint链上应用有一个额外的优势，就是可以将tendermint节点 与ABCI应用集成在单一程序内发布。</p>
+<p>我们还是使用计数状态机作为ABCI应用示例，在多个节点之间维护单一的计数值：</p>
+<p><img src="https://lh3.googleusercontent.com/-LdBVIwAtCoE/XAiKycP9UxI/AAAAAAAAEI4/B1Qm3FrafDgBd0iSK2jRhbAgGB9JxblkgCHMYCw/I/sm-counter.png" alt="sm-counte"></p>
+<p>为简化问题，我们仅实现三个主要的ABCI接口 —— CheckTx、DeliverTx和Query， 同时，使用0x01~0x03分别表示递增、递减和复位交易：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">type App struct &#123;</span><br><span class="line">  types.BaseApplication</span><br><span class="line">  Value int</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (app *App) CheckTx(tx []byte) (rsp types.ResponseCheckTx) &#123;</span><br><span class="line">  if tx[0] &lt; 0x04 &#123;  return &#125;</span><br><span class="line">  rsp.Code = 1</span><br><span class="line">  return</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (app *App) DeliverTx(tx []byte) (rsp types.ResponseDeliverTx) &#123;</span><br><span class="line">  switch tx[0] &#123;</span><br><span class="line">    case 0x01 : app.Value += 1</span><br><span class="line">    case 0x02 : app.Value -= 1</span><br><span class="line">    case 0x03 : app.Value = 0</span><br><span class="line">  &#125;</span><br><span class="line">  return</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (app *App) Query(req types.RequestQuery) (rsp types.ResponseQuery) &#123;</span><br><span class="line">  rsp.Log = fmt.Sprintf(&quot;counter: %d&quot;,app.Value)</span><br><span class="line">  return</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>你可以查看~/repo/go/src/hubwiz.com/c8/smr.go中的完整示例代码。</p>
+<h2 id="命令行封装：cobra子命令"><a href="#命令行封装：cobra子命令" class="headerlink" title="命令行封装：cobra子命令"></a>命令行封装：cobra子命令</h2><p>Tendermint的命令行程序是基于spf13/cobra开发包开发的，每个子命令都对应着 一个cobra/Command结构的实例，例如，初始化节点子命令init对应着InitFilesCmd这个 对象，而RootCmd则对应着根命令：</p>
+<p><img src="https://lh3.googleusercontent.com/-6-_bcE_nev0/XAiKyzyxyxI/AAAAAAAAEJA/UY8WkMKnBs4Hw5f_A5bZYyunJcUAaxpOQCHMYCw/I/cobra-commands.png" alt="cobra-commands"></p>
+<p>因此我们可以利用这些封装好的cobra命令，非常快速地生成一个具有节点同样功能 的命令行程序：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">func main()&#123;</span><br><span class="line">  root := commands.RootCmd</span><br><span class="line"></span><br><span class="line">  root.AddCommand(commands.InitFilesCmd) </span><br><span class="line">  root.AddCommand(commands.ResetAllCmd)</span><br><span class="line"></span><br><span class="line">  exec := cli.PrepareBaseCmd(root,&quot;WIZ&quot;,&quot;.&quot;)</span><br><span class="line">  exec.Execute()    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>PrepareBaseCmd()方法将指定的Command实例转换为一个Executor对象，它进行 必要的环境变量设置（根据第二个参数指定的前缀），并确定命令行的默认工作目录 （第三个参数）。</p>
+<p>在上面代码中，我们将默认工作目录设置为当前目录，这意味着在默认情况下， 当执行init子命令时，将在当前目录下生成data和config子目录。不过在RootCmd 中定义了全局标志–home，可以在命令行指定其他目录为节点工作目录。例如， 下面的代码将在当前目录下的n1子目录中执行初始化命令：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ go run smr.go init –home n1</p>
+<h2 id="实现节点提供器"><a href="#实现节点提供器" class="headerlink" title="实现节点提供器"></a>实现节点提供器</h2><p>与其他cobra命令不同，用于启动节点旳node子命令对应于一个NewRunNodeCmd()方法， 它是一个构建cobra/Command实例的工厂方法，需要传入一个NodeProvider类型的变量：</p>
+<p><img src="https://lh3.googleusercontent.com/-QIVWms97fOc/XAiKy3D_JqI/AAAAAAAAEJI/DWXhB9C_VbgqV4lIWlrtIh2KU4yzUacswCHMYCw/I/node-provider.png" alt="node-provide"></p>
+<p>NodeProvider其实是返回节点实例的函数，其原型定义如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">type NodeProvider func(config *cfg.Config, logger log.Logger) (*node.Node, error)</span><br></pre></td></tr></table></figure></p>
+<p>其中，参数config（节点配置）和logger（日志）都是由tendermint框架在启动时传入的参数。</p>
+<p>NodeProvider是基于具体的abci应用创建的。例如，下面的代码利用abci应用实例创建一个 NodeProvider实例，并最终得到cobra/Command实例添加到根命令中：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app := NewApp()</span><br><span class="line">nodeProvider := makeNodeProvider(app)</span><br><span class="line">root.AddCommand(commands.NewRunNodeCmd(nodeProvider))</span><br></pre></td></tr></table></figure></p>
+<p>makeNodeProvider()函数返回NodeProvider实例，其实现代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">func makeNodeProvider(app types.Application) node.NodeProvider &#123;</span><br><span class="line">  return func(config *cfg.Config, logger log.Logger) (*node.Node, error) &#123;</span><br><span class="line">      nodeKey, err := p2p.LoadOrGenNodeKey(config.NodeKeyFile())</span><br><span class="line">      if err != nil &#123;  return nil, err &#125;</span><br><span class="line"></span><br><span class="line">      return node.NewNode(config,</span><br><span class="line">          privval.LoadOrGenFilePV(config.PrivValidatorFile()),</span><br><span class="line">          nodeKey,</span><br><span class="line">          proxy.NewLocalClientCreator(app),</span><br><span class="line">          node.DefaultGenesisDocProviderFunc(config),</span><br><span class="line">          node.DefaultDBProvider,</span><br><span class="line">          node.DefaultMetricsProvider(config.Instrumentation),</span><br><span class="line">          logger)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>编译安装</p>
+<p>在整合了abci应用和cobra命令代码后，为了简化后续的键盘输入，我们将其 编译安装：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ go install smr.go<br>现在可以很简单地执行节点程序：</p>
+<p>~/repo/go/hubwiz.com/c8$ smr</p>
+<h2 id="单节点实验"><a href="#单节点实验" class="headerlink" title="单节点实验"></a>单节点实验</h2><p>Tendermint支持两种类型的节点：验证节点（Validator）和观察节点（Observer）。显然，对于 网络中的第一个节点而言，必须是一个验证节点 —— 否则没有办法出块了：</p>
+<p><img src="https://lh3.googleusercontent.com/-J3veWjCNVXo/XAiKy6UgyhI/AAAAAAAAEJU/uionNNfOwAgpf5sxt1mMtgfbvsGPPYJ5ACHMYCw/I/node-provider-1.png" alt="node-provide"></p>
+<p>第一个节点旳基本参数是：</p>
+<p>P2P通信端口：26656<br>RPC服务端口：26657<br>节点目录：n1<br>节点初始化与启动</p>
+<p>进入1#终端，执行init子命令初始化第一个节点，注意使用–home标志指定节点目录：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ smr init –home n1<br>执行show_node_id子命令显示并记录第一个节点旳ID：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ smr show_node_id –home n1<br>输出结果为节点旳ID，我们后续会用到，请记下来（你的ID应该与此不同）：</p>
+<p>fd8debec2b97adfa0f6e8bae939c22a69cda9741<br>然后执行node子命令启动第一个节点：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ smr node –home n1<br>测试状态机交易</p>
+<p>进入2#终端，执行如下交易并分别查询：</p>
+<p>增加：</p>
+<p>~$ curl localhost:26657/broadcast_tx_commit?tx=0x0101<br>~$ curl localhost:26657/abci_query<br>减少：</p>
+<p>~$ curl localhost:26657/broadcast_tx_commit?tx=0x0201<br>~$ curl localhost:26657/abci_query<br>复位：</p>
+<p>~$ curl localhost:26657/broadcast_tx_commit?tx=0x0301<br>~$ curl localhost:26657/abci_query</p>
+<h2 id="添加观察节点"><a href="#添加观察节点" class="headerlink" title="添加观察节点"></a>添加观察节点</h2><p>现在我们在网络中添加一个观察节点，它不会参与到共识的建立：</p>
+<p><img src="https://lh3.googleusercontent.com/-6FX6ojIAJGk/XAiKy3hhulI/AAAAAAAAEJQ/nbWe11We7jYcLFYjbDtnuWnBLDgLcQVywCHMYCw/I/two-node.png" alt="two-node"></p>
+<p>第二个节点旳基本参数是：</p>
+<p>P2P通信端口：36656<br>RPC服务端口：36657<br>节点目录：n2<br>节点初始化配置与启动</p>
+<p>进入2#终端，执行init子命令初始化第二个节点：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ smr init –home n2<br>由于这个节点是观察节点，因此我们可以直接使用验证节点旳创世文件：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ cp n1/config/genesis.json n2/config/genesis.json<br>同时修改n2/config/config.toml，设置其rpc监听端口为36657，p2p监听端口为36656， 并使其主动连接第一个节点，其中fd8d…41为第一个节点旳ID（使用show_node_id 子命令获取）：</p>
+<p>[rpc]<br>laddr = “tcp://0.0.0.0:36657”</p>
+<p>[p2p]<br>laddr = “tcp://0.0.0.0:36656”<br>persistent_peers = “fd8debec2b97adfa0f6e8bae939c22a69cda9741@127.0.0.1:26656”<br>现在2#终端启动第二个节点：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ smr node –home n2<br>交易测试</p>
+<p>无论利用哪个节点提交交易，都可以保证所有的节点状态同步。</p>
+<p>首先在5#终端分别查看节点一和节点二的状态：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ curl localhost:26657/abci_query<br>~/repo/go/src/hubwiz.com/c8$ curl localhost:36657/abci_query<br>然后利用节点一的rpc接口提交交易：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ curl localhost:26657/broadcast_tx_commit?tx=0x01<br>再次查看节点一和节点二的状态，你可以观察到同样的最新状态</p>
+<p>停机测试</p>
+<p>由于我们只有一个验证节点，显然当该节点停机时，整个集群将无法达成共识。</p>
+<p>首先在1#终端按ctrl+c停止smr的运行，然后在5#终端通过节点二提交交易：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ curl localhost:26657/broadcast_tx_commit?tx=0x01<br>该命令会一直挂起直至超时，因为交易始终无法确认。</p>
+<h2 id="添加验证节点"><a href="#添加验证节点" class="headerlink" title="添加验证节点"></a>添加验证节点</h2><p>现在我们继续向网络中添加第三个节点，这次是一个验证节点：</p>
+<p><img src="https://lh3.googleusercontent.com/-VYm-WaO9dHE/XAiKy1xsZ3I/AAAAAAAAEJM/9pNl8Dmi1U0-bQVpe9Kum7u0S7eSyx1egCHMYCw/I/three-node.png" alt="three-node"></p>
+<p>第三个节点旳基本参数是：</p>
+<p>P2P通信端口：46656<br>RPC服务端口：46657<br>节点目录：n3<br>节点初始化配置与启动</p>
+<p>进入3#终端，执行init子命令初始化节点三的目录n3：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ smr init –home n3<br>由于这个节点是验证节点，因此我们需要在节点一现有的创世文件中添加该节点 的priv_validator.json文件中的公钥和地址，其中每个验证节点旳power值用来 表征其代表的权益：</p>
+<p><img src="https://lh3.googleusercontent.com/-fXLrdNs4gFg/XAiKy2Jg0DI/AAAAAAAAEJY/T6ME5vG5RB8Bg55jhlYolz4J42uvRv7wgCHMYCw/I/validator-genesis.png" alt="validator-genesis"></p>
+<p>在上面的配置中，由于每个节点旳power都是10，因此每个节点都有50%（10/(10+10)） 的机率出块。</p>
+<p>然后将新的创世文件分发给节点二和节点三：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ cp n1/config/genesis.json n2/config/genesis.json<br>~/repo/go/src/hubwiz.com/c8$ cp n1/config/genesis.json n3/config/genesis.json<br>同时修改n3/config/config.toml，设置其rpc监听端口为46657，p2p监听端口为46656， 并使其主动连接第一个节点，其中fd8d…41为第一个节点旳ID（使用show_node_id 子命令获取）：</p>
+<p>[rpc]<br>laddr = “tcp://0.0.0.0:46657”</p>
+<p>[p2p]<br>laddr = “tcp://0.0.0.0:46656”<br>persistent_peers = “fd8debec2b97adfa0f6e8bae939c22a69cda9741@127.0.0.1:26656”<br>现在3#终端启动第二个节点：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ smr node –home n3<br>交易测试</p>
+<p>无论利用哪个节点提交交易，都可以保证所有的节点状态同步。</p>
+<p>首先在5#终端分别查看三个节点的状态：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ curl localhost:26657/abci_query<br>~/repo/go/src/hubwiz.com/c8$ curl localhost:36657/abci_query<br>然后利用节点一的rpc接口提交交易：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ curl localhost:26657/broadcast_tx_commit?tx=0x0101<br>再次查看三个节点的状态，你可以观察到同样的最新状态</p>
+<p>停机测试</p>
+<p>由于3f+1个验证节点中，才允许f个发生拜占庭故障，因此两个验证节点旳任一个 出现故障，整个集群都将停止共识。</p>
+<p>首先在3#终端按ctrl+c停止smr的运行，然后在5#终端通过节点二提交交易：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ curl localhost:36657/broadcast_tx_commit?tx=0x0102<br>该命令会一直挂起直至超时，因为交易始终无法确认。</p>
+<p>但是观测节点旳停机不会影响共识的达成。</p>
+<h2 id="拜占庭容错实验"><a href="#拜占庭容错实验" class="headerlink" title="拜占庭容错实验"></a>拜占庭容错实验</h2><p>现在我们添加第四个节点，并将全部节点都设置为验证节点，来测试当其中某个 节点故障时，系统的容错能力：</p>
+<p><img src="https://lh3.googleusercontent.com/-NpKjViMnInQ/XAiKy_bwM2I/AAAAAAAAEI8/XVKIhvA8Y4s_d6ctYlOUqyhDKkTEmIZaQCHMYCw/I/four-node.png" alt="four-node"></p>
+<p>第四个节点旳基本参数是：</p>
+<p>P2P通信端口：56656<br>RPC服务端口：56657<br>节点目录：n4<br>节点初始化配置与启动</p>
+<p>进入1#终端，首先初始化第四个节点目录：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ smr init –home n4<br>修改节点一的创世文件，将其他三个节点的priv_validator.json文件中的公钥和地址 添加进去，然后将新的创世文件分发给其他节点</p>
+<p>~/repo/go/src/hubwiz.com/c8$ cp n1/config/genesis.json n2/config/genesis.json<br>~/repo/go/src/hubwiz.com/c8$ cp n1/config/genesis.json n3/config/genesis.json<br>~/repo/go/src/hubwiz.com/c8$ cp n1/config/genesis.json n4/config/genesis.json<br>同时修改节点2/3/4的config/config.toml，设置其rpc监听端口分别为36657/46657/56657， p2p监听端口分别为36656/46656/56656，并使其主动连接第一个节点，其中fd8d…41为第一 个节点旳ID（使用show_node_id子命令获取）。以节点2为例：</p>
+<p>[rpc]<br>laddr = “tcp://0.0.0.0:56657”</p>
+<p>[p2p]<br>laddr = “tcp://0.0.0.0:56656”<br>persistent_peers = “fd8debec2b97adfa0f6e8bae939c22a69cda9741@127.0.0.1:26656”<br>分别在四个终端启动四个目录对应的节点，例如，在2#终端启动节点2：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ smr node –home n2<br>容错测试</p>
+<p>由于3f+1个验证节点中，允许f个发生拜占庭故障，因此我们的四个节点旳小集群， 允许任一个出现拜占庭错误。</p>
+<p>首先在1#终端按ctrl+c停止smr的运行，然后在5#终端通过节点二提交交易：</p>
+<p>~/repo/go/src/hubwiz.com/c8$ curl localhost:36657/broadcast_tx_commit?tx=0x0101<br>可以观察到交易正常完成。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;多节点组网概述&quot;&gt;&lt;a href=&quot;#多节点组网概述&quot; class=&quot;headerlink&quot; title=&quot;多节点组网概述&quot;&gt;&lt;/a&gt;多节点组网概述&lt;/h2&gt;&lt;p&gt;在之前的课程内容中，我们的关注点集中在单一节点上的状态机逻辑实现上，这是因为 状态机复制的问题，是由tendermint负责完成的：我们在任何一个节点提交的交易请求， tendermint可以透明地帮我们在多个节点间实现同步。&lt;/p&gt;
+&lt;p&gt;在这一章，我们将通过前面已经学习过的简单的ABCI计数应用来学习如何部署多个tendermint节点， 并进一步理解tendermint共识的建立过程。为了简化操作，我们将首先了解如何将ABCI 应用与tendermint库集成为单一可执行文件，然后利用这个单一完整的程序来部署4个 节点旳区块链：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://lh3.googleusercontent.com/-IQliQxXjyMM/XAiKyzlDVUI/AAAAAAAAEJE/_L0D3hPCKA4or_0B2M6bZAObHHabnLt_gCHMYCw/I/networking.png&quot; alt=&quot;networking&quot;&gt;&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="tendermint" scheme="http://gcblog/github.io/categories/tendermint/"/>
+    
+    
+      <category term="tendermint" scheme="http://gcblog/github.io/tags/tendermint/"/>
+    
+  </entry>
   
   <entry>
     <title>tendermint多版本状态库</title>
@@ -898,9 +1016,9 @@
       <category term="共识算法" scheme="http://gcblog/github.io/categories/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
     
     
-      <category term="共识算法" scheme="http://gcblog/github.io/tags/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
-    
       <category term="DPOS" scheme="http://gcblog/github.io/tags/DPOS/"/>
+    
+      <category term="共识算法" scheme="http://gcblog/github.io/tags/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
     
   </entry>
   
@@ -928,9 +1046,9 @@
       <category term="共识算法" scheme="http://gcblog/github.io/categories/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
     
     
-      <category term="POS" scheme="http://gcblog/github.io/tags/POS/"/>
-    
       <category term="共识算法" scheme="http://gcblog/github.io/tags/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="POS" scheme="http://gcblog/github.io/tags/POS/"/>
     
   </entry>
   
@@ -1157,53 +1275,6 @@
       <category term="AES" scheme="http://gcblog/github.io/tags/AES/"/>
     
       <category term="对称加密" scheme="http://gcblog/github.io/tags/%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>对称加密算法DES原理及实现</title>
-    <link href="http://gcblog/github.io/2018/06/26/%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95DES%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/"/>
-    <id>http://gcblog/github.io/2018/06/26/对称加密算法DES原理及实现/</id>
-    <published>2018-06-26T11:24:12.000Z</published>
-    <updated>2018-06-27T10:50:44.652Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="DES加密算法"><a href="#DES加密算法" class="headerlink" title="DES加密算法"></a>DES加密算法</h2><p>DES加密算法，为对称加密算法中的一种。70年代初由IBM研发，后1977年被美国国家标准局采纳为数据加密标准，即DES全称的由来：Data Encryption Standard。对称加密算法，是相对于非对称加密算法而言的。两者区别在于，对称加密在加密和解密时使用同一密钥，而非对称加密在加密和解密时使用不同的密钥，即公钥和私钥。常见的DES、3DES、AES均为对称加密算法，而RSA、椭圆曲线加密算法，均为非对称加密算法。<br> <br>　　DES是以64比特的明文为一个单位来进行加密的，超过64比特的数据，要求按固定的64比特的大小分组，分组有很多模式，后续单独总结，暂时先介绍DES加密算法。DES使用的密钥长度为64比特，但由于每隔7个比特设置一个奇偶校验位，因此其密钥长度实际为56比特。奇偶校验为最简单的错误检测码，即根据一组二进制代码中1的个数是奇数或偶数来检测错误。<br>　　<br><a id="more"></a></p>
-<h2 id="Feistel网络"><a href="#Feistel网络" class="headerlink" title="Feistel网络"></a>Feistel网络</h2><p>DES的基本结构，由IBM公司的Horst Feistel设计，因此称Feistel网络。在Feistel网络中，加密的每个步骤称为轮，经过初始置换后的64位明文，进行了16轮Feistel轮的加密过程，最后经过终结置换后形成最终的64位密文。如下为Feistel网络的示意图：</p>
-<p><img src="http://olgjbx93m.bkt.clouddn.com/5f65e67ee5cbf1514c5614e944684cc1af2a4096.jpg" alt="">  </p>
-<p>64位明文被分为左、右两部分处理，右侧数据和子密钥经过轮函数f生成用于加密左侧数据的比特序列，与左侧数据异或运算，运算结果输出为加密后的左侧，右侧数据则直接输出为右侧。<br>　　其中子密钥为本轮加密使用的密钥，每次Feistel均使用不同的子密钥。子密钥的计算，以及轮函数的细节，稍后下文介绍。由于一次Feistel轮并不会加密右侧，因此需要将上一轮输出后的左右两侧对调后，重复Feistel轮的过程，DES算法共计进行16次Feistel轮，最后一轮输出后左右两侧无需对调。</p>
-<p>DES加密和解密的过程一致，均使用Feistel网络实现，区别仅在于解密时，密文作为输入，并逆序使用子密钥。</p>
-<h2 id="DES-加密算法的使用"><a href="#DES-加密算法的使用" class="headerlink" title="DES 加密算法的使用"></a>DES 加密算法的使用</h2><p>在使用DES加密前，需要自己实现对明文的补码和去码操作</p>
-<p>补码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">//实现PKCS5Padding补码</span><br><span class="line">func PKCS5Padding(cipherTxt [] byte, blockSize int) []byte &#123;</span><br><span class="line">	//计算准备添加的数字</span><br><span class="line">	padding := blockSize - len(cipherTxt)%blockSize</span><br><span class="line"></span><br><span class="line">	//得到补码</span><br><span class="line">	padTxt := bytes.Repeat([]byte&#123;byte(padding)&#125;, padding)</span><br><span class="line"></span><br><span class="line">	//拼接原文与补码</span><br><span class="line">	var byteTxt = append(cipherTxt, padTxt...)</span><br><span class="line"></span><br><span class="line">	return byteTxt</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>去码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//PKCS5Unpadding 去码</span><br><span class="line">func PKCS5UnPadding(cipherTxt []byte) []byte &#123;</span><br><span class="line">	var l = len(cipherTxt)</span><br><span class="line">	var txt = int(cipherTxt[l-1])</span><br><span class="line">	res := cipherTxt[:l-txt]</span><br><span class="line">	return res</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>DES加密<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">// key 必须为8位</span><br><span class="line">func EnDESEncrypt (origData []byte, key []byte) []byte &#123;</span><br><span class="line"></span><br><span class="line">	//校验密钥</span><br><span class="line">	block, _ := des.NewCipher(key)</span><br><span class="line">	//设置补码</span><br><span class="line">	origData = MyDES.PKCS5Padding(origData, block.BlockSize())</span><br><span class="line">	//设置CBC加密模式</span><br><span class="line">	blockMode := cipher.NewCBCEncrypter(block, key)</span><br><span class="line"></span><br><span class="line">	//加密明文</span><br><span class="line">	crypted := make([]byte, len(origData))</span><br><span class="line"></span><br><span class="line">	blockMode.CryptBlocks(crypted, origData)</span><br><span class="line"></span><br><span class="line">	return crypted</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>DES解密<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">func DeDESCriypt(cript []byte, key []byte) []byte  &#123;</span><br><span class="line">	//校验key的有效性</span><br><span class="line">	block,_:=des.NewCipher(key)</span><br><span class="line">	//通过CBC模式解密</span><br><span class="line">	blockMode:=cipher.NewCBCDecrypter(block,key)</span><br><span class="line"></span><br><span class="line">	//实现解密</span><br><span class="line">	origData:=make([]byte,len(cript))</span><br><span class="line">	blockMode.CryptBlocks(origData,cript)</span><br><span class="line"></span><br><span class="line">	//去码</span><br><span class="line">	origData = MyDES.PKCS5UnPadding(origData)</span><br><span class="line">	return origData</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>使用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">func main()  &#123;</span><br><span class="line"></span><br><span class="line">	key := []byte(&quot;aswedrfg&quot;)</span><br><span class="line">	var data =[]byte(&quot;hello world&quot;)</span><br><span class="line">	var cipherTxt = EnDESEncrypt(data,key)</span><br><span class="line">	fmt.Println(&quot;加密的结果：&quot;,hex.EncodeToString( cipherTxt))</span><br><span class="line"></span><br><span class="line">	var origData=DeDESCriypt(cipherTxt,key)</span><br><span class="line">	fmt.Println(&quot;解密后的结果为:&quot;,string(origData))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>输出结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">加密的结果： 935ae7ca3229f6c707bb9de9db9693c7</span><br><span class="line">解密后的结果为: hello world</span><br></pre></td></tr></table></figure></p>
-<h2 id="根据DES原理自己实现加密解密过程"><a href="#根据DES原理自己实现加密解密过程" class="headerlink" title="根据DES原理自己实现加密解密过程"></a>根据DES原理自己实现加密解密过程</h2><p>加密<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">func EnCrypt(key string, data []byte) []byte &#123;</span><br><span class="line"></span><br><span class="line">	var sum = 0</span><br><span class="line">	for i := 0; i &lt; len(key); i++ &#123;</span><br><span class="line">		sum += int(key[i])</span><br><span class="line">	&#125;</span><br><span class="line">	// 对明文进行补码</span><br><span class="line">	var pad = PKCS5Padding(data, len(key))</span><br><span class="line">	//通过加法，实现简单加密</span><br><span class="line">	for i := 0;i&lt;len(pad);i++&#123;</span><br><span class="line">		pad[i] = pad[i]+byte(sum)</span><br><span class="line">	&#125;</span><br><span class="line">	return pad</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>解密<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">func Decrypt(cipherTxt []byte,key string) []byte &#123;</span><br><span class="line"></span><br><span class="line">	fmt.Println(&quot;???&quot;,cipherTxt)</span><br><span class="line">	//计算key的总和</span><br><span class="line">	var sum =0</span><br><span class="line">	for i:=0;i&lt;len(key);i++ &#123;</span><br><span class="line">		sum += int(key[i])</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	//减法运算</span><br><span class="line">	for i:=0;i&lt;len(cipherTxt);i++&#123;</span><br><span class="line">		cipherTxt[i]=cipherTxt[i]-byte(sum)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(&quot;???&quot;,cipherTxt)</span><br><span class="line">	//去码</span><br><span class="line">	var p = PKCS5UnPadding(cipherTxt)</span><br><span class="line">	return p</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="3DES"><a href="#3DES" class="headerlink" title="3DES"></a>3DES</h2><h3 id="3DES加密"><a href="#3DES加密" class="headerlink" title="3DES加密"></a>3DES加密</h3><p>DES是一个经典的对称加密算法，但也缺陷明显，即56位的密钥安全性不足，已被证实可以在短时间内破解。为解决此问题，出现了3DES，也称Triple DES，3DES为DES向AES过渡的加密算法，它使用3条56位的密钥对数据进行三次加密。为了兼容普通的DES，3DES并没有直接使用 <code>加密-&gt;加密-&gt;加密</code> 的方式，而是采用了<code>加密-&gt;解密-&gt;加密</code> 的方式。</p>
-<p><img src="http://oscd4dgpc.bkt.clouddn.com/00f3fb2538ec90b80eb9.jpg" alt=""></p>
-<p>当三重密钥均相同时，前两步相互抵消，相当于仅实现了一次加密，因此可实现对普通DES加密算法的兼容。</p>
-<p><img src="http://oscd4dgpc.bkt.clouddn.com/7de5d8dfcd0bd221596384.jpg" alt=""></p>
-<h3 id="3DES解密"><a href="#3DES解密" class="headerlink" title="3DES解密"></a>3DES解密</h3><p>3DES解密过程，与加密过程相反，即逆序使用密钥。是以密钥3、密钥2、密钥1的顺序执行 <code>解密-&gt;加密-&gt;解密</code>。</p>
-<p><img src="http://oscd4dgpc.bkt.clouddn.com/WX20180216-083713.png" alt=""></p>
-<p>相比DES，3DES因密钥长度变长，安全性有所提高，但其处理速度不高。因此又出现了AES加密算法，AES较于3DES速度更快、安全性更高。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;DES加密算法&quot;&gt;&lt;a href=&quot;#DES加密算法&quot; class=&quot;headerlink&quot; title=&quot;DES加密算法&quot;&gt;&lt;/a&gt;DES加密算法&lt;/h2&gt;&lt;p&gt;DES加密算法，为对称加密算法中的一种。70年代初由IBM研发，后1977年被美国国家标准局采纳为数据加密标准，即DES全称的由来：Data Encryption Standard。对称加密算法，是相对于非对称加密算法而言的。两者区别在于，对称加密在加密和解密时使用同一密钥，而非对称加密在加密和解密时使用不同的密钥，即公钥和私钥。常见的DES、3DES、AES均为对称加密算法，而RSA、椭圆曲线加密算法，均为非对称加密算法。&lt;br&gt; &lt;br&gt;　　DES是以64比特的明文为一个单位来进行加密的，超过64比特的数据，要求按固定的64比特的大小分组，分组有很多模式，后续单独总结，暂时先介绍DES加密算法。DES使用的密钥长度为64比特，但由于每隔7个比特设置一个奇偶校验位，因此其密钥长度实际为56比特。奇偶校验为最简单的错误检测码，即根据一组二进制代码中1的个数是奇数或偶数来检测错误。&lt;br&gt;　　&lt;br&gt;
-    
-    </summary>
-    
-      <category term="加密算法" scheme="http://gcblog/github.io/categories/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"/>
-    
-    
-      <category term="对称加密" scheme="http://gcblog/github.io/tags/%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86/"/>
-    
-      <category term="DES" scheme="http://gcblog/github.io/tags/DES/"/>
-    
-      <category term="3DES" scheme="http://gcblog/github.io/tags/3DES/"/>
     
   </entry>
   
