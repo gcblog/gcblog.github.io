@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css">
 
 
-  <meta name="keywords" content="签名,验签,RSA,">
+  <meta name="keywords" content="tendermint,">
 
 
 
@@ -86,18 +86,24 @@
 
 
 
-<meta name="description" content="什么是数字签名数字签名就是只有信息的发送者才能产生的别人无法伪造的一段数字串，这段数字串同时也是对信息的发送者发送信息真实性的一个有效证明。 签名的生成和验证生成消息签名的行为生成消息签名这一行为是由消息的发送者来完成的，也称为“对消息签名”。生成签名就是根据消息内容计算数字签名的值，这个行为意味着“我认可该消息的内容”。">
-<meta name="keywords" content="签名,验签,RSA">
+<meta name="description" content="平衡二叉树简介在之前的课程中，我们简单地使用磁盘文件来保存状态，对于简单的学习或验证 而言没有问题，但在生产环境中，tendermint推荐我们使用其基于avl树实现的 多版本状态库。 avl树得名于发明者G. M. Adelson-Velsky和Evgenii Landis，它是一种 自平衡二叉检索树，这包括两个核心的思想：二叉、平衡。 二叉是指整棵树中每个节点最多有两个子节点，左侧的子节点值一">
+<meta name="keywords" content="tendermint">
 <meta property="og:type" content="article">
-<meta property="og:title" content="RSA签名验签">
-<meta property="og:url" content="http://gcblog/github.io/2018/06/28/RSA签名验签/index.html">
+<meta property="og:title" content="tendermint多版本状态库">
+<meta property="og:url" content="http://gcblog/github.io/2019/03/16/tendermint多版本状态库/index.html">
 <meta property="og:site_name" content="code随手记">
-<meta property="og:description" content="什么是数字签名数字签名就是只有信息的发送者才能产生的别人无法伪造的一段数字串，这段数字串同时也是对信息的发送者发送信息真实性的一个有效证明。 签名的生成和验证生成消息签名的行为生成消息签名这一行为是由消息的发送者来完成的，也称为“对消息签名”。生成签名就是根据消息内容计算数字签名的值，这个行为意味着“我认可该消息的内容”。">
+<meta property="og:description" content="平衡二叉树简介在之前的课程中，我们简单地使用磁盘文件来保存状态，对于简单的学习或验证 而言没有问题，但在生产环境中，tendermint推荐我们使用其基于avl树实现的 多版本状态库。 avl树得名于发明者G. M. Adelson-Velsky和Evgenii Landis，它是一种 自平衡二叉检索树，这包括两个核心的思想：二叉、平衡。 二叉是指整棵树中每个节点最多有两个子节点，左侧的子节点值一">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-06-28T10:54:08.921Z">
+<meta property="og:image" content="https://lh3.googleusercontent.com/-rHf4N7nhTT4/XAiKtnjwMUI/AAAAAAAAEIs/6z6NO6fWTgArP6et8QUQOwKDpDoFzuqEwCHMYCw/I/btree.png">
+<meta property="og:image" content="https://lh3.googleusercontent.com/-jFPbOluKdTw/XAiKtitKN9I/AAAAAAAAEIo/bSuESPU3WLcxYZilQGWodK64kHtcYR4ugCHMYCw/I/avl-tree.png">
+<meta property="og:image" content="https://lh3.googleusercontent.com/-sFxNq1F_rOw/XAiKtoUzI7I/AAAAAAAAEIk/GqXQ9hPM4GE5vgLPR-4-06bfaUWy8cKEwCHMYCw/I/iavl-store.png">
+<meta property="og:image" content="https://lh3.googleusercontent.com/-utrzL2D_xEo/XAiKtuuxMbI/AAAAAAAAEIw/BWqJlNQvztg8WARM_tuGBVYp2acu-HIBACHMYCw/I/iavl-uml.png">
+<meta property="og:image" content="https://lh3.googleusercontent.com/-gYAQNNM3JvY/XAiKtnxjzlI/AAAAAAAAEI0/3fDXRZgHpAI07GrntscK1XVw-34-Qn-nQCHMYCw/I/store.png">
+<meta property="og:updated_time" content="2019-03-16T07:54:01.466Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="RSA签名验签">
-<meta name="twitter:description" content="什么是数字签名数字签名就是只有信息的发送者才能产生的别人无法伪造的一段数字串，这段数字串同时也是对信息的发送者发送信息真实性的一个有效证明。 签名的生成和验证生成消息签名的行为生成消息签名这一行为是由消息的发送者来完成的，也称为“对消息签名”。生成签名就是根据消息内容计算数字签名的值，这个行为意味着“我认可该消息的内容”。">
+<meta name="twitter:title" content="tendermint多版本状态库">
+<meta name="twitter:description" content="平衡二叉树简介在之前的课程中，我们简单地使用磁盘文件来保存状态，对于简单的学习或验证 而言没有问题，但在生产环境中，tendermint推荐我们使用其基于avl树实现的 多版本状态库。 avl树得名于发明者G. M. Adelson-Velsky和Evgenii Landis，它是一种 自平衡二叉检索树，这包括两个核心的思想：二叉、平衡。 二叉是指整棵树中每个节点最多有两个子节点，左侧的子节点值一">
+<meta name="twitter:image" content="https://lh3.googleusercontent.com/-rHf4N7nhTT4/XAiKtnjwMUI/AAAAAAAAEIs/6z6NO6fWTgArP6et8QUQOwKDpDoFzuqEwCHMYCw/I/btree.png">
 
 
 
@@ -115,7 +121,7 @@
   };
 </script>
 
-  <title> RSA签名验签 | code随手记 </title>
+  <title> tendermint多版本状态库 | code随手记 </title>
 </head>
 
 <body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -278,7 +284,7 @@
             
             
               
-                RSA签名验签
+                tendermint多版本状态库
               
             
           </h1>
@@ -290,8 +296,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-06-28T18:51:55+08:00" content="2018-06-28">
-              2018-06-28
+            <time itemprop="dateCreated" datetime="2019-03-16T15:51:36+08:00" content="2019-03-16">
+              2019-03-16
             </time>
           </span>
 
@@ -304,8 +310,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope="" itemtype="https://schema.org/Thing">
-                  <a href="/categories/加密算法/" itemprop="url" rel="index">
-                    <span itemprop="name">加密算法</span>
+                  <a href="/categories/tendermint/" itemprop="url" rel="index">
+                    <span itemprop="name">tendermint</span>
                   </a>
                 </span>
 
@@ -320,8 +326,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2018/06/28/RSA签名验签/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/06/28/RSA签名验签/" itemprop="commentsCount"></span>
+                <a href="/2019/03/16/tendermint多版本状态库/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2019/03/16/tendermint多版本状态库/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -331,7 +337,7 @@
 
           
           
-             <span id="/2018/06/28/RSA签名验签/" class="leancloud_visitors" data-flag-title="RSA签名验签">
+             <span id="/2019/03/16/tendermint多版本状态库/" class="leancloud_visitors" data-flag-title="tendermint多版本状态库">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -358,17 +364,49 @@
       
 
       
-        <h2 id="什么是数字签名"><a href="#什么是数字签名" class="headerlink" title="什么是数字签名"></a>什么是数字签名</h2><p>数字签名就是只有信息的发送者才能产生的别人无法伪造的一段数字串，这段数字串同时也是对信息的发送者发送信息真实性的一个有效证明。</p>
-<h2 id="签名的生成和验证"><a href="#签名的生成和验证" class="headerlink" title="签名的生成和验证"></a>签名的生成和验证</h2><h3 id="生成消息签名的行为"><a href="#生成消息签名的行为" class="headerlink" title="生成消息签名的行为"></a>生成消息签名的行为</h3><p>生成消息签名这一行为是由消息的发送者来完成的，也称为“对消息签名”。生成签名就是根据消息内容计算数字签名的值，这个行为意味着“我认可该消息的内容”。</p>
+        <h2 id="平衡二叉树简介"><a href="#平衡二叉树简介" class="headerlink" title="平衡二叉树简介"></a>平衡二叉树简介</h2><p>在之前的课程中，我们简单地使用磁盘文件来保存状态，对于简单的学习或验证 而言没有问题，但在生产环境中，tendermint推荐我们使用其基于avl树实现的 多版本状态库。</p>
+<p>avl树得名于发明者G. M. Adelson-Velsky和Evgenii Landis，它是一种 自平衡二叉检索树，这包括两个核心的思想：二叉、平衡。</p>
+<p>二叉是指整棵树中每个节点最多有两个子节点，左侧的子节点值一定小于父节点值，而 右侧的子节点值一定大于父节点值，二叉树的主要用途是进行数据检索：当查找指定的数值时， 只需要逐层与节点值比较即可快速定位，因此被称为二叉检索树。</p>
+<p>例如，下图就是一个典型的二叉检索树，每个节点列出了其表示的值：</p>
+<p><img src="https://lh3.googleusercontent.com/-rHf4N7nhTT4/XAiKtnjwMUI/AAAAAAAAEIs/6z6NO6fWTgArP6et8QUQOwKDpDoFzuqEwCHMYCw/I/btree.png" alt="btree"></p>
 <a id="more"></a>
-<h3 id="验证消息签名的行为"><a href="#验证消息签名的行为" class="headerlink" title="验证消息签名的行为"></a>验证消息签名的行为</h3><p>验证数字签名这一行为一般是由消息的接收者来完成的，但也可以由需要验证消息的第三方来完成，这里的第三方在本书中被命名为验证者。验证签名就是检查该消息的签名是否真的属于发送者,验证的结果可以是成功或者失败，成功就意味着这个签名是属于发送者的，失败则意味着这个签名不是属于发送者的。</p>
-<h2 id="公钥密码与数字签名"><a href="#公钥密码与数字签名" class="headerlink" title="公钥密码与数字签名"></a>公钥密码与数字签名</h2><p>在数字签名中，生成签名和验证签名这两个行为需要使用各自专用的密钥来完成。发送者使用“签名密钥”来生成消息的签名，而验证者则使用“验证密钥”来验证消息的签名。数字签名对签名密钥和验证密钥进行了区分，使用验证密钥是无法生成签名的。此外，签名密钥只能由签名的人持有，而验证密钥则是任何需要验证签名的人都可以持有。</p>
-<h3 id="公钥密码机制"><a href="#公钥密码机制" class="headerlink" title="公钥密码机制"></a>公钥密码机制</h3><p>公钥密码包括一个由公钥和私钥组成的密钥对，其中公钥用于加密，私钥用于解密。用公钥加密所得到的密文只有<br>用与之对应的私钥才能正确解密。</p>
-<h3 id="数字签名"><a href="#数字签名" class="headerlink" title="数字签名"></a>数字签名</h3><p>数字签名中也同样会使用公钥和私钥组成的密钥对，不过这两个密钥的用法和公钥密码是相反的，即用 <strong>私钥加密</strong> 相当于 <strong>生成签名</strong>，而用 <strong>公钥解密</strong> 则相当于<strong>验证签名</strong>。</p>
-<h2 id="数字签名算法"><a href="#数字签名算法" class="headerlink" title="数字签名算法"></a>数字签名算法</h2><h3 id="RSA"><a href="#RSA" class="headerlink" title="RSA"></a>RSA</h3><p>RSA是提出这个算法的三人姓氏开头字母组成，可用于加密，也可以用于数字签名。</p>
-<h3 id="DSA"><a href="#DSA" class="headerlink" title="DSA"></a>DSA</h3><p>DSA ( Digital Signature Algorithm)是一种数字签名算法，是由NIST ( National Institute of Standards and Technology,美国国家标准技术研究所)于1991年制定的数字签名规范( DSS)。DSA是Schnorr算法与ElGammal方式的变体，只能被用于数字签名。</p>
-<h3 id="ECDSA"><a href="#ECDSA" class="headerlink" title="ECDSA"></a>ECDSA</h3><p>ECDSA ( Elliptic Curve Digital Signature Algorithm)是一~种利用椭圆曲线密码来实现的数字<br>签名算法( NIST FIPS 186-3 )。</p>
-<h2 id="RSA算法实现签名和验签"><a href="#RSA算法实现签名和验签" class="headerlink" title="RSA算法实现签名和验签"></a>RSA算法实现签名和验签</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">func main()  &#123;</span><br><span class="line"></span><br><span class="line">	//生成私钥</span><br><span class="line">	pri,_ := rsa.GenerateKey(rand.Reader, 1024)</span><br><span class="line"></span><br><span class="line">	//生成公钥</span><br><span class="line">	pub := &amp;pri.PublicKey</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	plainTxt := []byte(&quot;hello world，你好&quot;)</span><br><span class="line"></span><br><span class="line">	//对原文进行hash散列</span><br><span class="line">	h := md5.New()</span><br><span class="line">	h.Write(plainTxt)</span><br><span class="line">	hashed := h.Sum(nil)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	opts := rsa.PSSOptions&#123;rsa.PSSSaltLengthAuto, crypto.MD5&#125;</span><br><span class="line"></span><br><span class="line">	//实现签名</span><br><span class="line"></span><br><span class="line">	sign,_ := rsa.SignPSS(rand.Reader,pri, crypto.MD5,hashed,&amp;opts)</span><br><span class="line"></span><br><span class="line">	fmt.Println(hex.EncodeToString(sign))</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">	//通过公钥实现验签</span><br><span class="line">	err:= rsa.VerifyPSS(pub, crypto.MD5,hashed, sign, &amp;opts)</span><br><span class="line"></span><br><span class="line">	//err 为空 及验签成功</span><br><span class="line">	fmt.Println(&quot;err:&quot;, err)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当我们需要在树中定位值为19的节点时，从根节点出发，只需要三次对比就可以定位：</p>
+<p>10 &lt; 50，因此进入50的左侧子树继续搜索<br>19 &gt; 17，因此进入17的右侧子树继续搜索<br>19 &lt; 23，因此进入23的左侧子树继续搜索<br>19 == 19，定位成功<br>平衡是指树中任一节点旳左右两棵子树的高度差不超过1。例如，上面的树就不是平衡的， 该数据集对应的平衡树如下图所示：<br><img src="https://lh3.googleusercontent.com/-jFPbOluKdTw/XAiKtitKN9I/AAAAAAAAEIo/bSuESPU3WLcxYZilQGWodK64kHtcYR4ugCHMYCw/I/avl-tree.png" alt="avl-tree"></p>
+<p>自平衡指的是树的形成算法：当一个新的节点加入树树中时，算法将通过旋转等手段使整棵树 始终处于平衡状态，因此看起来就树就是靠自己找到了平衡状态。</p>
+<h2 id="多版本状态库-avl-merkle"><a href="#多版本状态库-avl-merkle" class="headerlink" title="多版本状态库 avl + merkle"></a>多版本状态库 avl + merkle</h2><p>为了快速计算状态集合的哈希以及进行默克尔验证，基于avl树和merkle树，tendermint实现了 多版本状态库iavl，它提供了类似于key/value数据库的操作接口：</p>
+<p><img src="https://lh3.googleusercontent.com/-sFxNq1F_rOw/XAiKtoUzI7I/AAAAAAAAEIk/GqXQ9hPM4GE5vgLPR-4-06bfaUWy8cKEwCHMYCw/I/iavl-store.png" alt="iavl-store"></p>
+<p>为了便于计算默克尔哈希，在tendermint的avl树实现中，只有在叶节点中才会保存实际的状态值， 中间节点仅用于key的比较和哈希的计算。由于在所有节点中已经预存了左右子节点的哈希，因此可以 快速获取整棵树的根节点哈希，即状态集合的哈希。</p>
+<p>iavl支持同一个key值的多个版本，这通过在节点结构中引入version项来实现：当一个节点被新版本 的数据更新后，iavl会同时保留其历史版本，因此使用iavl可以快速回溯到任何状态的任意历史版本。</p>
+<p>安装iavl：</p>
+<p><code>~$ go get github.com/tendermint/iavl</code></p>
+<h2 id="使用多版本状态库"><a href="#使用多版本状态库" class="headerlink" title="使用多版本状态库"></a>使用多版本状态库</h2><p><code>tendermint/iavl</code>软件包的主要模型包括可修改树（MutableTree）、只读树（ImmutableTree） 以及状态证据（RangeProof）等，其关系如下图所示：</p>
+<p><img src="https://lh3.googleusercontent.com/-utrzL2D_xEo/XAiKtuuxMbI/AAAAAAAAEIw/BWqJlNQvztg8WARM_tuGBVYp2acu-HIBACHMYCw/I/iavl-uml.png" alt="iavl-um"></p>
+<p>ImmutableTree是一个只读的二叉平衡哈希树，而MutableTree则提供了Set()方法来修改树 的节点构成并保证其处于平衡状态，RangeProof则是默克尔证据的封装结构。</p>
+<p>加载状态库</p>
+<p>iavl使用leveldb数据库保存节点以及其关系，例如，下面的代码从当前目录下的 counter数据库加载状态库，并使用Load()方法将载入最后版本的状态：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gdb,_ := db.NewGoLevelDB(&quot;counter&quot;,&quot;.&quot;)</span><br><span class="line">tree := iavl.NewMutableTree(gdb,128)</span><br><span class="line">tree.Load()</span><br></pre></td></tr></table></figure></p>
+<p>工作区</p>
+<p>类似于git，iavl也有一个工作区的概念 —— 所有的修改操作都是在工作区完成的，而不是 直接操作状态库。可以使用Load()方法载入最后（新）版本的状态库到工作区，也可以使用 LoadVersion()方法载入指定版本的状态库到工作区。</p>
+<p>一旦将状态载入工作区，我们就可以利用Set()方法设置指定的键/值对了。例如，下面的 代码设置键name的值为tommy：</p>
+<p><code>tree.Set([]byte(&quot;name&quot;),[]byte(&quot;Tommy&quot;))</code><br>当我们调用Get()方法时，是从当前工作区中读取指定键的值，例如：</p>
+<p><code>idx,val := tree.Get([]byte(&quot;name&quot;))</code><br>其中，返回的idx表示该键对应的叶节点在集合中的先后序号，val表示键对应的值。</p>
+<p>如果需要从状态库中指定版本读取键值，可以使用GetVersioned()方法。例如， 下面的代码读取版本2的指定键值：</p>
+<p><code>idx,val := tree.GetVersioned([]byte{&quot;name&quot;},2)</code><br>提交新版本</p>
+<p>所有的修改完毕后，使用SaveVersion()方法将工作区的变更提交到库中，这将返回根节点 哈希和新的版本号：</p>
+<p><code>hash,ver,err := tree.SaveVersion()</code><br>iavl库的版本号是从0开始，每个版本加1。</p>
+<h2 id="封装iavl操作"><a href="#封装iavl操作" class="headerlink" title="封装iavl操作"></a>封装iavl操作</h2><p>为了简化iavl的操作，我们将编解码等繁琐的操作封装到一个单独的结构Store里：</p>
+<p><img src="https://lh3.googleusercontent.com/-gYAQNNM3JvY/XAiKtnxjzlI/AAAAAAAAEI0/3fDXRZgHpAI07GrntscK1XVw-34-Qn-nQCHMYCw/I/store.png" alt="store"></p>
+<p>Store的结构声明如下，除了iavl库，额外的两个成员分别记录状态的最后版本号以及最后 状态的默克尔哈希：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">type Store struct &#123;</span><br><span class="line">  tree *iavl.MutableTree  //iavl库</span><br><span class="line">  LastVersion int64           //状态的最后版本号</span><br><span class="line">  LastHash []byte             //最后版本状态的根哈希</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>GetBalance()方法获取指定地址的当前（最后版本）余额：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func (store *Store) GetBalance(addr crypto.Address) (int,error) &#123;</span><br><span class="line">  _,bz := store.tree.Get(addr)</span><br><span class="line">  if bz == nil &#123; return 0,errors.New(&quot;account not found&quot;) &#125;  </span><br><span class="line">  var val int</span><br><span class="line">  err := codec.UnmarshalBinary(bz,&amp;val)</span><br><span class="line">  if err !=nil &#123; return 0,errors.New(&quot;decode error&quot;)&#125;</span><br><span class="line">  return val,nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>GetBalanceVersoined()方法获取特定版本的指定地址余额：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func (store *Store) GetBalanceVersioned(addr crypto.Address,version int64) (int,error) &#123;</span><br><span class="line">  _,bz := store.tree.GetVersioned(addr,version)</span><br><span class="line">  if bz == nil &#123; return 0,errors.New(&quot;account not found on this version&quot;) &#125;  </span><br><span class="line">  var val int</span><br><span class="line">  err := codec.UnmarshalBinary(bz,&amp;val)</span><br><span class="line">  if err !=nil &#123; return 0,errors.New(&quot;decode error&quot;)&#125;</span><br><span class="line">  return val,nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>SetBalance()方法修改指定地址的余额：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func (store *Store) SetBalance(addr crypto.Address,value int) error &#123;</span><br><span class="line">  bz,err := codec.MarshalBinary(value)</span><br><span class="line">  if err != nil &#123; return err &#125;</span><br><span class="line">  store.tree.Set(addr,bz)</span><br><span class="line">  return nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Commit()提交当前工作区的修改：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func (store *Store) Commit() &#123;</span><br><span class="line">  hash,ver,err := store.tree.SaveVersion()</span><br><span class="line">  if err != nil &#123; panic(err) &#125;</span><br><span class="line">  store.LastVersion = ver</span><br><span class="line">  store.LastHash = hash</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="升级代币状态机"><a href="#升级代币状态机" class="headerlink" title="升级代币状态机"></a>升级代币状态机</h2><p>基于Store的封装，很容易为代币状态机加入iavl的支持：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">type TokenApp struct &#123;</span><br><span class="line">  types.BaseApplication</span><br><span class="line">  store *Store</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>转账交易<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func (app *TokenApp) transfer(from,to crypto.Address,value int) error &#123;</span><br><span class="line">  fromBalance,_ := app.store.GetBalance(from)</span><br><span class="line">  if fromBalance &lt; value &#123;return errors.New(&quot;no enough balance&quot;)&#125;</span><br><span class="line">  toBalance,_ := app.GetBalance(to)</span><br><span class="line">  app.SetBalance(from,fromBalance - val)</span><br><span class="line">  app.SetBalance(to,toBalance + val)</span><br><span class="line">  return nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>发行交易<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func (app *TokenApp) issue(issuer,to crypto.Address,value int) error &#123;</span><br><span class="line">  if !bytes.Equal(issuer,SYSTEM_ISSUER) return &#123; errors.New(&quot;invalid issuer&quot;) &#125;</span><br><span class="line">  toBalance,_ := app.store.GetBalance(to)</span><br><span class="line">  app.SetBalance(to,toBalance + val)</span><br><span class="line">  return nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>实现Commit()<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func (app *TokenApp) Commit() types.ResponseCommit&#123;</span><br><span class="line">  hash,ver,_ := app.store.Commit()</span><br><span class="line">  app.Version = ver</span><br><span class="line">  app.Hash = hash</span><br><span class="line">  return types.ResponseCommit&#123;Data:hash&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>查询状态<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func (app *AccountApp) Query(req types.RequestQuery) types.ResponseQuery&#123;</span><br><span class="line">  if len(req.Data) == 0 &#123;</span><br><span class="line">    return types.ResponseQuery&#123;Code:1,Info:&quot;no address specified&quot;&#125;</span><br><span class="line">  &#125; </span><br><span class="line">  addr := cryto.Address(req.Data)</span><br><span class="line">  val,_:= app.store.GetBalance(addr)</span><br><span class="line">  return types.ResponseQuery&#123;Key:addr,Value:val&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -411,11 +449,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/签名/" rel="tag">#签名</a>
-          
-            <a href="/tags/验签/" rel="tag">#验签</a>
-          
-            <a href="/tags/RSA/" rel="tag">#RSA</a>
+            <a href="/tags/tendermint/" rel="tag">#tendermint</a>
           
         </div>
       
@@ -424,17 +458,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/06/27/非对称加密RSA原理简介及使用/" rel="next" title="非对称加密RSA原理简介及使用">
-                <i class="fa fa-chevron-left"></i> 非对称加密RSA原理简介及使用
+              <a href="/2019/03/16/tendermint默克尔树/" rel="next" title="tendermint默克尔树">
+                <i class="fa fa-chevron-left"></i> tendermint默克尔树
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/06/28/DSA和ECC签名验签/" rel="prev" title="DSA和ECC签名验签">
-                DSA和ECC签名验签 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -460,7 +490,7 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2018/06/28/RSA签名验签/" data-title="RSA签名验签" data-url="http://gcblog/github.io/2018/06/28/RSA签名验签/">
+      <div class="ds-thread" data-thread-key="2019/03/16/tendermint多版本状态库/" data-title="tendermint多版本状态库" data-url="http://gcblog/github.io/2019/03/16/tendermint多版本状态库/">
       </div>
     
   </div>
@@ -594,7 +624,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是数字签名"><span class="nav-number">1.</span> <span class="nav-text">什么是数字签名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#签名的生成和验证"><span class="nav-number">2.</span> <span class="nav-text">签名的生成和验证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#生成消息签名的行为"><span class="nav-number">2.1.</span> <span class="nav-text">生成消息签名的行为</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#验证消息签名的行为"><span class="nav-number">2.2.</span> <span class="nav-text">验证消息签名的行为</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#公钥密码与数字签名"><span class="nav-number">3.</span> <span class="nav-text">公钥密码与数字签名</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#公钥密码机制"><span class="nav-number">3.1.</span> <span class="nav-text">公钥密码机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数字签名"><span class="nav-number">3.2.</span> <span class="nav-text">数字签名</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数字签名算法"><span class="nav-number">4.</span> <span class="nav-text">数字签名算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RSA"><span class="nav-number">4.1.</span> <span class="nav-text">RSA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DSA"><span class="nav-number">4.2.</span> <span class="nav-text">DSA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ECDSA"><span class="nav-number">4.3.</span> <span class="nav-text">ECDSA</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RSA算法实现签名和验签"><span class="nav-number">5.</span> <span class="nav-text">RSA算法实现签名和验签</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#平衡二叉树简介"><span class="nav-number">1.</span> <span class="nav-text">平衡二叉树简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多版本状态库-avl-merkle"><span class="nav-number">2.</span> <span class="nav-text">多版本状态库 avl + merkle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用多版本状态库"><span class="nav-number">3.</span> <span class="nav-text">使用多版本状态库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#封装iavl操作"><span class="nav-number">4.</span> <span class="nav-text">封装iavl操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#升级代币状态机"><span class="nav-number">5.</span> <span class="nav-text">升级代币状态机</span></a></li></ol></div>
             
           </div>
         </section>

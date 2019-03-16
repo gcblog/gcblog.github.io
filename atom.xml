@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://gcblog/github.io/"/>
-  <updated>2019-03-16T05:49:28.118Z</updated>
+  <updated>2019-03-16T07:54:01.466Z</updated>
   <id>http://gcblog/github.io/</id>
   
   <author>
@@ -14,6 +14,75 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>tendermint多版本状态库</title>
+    <link href="http://gcblog/github.io/2019/03/16/tendermint%E5%A4%9A%E7%89%88%E6%9C%AC%E7%8A%B6%E6%80%81%E5%BA%93/"/>
+    <id>http://gcblog/github.io/2019/03/16/tendermint多版本状态库/</id>
+    <published>2019-03-16T07:51:36.000Z</published>
+    <updated>2019-03-16T07:54:01.466Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="平衡二叉树简介"><a href="#平衡二叉树简介" class="headerlink" title="平衡二叉树简介"></a>平衡二叉树简介</h2><p>在之前的课程中，我们简单地使用磁盘文件来保存状态，对于简单的学习或验证 而言没有问题，但在生产环境中，tendermint推荐我们使用其基于avl树实现的 多版本状态库。</p>
+<p>avl树得名于发明者G. M. Adelson-Velsky和Evgenii Landis，它是一种 自平衡二叉检索树，这包括两个核心的思想：二叉、平衡。</p>
+<p>二叉是指整棵树中每个节点最多有两个子节点，左侧的子节点值一定小于父节点值，而 右侧的子节点值一定大于父节点值，二叉树的主要用途是进行数据检索：当查找指定的数值时， 只需要逐层与节点值比较即可快速定位，因此被称为二叉检索树。</p>
+<p>例如，下图就是一个典型的二叉检索树，每个节点列出了其表示的值：</p>
+<p><img src="https://lh3.googleusercontent.com/-rHf4N7nhTT4/XAiKtnjwMUI/AAAAAAAAEIs/6z6NO6fWTgArP6et8QUQOwKDpDoFzuqEwCHMYCw/I/btree.png" alt="btree"></p>
+<a id="more"></a>
+<p>当我们需要在树中定位值为19的节点时，从根节点出发，只需要三次对比就可以定位：</p>
+<p>10 &lt; 50，因此进入50的左侧子树继续搜索<br>19 &gt; 17，因此进入17的右侧子树继续搜索<br>19 &lt; 23，因此进入23的左侧子树继续搜索<br>19 == 19，定位成功<br>平衡是指树中任一节点旳左右两棵子树的高度差不超过1。例如，上面的树就不是平衡的， 该数据集对应的平衡树如下图所示：<br><img src="https://lh3.googleusercontent.com/-jFPbOluKdTw/XAiKtitKN9I/AAAAAAAAEIo/bSuESPU3WLcxYZilQGWodK64kHtcYR4ugCHMYCw/I/avl-tree.png" alt="avl-tree"></p>
+<p>自平衡指的是树的形成算法：当一个新的节点加入树树中时，算法将通过旋转等手段使整棵树 始终处于平衡状态，因此看起来就树就是靠自己找到了平衡状态。</p>
+<h2 id="多版本状态库-avl-merkle"><a href="#多版本状态库-avl-merkle" class="headerlink" title="多版本状态库 avl + merkle"></a>多版本状态库 avl + merkle</h2><p>为了快速计算状态集合的哈希以及进行默克尔验证，基于avl树和merkle树，tendermint实现了 多版本状态库iavl，它提供了类似于key/value数据库的操作接口：</p>
+<p><img src="https://lh3.googleusercontent.com/-sFxNq1F_rOw/XAiKtoUzI7I/AAAAAAAAEIk/GqXQ9hPM4GE5vgLPR-4-06bfaUWy8cKEwCHMYCw/I/iavl-store.png" alt="iavl-store"></p>
+<p>为了便于计算默克尔哈希，在tendermint的avl树实现中，只有在叶节点中才会保存实际的状态值， 中间节点仅用于key的比较和哈希的计算。由于在所有节点中已经预存了左右子节点的哈希，因此可以 快速获取整棵树的根节点哈希，即状态集合的哈希。</p>
+<p>iavl支持同一个key值的多个版本，这通过在节点结构中引入version项来实现：当一个节点被新版本 的数据更新后，iavl会同时保留其历史版本，因此使用iavl可以快速回溯到任何状态的任意历史版本。</p>
+<p>安装iavl：</p>
+<p><code>~$ go get github.com/tendermint/iavl</code></p>
+<h2 id="使用多版本状态库"><a href="#使用多版本状态库" class="headerlink" title="使用多版本状态库"></a>使用多版本状态库</h2><p><code>tendermint/iavl</code>软件包的主要模型包括可修改树（MutableTree）、只读树（ImmutableTree） 以及状态证据（RangeProof）等，其关系如下图所示：</p>
+<p><img src="https://lh3.googleusercontent.com/-utrzL2D_xEo/XAiKtuuxMbI/AAAAAAAAEIw/BWqJlNQvztg8WARM_tuGBVYp2acu-HIBACHMYCw/I/iavl-uml.png" alt="iavl-um"></p>
+<p>ImmutableTree是一个只读的二叉平衡哈希树，而MutableTree则提供了Set()方法来修改树 的节点构成并保证其处于平衡状态，RangeProof则是默克尔证据的封装结构。</p>
+<p>加载状态库</p>
+<p>iavl使用leveldb数据库保存节点以及其关系，例如，下面的代码从当前目录下的 counter数据库加载状态库，并使用Load()方法将载入最后版本的状态：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gdb,_ := db.NewGoLevelDB(&quot;counter&quot;,&quot;.&quot;)</span><br><span class="line">tree := iavl.NewMutableTree(gdb,128)</span><br><span class="line">tree.Load()</span><br></pre></td></tr></table></figure></p>
+<p>工作区</p>
+<p>类似于git，iavl也有一个工作区的概念 —— 所有的修改操作都是在工作区完成的，而不是 直接操作状态库。可以使用Load()方法载入最后（新）版本的状态库到工作区，也可以使用 LoadVersion()方法载入指定版本的状态库到工作区。</p>
+<p>一旦将状态载入工作区，我们就可以利用Set()方法设置指定的键/值对了。例如，下面的 代码设置键name的值为tommy：</p>
+<p><code>tree.Set([]byte(&quot;name&quot;),[]byte(&quot;Tommy&quot;))</code><br>当我们调用Get()方法时，是从当前工作区中读取指定键的值，例如：</p>
+<p><code>idx,val := tree.Get([]byte(&quot;name&quot;))</code><br>其中，返回的idx表示该键对应的叶节点在集合中的先后序号，val表示键对应的值。</p>
+<p>如果需要从状态库中指定版本读取键值，可以使用GetVersioned()方法。例如， 下面的代码读取版本2的指定键值：</p>
+<p><code>idx,val := tree.GetVersioned([]byte{&quot;name&quot;},2)</code><br>提交新版本</p>
+<p>所有的修改完毕后，使用SaveVersion()方法将工作区的变更提交到库中，这将返回根节点 哈希和新的版本号：</p>
+<p><code>hash,ver,err := tree.SaveVersion()</code><br>iavl库的版本号是从0开始，每个版本加1。</p>
+<h2 id="封装iavl操作"><a href="#封装iavl操作" class="headerlink" title="封装iavl操作"></a>封装iavl操作</h2><p>为了简化iavl的操作，我们将编解码等繁琐的操作封装到一个单独的结构Store里：</p>
+<p><img src="https://lh3.googleusercontent.com/-gYAQNNM3JvY/XAiKtnxjzlI/AAAAAAAAEI0/3fDXRZgHpAI07GrntscK1XVw-34-Qn-nQCHMYCw/I/store.png" alt="store"></p>
+<p>Store的结构声明如下，除了iavl库，额外的两个成员分别记录状态的最后版本号以及最后 状态的默克尔哈希：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">type Store struct &#123;</span><br><span class="line">  tree *iavl.MutableTree  //iavl库</span><br><span class="line">  LastVersion int64           //状态的最后版本号</span><br><span class="line">  LastHash []byte             //最后版本状态的根哈希</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>GetBalance()方法获取指定地址的当前（最后版本）余额：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func (store *Store) GetBalance(addr crypto.Address) (int,error) &#123;</span><br><span class="line">  _,bz := store.tree.Get(addr)</span><br><span class="line">  if bz == nil &#123; return 0,errors.New(&quot;account not found&quot;) &#125;  </span><br><span class="line">  var val int</span><br><span class="line">  err := codec.UnmarshalBinary(bz,&amp;val)</span><br><span class="line">  if err !=nil &#123; return 0,errors.New(&quot;decode error&quot;)&#125;</span><br><span class="line">  return val,nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>GetBalanceVersoined()方法获取特定版本的指定地址余额：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func (store *Store) GetBalanceVersioned(addr crypto.Address,version int64) (int,error) &#123;</span><br><span class="line">  _,bz := store.tree.GetVersioned(addr,version)</span><br><span class="line">  if bz == nil &#123; return 0,errors.New(&quot;account not found on this version&quot;) &#125;  </span><br><span class="line">  var val int</span><br><span class="line">  err := codec.UnmarshalBinary(bz,&amp;val)</span><br><span class="line">  if err !=nil &#123; return 0,errors.New(&quot;decode error&quot;)&#125;</span><br><span class="line">  return val,nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>SetBalance()方法修改指定地址的余额：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func (store *Store) SetBalance(addr crypto.Address,value int) error &#123;</span><br><span class="line">  bz,err := codec.MarshalBinary(value)</span><br><span class="line">  if err != nil &#123; return err &#125;</span><br><span class="line">  store.tree.Set(addr,bz)</span><br><span class="line">  return nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Commit()提交当前工作区的修改：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func (store *Store) Commit() &#123;</span><br><span class="line">  hash,ver,err := store.tree.SaveVersion()</span><br><span class="line">  if err != nil &#123; panic(err) &#125;</span><br><span class="line">  store.LastVersion = ver</span><br><span class="line">  store.LastHash = hash</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="升级代币状态机"><a href="#升级代币状态机" class="headerlink" title="升级代币状态机"></a>升级代币状态机</h2><p>基于Store的封装，很容易为代币状态机加入iavl的支持：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">type TokenApp struct &#123;</span><br><span class="line">  types.BaseApplication</span><br><span class="line">  store *Store</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>转账交易<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func (app *TokenApp) transfer(from,to crypto.Address,value int) error &#123;</span><br><span class="line">  fromBalance,_ := app.store.GetBalance(from)</span><br><span class="line">  if fromBalance &lt; value &#123;return errors.New(&quot;no enough balance&quot;)&#125;</span><br><span class="line">  toBalance,_ := app.GetBalance(to)</span><br><span class="line">  app.SetBalance(from,fromBalance - val)</span><br><span class="line">  app.SetBalance(to,toBalance + val)</span><br><span class="line">  return nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>发行交易<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func (app *TokenApp) issue(issuer,to crypto.Address,value int) error &#123;</span><br><span class="line">  if !bytes.Equal(issuer,SYSTEM_ISSUER) return &#123; errors.New(&quot;invalid issuer&quot;) &#125;</span><br><span class="line">  toBalance,_ := app.store.GetBalance(to)</span><br><span class="line">  app.SetBalance(to,toBalance + val)</span><br><span class="line">  return nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>实现Commit()<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func (app *TokenApp) Commit() types.ResponseCommit&#123;</span><br><span class="line">  hash,ver,_ := app.store.Commit()</span><br><span class="line">  app.Version = ver</span><br><span class="line">  app.Hash = hash</span><br><span class="line">  return types.ResponseCommit&#123;Data:hash&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>查询状态<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func (app *AccountApp) Query(req types.RequestQuery) types.ResponseQuery&#123;</span><br><span class="line">  if len(req.Data) == 0 &#123;</span><br><span class="line">    return types.ResponseQuery&#123;Code:1,Info:&quot;no address specified&quot;&#125;</span><br><span class="line">  &#125; </span><br><span class="line">  addr := cryto.Address(req.Data)</span><br><span class="line">  val,_:= app.store.GetBalance(addr)</span><br><span class="line">  return types.ResponseQuery&#123;Key:addr,Value:val&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;平衡二叉树简介&quot;&gt;&lt;a href=&quot;#平衡二叉树简介&quot; class=&quot;headerlink&quot; title=&quot;平衡二叉树简介&quot;&gt;&lt;/a&gt;平衡二叉树简介&lt;/h2&gt;&lt;p&gt;在之前的课程中，我们简单地使用磁盘文件来保存状态，对于简单的学习或验证 而言没有问题，但在生产环境中，tendermint推荐我们使用其基于avl树实现的 多版本状态库。&lt;/p&gt;
+&lt;p&gt;avl树得名于发明者G. M. Adelson-Velsky和Evgenii Landis，它是一种 自平衡二叉检索树，这包括两个核心的思想：二叉、平衡。&lt;/p&gt;
+&lt;p&gt;二叉是指整棵树中每个节点最多有两个子节点，左侧的子节点值一定小于父节点值，而 右侧的子节点值一定大于父节点值，二叉树的主要用途是进行数据检索：当查找指定的数值时， 只需要逐层与节点值比较即可快速定位，因此被称为二叉检索树。&lt;/p&gt;
+&lt;p&gt;例如，下图就是一个典型的二叉检索树，每个节点列出了其表示的值：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://lh3.googleusercontent.com/-rHf4N7nhTT4/XAiKtnjwMUI/AAAAAAAAEIs/6z6NO6fWTgArP6et8QUQOwKDpDoFzuqEwCHMYCw/I/btree.png&quot; alt=&quot;btree&quot;&gt;&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="tendermint" scheme="http://gcblog/github.io/categories/tendermint/"/>
+    
+    
+      <category term="tendermint" scheme="http://gcblog/github.io/tags/tendermint/"/>
+    
+  </entry>
   
   <entry>
     <title>tendermint默克尔树</title>
@@ -1135,98 +1204,6 @@
       <category term="DES" scheme="http://gcblog/github.io/tags/DES/"/>
     
       <category term="3DES" scheme="http://gcblog/github.io/tags/3DES/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>hash算法</title>
-    <link href="http://gcblog/github.io/2018/06/26/hash%E7%AE%97%E6%B3%95/"/>
-    <id>http://gcblog/github.io/2018/06/26/hash算法/</id>
-    <published>2018-06-26T11:00:51.000Z</published>
-    <updated>2018-06-26T11:04:32.438Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="什么是-hash-算法"><a href="#什么是-hash-算法" class="headerlink" title="什么是 hash 算法"></a>什么是 hash 算法</h2><p>散列方法的主要思想是根据结点的关键码值来确定其存储地址：以关键码值K为自变量，通过一定的函数关系h(K)(称为散列函数)，计算出对应的函数值来，把这个值解释为结点的存储地址，将结点存入到此存储单元中。检索时，用同样的方法计算地址，然后到相应的单元里去取要找的结点。通过散列方法可以对结点进行快速检索。散列（hash，也称“哈希”）是一种重要的存储方式，也是一种常见的检索方法。</p>
-<p>散列算法（Hash Algorithm），又称哈希算法，杂凑算法，是一种从任意文件中创造小的数字「指纹」的方法。与指纹一样，散列算法就是一种以较短的信息来保证文件唯一性的标志，这种标志与文件的每一个字节都相关，而且难以找到逆向规律。因此，当原有文件发生改变时，其标志值也会发生改变，从而告诉文件使用者当前的文件已经不是你所需求的文件。</p>
-<h2 id="Hash算法有什么特点"><a href="#Hash算法有什么特点" class="headerlink" title="Hash算法有什么特点"></a>Hash算法有什么特点</h2><p>一个优秀的 hash 算法，将能实现：</p>
-<ul>
-<li><p><strong>正向快速</strong>：给定明文和 hash 算法，在有限时间和有限资源内能计算出 hash 值。</p>
-</li>
-<li><p><strong>逆向困难</strong>：给定（若干） hash 值，在有限时间内很难（基本不可能）逆推出明文。</p>
-</li>
-<li><p><strong>输入敏感</strong>：原始输入信息修改一点信息，产生的 hash 值看起来应该都有很大不同。</p>
-</li>
-<li><p><strong>冲突避免</strong>：很难找到两段内容不同的明文，使得它们的 hash 值一致（发生冲突）。即对于任意两个不同的数据块，其hash值相同的可能性极小；对于一个给定的数据块，找到和它hash值相同的数据块极为困难。</p>
-</li>
-</ul>
-<p>但在不同的使用场景中，如数据结构和安全领域里，其中对某一些特点会有所侧重。<br><a id="more"></a></p>
-<h2 id="几种常见的hash算法"><a href="#几种常见的hash算法" class="headerlink" title="几种常见的hash算法"></a>几种常见的hash算法</h2><ul>
-<li>MD5</li>
-<li>SHA-1</li>
-<li>SHA-2</li>
-<li>SHA-256</li>
-<li>SHA-512</li>
-<li>SHA-3</li>
-<li>RIPEMD-160</li>
-</ul>
-<h2 id="MD5-加密使用"><a href="#MD5-加密使用" class="headerlink" title="MD5 加密使用"></a>MD5 加密使用</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">func Md5(data string)  &#123;</span><br><span class="line"></span><br><span class="line">	fmt.Println(&quot;-----------Md5-----------&quot;)</span><br><span class="line">	mes := []byte(data)</span><br><span class="line"></span><br><span class="line">	// 1. 使用系统的包实现</span><br><span class="line">	// 密文为16进制的数字 16 *8 = 128位</span><br><span class="line">	by := md5.Sum(mes)</span><br><span class="line">	fmt.Printf(&quot;%x\n&quot;, by)</span><br><span class="line"></span><br><span class="line">	// 2. 第二种写法</span><br><span class="line">	m := md5.New()</span><br><span class="line">	m.Write(mes)</span><br><span class="line">	//将字节数组转换成字符串</span><br><span class="line">	s2:= hex.EncodeToString(m.Sum(nil))</span><br><span class="line">	fmt.Println(s2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="Sha256加密使用"><a href="#Sha256加密使用" class="headerlink" title="Sha256加密使用"></a>Sha256加密使用</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">func Sha256(data string)  &#123;</span><br><span class="line"></span><br><span class="line">	fmt.Println(&quot;--------sha256----------&quot;)</span><br><span class="line"></span><br><span class="line">	// 32字节 通用在公链中 32 * 8 = 256 位</span><br><span class="line">	// 2. 第一种写法</span><br><span class="line">	by := sha256.Sum256([]byte(data))</span><br><span class="line">	s := fmt.Sprintf(&quot;%x&quot;, by)</span><br><span class="line">	fmt.Println(s)</span><br><span class="line"></span><br><span class="line">  // 2. 第二种写法</span><br><span class="line">	m := sha256.New()</span><br><span class="line">	m.Write([]byte(data))</span><br><span class="line">	s2 := hex.EncodeToString(m.Sum(nil))</span><br><span class="line">	fmt.Println(s2)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	//对文件中的数据进行加密</span><br><span class="line">	file, _ := os.Open(&quot;test.txt&quot;)</span><br><span class="line">	h := sha256.New()</span><br><span class="line">	//将file copy到 h中</span><br><span class="line">	io.Copy(h, file)</span><br><span class="line">	resu := h.Sum(nil)</span><br><span class="line"></span><br><span class="line">	fmt.Println(hex.EncodeToString(resu))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="rpemd160加密使用"><a href="#rpemd160加密使用" class="headerlink" title="rpemd160加密使用"></a>rpemd160加密使用</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">//需要用到三方库 crypto</span><br><span class="line">func Ripem160(data string)  &#123;</span><br><span class="line"></span><br><span class="line">	fmt.Println(&quot;-------Ripem160--------&quot;)</span><br><span class="line">	rip := ripemd160.New()</span><br><span class="line">	rip.Write([]byte(data))</span><br><span class="line">	res := hex.EncodeToString(rip.Sum(nil))</span><br><span class="line"></span><br><span class="line">	fmt.Println(res)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="md5-实现原理"><a href="#md5-实现原理" class="headerlink" title="md5 实现原理"></a>md5 实现原理</h2><p>对MD5算法简要的叙述可以为：MD5以512位分组来处理输入的信息，且每一分组又被划分为16个32位子分组，经过了一系列的处理后，算法的输出由四个32位分组组成，将这四个32位分组级联后将生成一个128位散列值。</p>
-<ol>
-<li><p><strong>填充</strong>：如果输入信息的长度(bit)对512求余的结果不等于448，就需要填充使得对512求余的结果等于448。填充的方法是填充一个1和n个0。填充完后，信息的长度就为N*512+448(bit)；</p>
-</li>
-<li><p><strong>记录信息长度</strong>：用64位来存储填充前信息长度。这64位加在第一步结果的后面，这样信息长度就变为N*512+448+64=(N+1)*512位。</p>
-</li>
-<li><p><strong>装入标准的幻数（四个整数）</strong>：标准的幻数（物理顺序）是（A=(01234567)16，B=(89ABCDEF)16，C=(FEDCBA98)16，D=(76543210)16）。如果在程序中定义应该是（A=0X67452301，B=0XEFCDAB89，C=0X98BADCFE，D=0X10325476）</p>
-</li>
-<li><p>四轮循环运算</p>
-</li>
-</ol>
-<h2 id="sha256-实现原理"><a href="#sha256-实现原理" class="headerlink" title="sha256 实现原理"></a>sha256 实现原理</h2><p>SHA-256 算法输入报文的最大长度不超过2^64 bit，输入按512-bit 分组进行处理，产生的输出是一个256-bit 的报文摘要。</p>
-<ul>
-<li><p><strong>附加填充比特</strong>：对报文进行填充使报文长度与448 模512 同余（长度=448 mod 512），填充的比特数范围是1 到512，填充比特串的最高位为1，其余位为0。就是先在报文后面加一个 1，再加很多个0，直到长度 满足 mod 512=448.为什么是448，因为448+64=512. 第二步会加上一个 64bit的 原始报文的 长度信息。</p>
-</li>
-<li><p><strong>附加长度值</strong> 将用64-bit 表示的初始报文（填充前）的位长度附加在步骤1 的结果后（低位字节优先）。</p>
-</li>
-<li><p><strong>初始化缓存</strong>：使用一个256-bit 的缓存来存放该散列函数的中间及最终结果。 </p>
-</li>
-<li><strong>处理512-bit（16 个字）报文分组序列</strong>：该算法使用了六种基本逻辑函数，由64步迭代运算组成。每步都以256-bit 缓存值ABCDEFGH 为输入，然后更新缓存内容。 每步使用一个32-bit 常数值Kt 和一个32-bit Wt。 </li>
-</ul>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;什么是-hash-算法&quot;&gt;&lt;a href=&quot;#什么是-hash-算法&quot; class=&quot;headerlink&quot; title=&quot;什么是 hash 算法&quot;&gt;&lt;/a&gt;什么是 hash 算法&lt;/h2&gt;&lt;p&gt;散列方法的主要思想是根据结点的关键码值来确定其存储地址：以关键码值K为自变量，通过一定的函数关系h(K)(称为散列函数)，计算出对应的函数值来，把这个值解释为结点的存储地址，将结点存入到此存储单元中。检索时，用同样的方法计算地址，然后到相应的单元里去取要找的结点。通过散列方法可以对结点进行快速检索。散列（hash，也称“哈希”）是一种重要的存储方式，也是一种常见的检索方法。&lt;/p&gt;
-&lt;p&gt;散列算法（Hash Algorithm），又称哈希算法，杂凑算法，是一种从任意文件中创造小的数字「指纹」的方法。与指纹一样，散列算法就是一种以较短的信息来保证文件唯一性的标志，这种标志与文件的每一个字节都相关，而且难以找到逆向规律。因此，当原有文件发生改变时，其标志值也会发生改变，从而告诉文件使用者当前的文件已经不是你所需求的文件。&lt;/p&gt;
-&lt;h2 id=&quot;Hash算法有什么特点&quot;&gt;&lt;a href=&quot;#Hash算法有什么特点&quot; class=&quot;headerlink&quot; title=&quot;Hash算法有什么特点&quot;&gt;&lt;/a&gt;Hash算法有什么特点&lt;/h2&gt;&lt;p&gt;一个优秀的 hash 算法，将能实现：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;正向快速&lt;/strong&gt;：给定明文和 hash 算法，在有限时间和有限资源内能计算出 hash 值。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;逆向困难&lt;/strong&gt;：给定（若干） hash 值，在有限时间内很难（基本不可能）逆推出明文。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;输入敏感&lt;/strong&gt;：原始输入信息修改一点信息，产生的 hash 值看起来应该都有很大不同。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;冲突避免&lt;/strong&gt;：很难找到两段内容不同的明文，使得它们的 hash 值一致（发生冲突）。即对于任意两个不同的数据块，其hash值相同的可能性极小；对于一个给定的数据块，找到和它hash值相同的数据块极为困难。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;但在不同的使用场景中，如数据结构和安全领域里，其中对某一些特点会有所侧重。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="加密算法" scheme="http://gcblog/github.io/categories/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"/>
-    
-    
-      <category term="go" scheme="http://gcblog/github.io/tags/go/"/>
-    
-      <category term="加密算法" scheme="http://gcblog/github.io/tags/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"/>
-    
-      <category term="hash" scheme="http://gcblog/github.io/tags/hash/"/>
-    
-      <category term="MD5" scheme="http://gcblog/github.io/tags/MD5/"/>
-    
-      <category term="sha256" scheme="http://gcblog/github.io/tags/sha256/"/>
-    
-      <category term="rpemd160" scheme="http://gcblog/github.io/tags/rpemd160/"/>
     
   </entry>
   
