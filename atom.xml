@@ -1016,9 +1016,9 @@
       <category term="共识算法" scheme="http://gcblog/github.io/categories/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
     
     
-      <category term="DPOS" scheme="http://gcblog/github.io/tags/DPOS/"/>
-    
       <category term="共识算法" scheme="http://gcblog/github.io/tags/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="DPOS" scheme="http://gcblog/github.io/tags/DPOS/"/>
     
   </entry>
   
@@ -1077,9 +1077,9 @@
       <category term="共识算法" scheme="http://gcblog/github.io/categories/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
     
     
-      <category term="共识算法" scheme="http://gcblog/github.io/tags/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
-    
       <category term="POW" scheme="http://gcblog/github.io/tags/POW/"/>
+    
+      <category term="共识算法" scheme="http://gcblog/github.io/tags/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"/>
     
   </entry>
   
@@ -1272,9 +1272,9 @@
       <category term="加密算法" scheme="http://gcblog/github.io/categories/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"/>
     
     
-      <category term="AES" scheme="http://gcblog/github.io/tags/AES/"/>
-    
       <category term="对称加密" scheme="http://gcblog/github.io/tags/%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86/"/>
+    
+      <category term="AES" scheme="http://gcblog/github.io/tags/AES/"/>
     
   </entry>
   
